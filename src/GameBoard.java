@@ -92,10 +92,5 @@ public class GameBoard {
         System.out.println();
     }
 
-    public static void main(String[] args) {
-        GameBoard scrabble = new GameBoard(5,5);
-        scrabble.placeWord("fire 3A");
-        scrabble.placeWord("hide B2");
-    }
 
 }
