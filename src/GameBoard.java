@@ -40,6 +40,94 @@ public class GameBoard {
         }
     }
 
+    public boolean checkSurroundingWords(String place, String word) {
+
+        int row;
+        int col;
+        int tempRow;
+        int tempCol;
+        int wordLength;
+        String wordToCheck = "";
+
+        wordLength = word.length();
+        // Getting the column and row of the placed word
+        // Horizontal word
+        if (Character.isDigit(place.charAt(0))) {
+            row = Character.getNumericValue(place.charAt(0)) - 1;
+            col = place.charAt(1) - 'A'; //cols starts at A, so we find the offset
+        }else {
+            col = place.charAt(0) - 'A';
+            row = Character.getNumericValue(place.charAt(1)) - 1;
+        }
+
+        // Loops through each letter
+        for (int k = 0; k < wordLength-1; k++) {
+            tempRow = row + k;
+            System.out.println("Temp row: " + tempRow);
+            tempCol = col + k;
+            System.out.println("Temp col: " + tempCol);
+            System.out.println("LETTER row + tempCol " + board[row][tempCol]);
+            System.out.println("LETTER tempRow + col " + board[tempRow][col]);
+            System.out.println("First loop");
+
+            // Checks if the columns has any attached letters to the letter
+            // Checks above the letter
+            for (int i = tempRow; i >= 0; i--) {
+                System.out.println("Letter: " + board[i][col]);
+                if (board[i][col].equals("_")) {
+                    System.out.println("if board[row][i] == _");
+                    // Checks below the letter
+                    for (int j = i + 1; j < rows; j++) {
+                        System.out.println("j: " + j);
+                        if (!board[j][col].equals("_")) {
+                            wordToCheck += board[j][col];
+                            System.out.println("Char: " + board[j][col]);
+                            System.out.println("Word: " + wordToCheck);
+                        }
+                    }
+                    System.out.println("checkWord");
+                    if(wordToCheck.length() > 1) {
+                        if (!checkWord(wordToCheck)) {
+                            System.out.println("Word: " + wordToCheck);
+                            System.out.println("checkWord = false");
+                            return false;
+                        }
+                    }
+                    wordToCheck = "";
+                }
+            }
+
+            System.out.println("Second loop");
+            // Checks if the rows has any attached letters to the letter
+            // Checks before the letter
+            for (int i = tempCol; i >= 0; i--) {
+                System.out.println("Letter: " + board[row][i]);
+                if (board[row][i].equals("_") || i == 0) {
+                    System.out.println("if board[row][i] == _");
+
+                    // Checks afer the letter
+                    for (int j = i + 1; j < cols; j++) {
+                        if (!board[row][j].equals("_")) {
+                            wordToCheck += board[row][j];
+                            System.out.println("Word1: " + wordToCheck);
+                        }
+                    }
+                    System.out.println("checkWord");
+                    System.out.println(wordToCheck.length());
+                    if(wordToCheck.length() > 1) {
+                        if (!checkWord(wordToCheck)) {
+                            System.out.println("Word: " + wordToCheck);
+                            System.out.println("checkWord = false");
+                            return false;
+                        }
+                    }
+                    wordToCheck = "";
+                }
+            }
+        }
+        return true;
+    }
+
     public void placeWord (String play) {
         String word = play.split(" ")[0]; //gets the word
         String place = play.split(" ")[1]; //gets where the word will be placed
@@ -77,6 +165,7 @@ public class GameBoard {
                 }
             }
             printBoard();
+            checkSurroundingWords(place, word);
         } else {
             System.out.println(word + " is not a valid word.");
         }
