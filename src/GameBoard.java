@@ -105,7 +105,7 @@ public class GameBoard {
                 if (board[row][i].equals("_") || i == 0) {
                     System.out.println("if board[row][i] == _");
 
-                    // Checks afer the letter
+                    // Checks after the letter
                     for (int j = i + 1; j < cols; j++) {
                         if (!board[row][j].equals("_")) {
                             wordToCheck += board[row][j];
