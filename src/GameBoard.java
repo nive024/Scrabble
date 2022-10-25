@@ -380,7 +380,7 @@ public class GameBoard {
                     }
                 }
             }
-            printBoard();sr
+            printBoard();
             isBoardEmpty = false;
         } else {
             System.out.println(word + " is not a valid word.");
