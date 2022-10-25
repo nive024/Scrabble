@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 public class GameBoard {
@@ -9,10 +10,13 @@ public class GameBoard {
     private int cols;
     private boolean isBoardEmpty;
 
-    public GameBoard (int rows, int cols) {
+    private Player currentPlayer;
+
+    public GameBoard (int rows, int cols, Player currentPlayer) {
         this.rows = rows;
         this.cols = cols;
         isBoardEmpty = true;
+        this.currentPlayer = currentPlayer;
         board = new String[rows][cols];
         //initialize places in the board
         for (int i = 0; i < rows; i++) {
@@ -85,6 +89,7 @@ public class GameBoard {
                                 System.out.println("Invalid placement: " + wordToCheck + " is not a valid word.");
                                 return false;
                             }
+                            else{calculateScore(wordToCheck, currentPlayer);}
                         }
                         wordToCheck = "";
                     }
@@ -107,6 +112,7 @@ public class GameBoard {
                                 System.out.println("Invalid placement: " + wordToCheck + " is not a valid word.");
                                 return false;
                             }
+                            else{calculateScore(wordToCheck, currentPlayer);}
                         }
                         wordToCheck = "";
                     }
@@ -116,7 +122,8 @@ public class GameBoard {
         return true;
     }
 
-    public void placeWord (String play) {
+    public void placeWord (String play, Player p) {
+        currentPlayer = p;
         String[][] tempBoard = new String[rows][cols];
         for (int i = 0; i < rows; i++) {
             if (cols >= 0) System.arraycopy(board[i], 0, tempBoard[i], 0, cols);
@@ -194,6 +201,7 @@ public class GameBoard {
                 }
             }
             checkSurroundingWords(place, word);
+            calculateScore(word, currentPlayer);
             printBoard();
             isBoardEmpty = false;
         } else {
@@ -211,6 +219,26 @@ public class GameBoard {
             System.out.println();
         }
         System.out.println();
+    }
+
+    private int calculateScore(String word, Player p){
+        int score=0;
+        int i = 0;
+
+        ArrayList<Letters> letter = new ArrayList<>();
+
+        while(i<word.length()){
+            Letters nl = new Letters(word.charAt(i));
+            letter.add(nl);
+            score += nl.getPointValue(nl.getLetter());
+            i++;
+        }
+
+        p.setScore(score);
+        System.out.println("Yay! You scored " + score + " points for that word.");
+        System.out.println("Your total score is now: " + p.getScore());
+
+        return score;
     }
 
 

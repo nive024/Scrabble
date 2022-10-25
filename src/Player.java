@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Player {
 
     /**
@@ -9,6 +11,8 @@ public class Player {
      */
     private int score;
 
+    private ArrayList<Letters> letters;
+
     /**
      *
      * @param name Name of the player
@@ -16,6 +20,7 @@ public class Player {
     public Player(String name){
         this.name = name;
         score = 0;
+        letters = new ArrayList<>();
     }
 
     /**
@@ -49,4 +54,19 @@ public class Player {
     public int getScore(){
         return score;
     }
+
+    public ArrayList<Letters> getLetters(){
+        return letters;
+    }
+
+    public void setLetters(ArrayList<Letters> newList){
+        letters.clear();
+
+        for(Letters l : newList){
+            letters.add(l);
+        }
+    }
+
 }
+
+
