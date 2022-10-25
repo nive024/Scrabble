@@ -1,4 +1,4 @@
-#Scabble
+# Scrabble Game
 
 <!-- The Project's Objectives -->
 ## The Project's Objectives
