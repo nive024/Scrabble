@@ -72,4 +72,6 @@ public class Tile {
     public void placeLetter(Letters letter){
         this.letter = letter;
     }
+
+    public Letters getLetter() { return letter; }
 }
