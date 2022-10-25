@@ -68,20 +68,11 @@ public class GameBoard {
         }
     }
 
-    public boolean checkNewWords(String place, String word) {
-        int row;
-        int col;
+    public boolean checkNewWords() {
         int tempRow = 0;
         int tempCol = 0;
         ArrayList<String> tempNewWords = new ArrayList<>();
         //check the row and col of the word that was just added
-        if (Character.isDigit(place.charAt(0))) {
-            row = Character.getNumericValue(place.charAt(0)) - 1;
-            col = place.charAt(1) - 'A'; //cols starts at A, so we find the offset
-        } else {
-            col = place.charAt(0) - 'A';
-            row = Character.getNumericValue(place.charAt(1)) - 1;
-        }
         String wordToCheck = "";
 
         //go through the board left to right and look for complete words
@@ -96,10 +87,6 @@ public class GameBoard {
                         if (checkWord(wordToCheck)) { //if its a real word
                             wordToCheck += " " + tempRow + (tempCol-wordToCheck.length()+1);
                             tempNewWords.add(wordToCheck); //add to arratList bc we don't know if valid placement or not
-//                            System.out.println(wordToCheck);
-//                            if (wordOnBoard.add(wordToCheck)) { //if it hasn't been counted on a previous play yet
-//
-//                            }
                         } else {
                             System.out.println("Invalid placement: " + wordToCheck + " is not a valid word.");
                             for (int k = 0; k < rows; k++) {
@@ -345,7 +332,7 @@ public class GameBoard {
                     }
 
                 }
-                if (checkNewWords(place, word)) {
+                if (checkNewWords()) {
                     for (int i = 0; i < word.length(); i++) {
                         tileBoard[row][i + col].placeLetter(new Letters(stringBoard[row][i + col].toUpperCase().charAt(0)));
                     }
@@ -374,7 +361,7 @@ public class GameBoard {
                         return;
                     }
                 }
-                if (checkNewWords(place, word)) {
+                if (checkNewWords()) {
                     for (int i = 0; i < word.length(); i++) {
                         tileBoard[i + row][col].placeLetter(new Letters(stringBoard[i + row][col].toUpperCase().charAt(0)));
                     }
