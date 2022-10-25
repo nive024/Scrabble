@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 public class GameBoard {
-    private String[][] board;
+    private String[][] stringBoard; //used for error checking when placing a word
+    private Tile[][] tileBoard; //used for displaying the board
     private int rows;
     private int cols;
     private boolean isBoardEmpty;
@@ -17,11 +18,19 @@ public class GameBoard {
         this.cols = cols;
         isBoardEmpty = true;
         this.currentPlayer = currentPlayer;
-        board = new String[rows][cols];
+        stringBoard = new String[rows][cols];
+        tileBoard = new Tile[rows][cols];
         //initialize places in the board
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                board[i][j] = "_";
+                stringBoard[i][j] = "_";
+            }
+        }
+
+        //initialize new tiles on the board
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                tileBoard[i][j] = new Tile();
             }
         }
     }
@@ -77,11 +86,11 @@ public class GameBoard {
                 // Checks if the columns has any attached letters to the letter
                 // Checks above the letter
                 for (int i = tempRow; i >= 0; i--) {
-                    if (board[i][col].equals("_")) {
+                    if (stringBoard[i][col].equals("_")) {
                         // Checks below the letter
                         for (int j = i + 1; j < rows; j++) {
-                            if (!board[j][col].equals("_")) {
-                                wordToCheck += board[j][col];
+                            if (!stringBoard[j][col].equals("_")) {
+                                wordToCheck += stringBoard[j][col];
                             }
                         }
                         if (wordToCheck.length() > 1) {
@@ -98,21 +107,29 @@ public class GameBoard {
                 // Checks if the rows has any attached letters to the letter
                 // Checks before the letter
                 for (int i = tempCol; i >= 0; i--) {
-                    if (board[row][i].equals("_") || i == 0) {
+                    if (stringBoard[row][i].equals("_") || i == 0) {
 
                         // Checks after the letter
                         for (int j = i + 1; j < cols; j++) {
-                            if (!board[row][j].equals("_")) {
-                                wordToCheck += board[row][j];
+                            if (!stringBoard[row][j].equals("_")) {
+                                wordToCheck += stringBoard[row][j];
                             }
                         }
                         System.out.println(wordToCheck.length());
                         if (wordToCheck.length() > 1) {
                             if (!checkWord(wordToCheck)) {
                                 System.out.println("Invalid placement: " + wordToCheck + " is not a valid word.");
+                                //reset stringBoard back to tileBoard version
+                                for (int n = 0; k < rows; k++) {
+                                    for (int j = 0; j < cols; j++) {
+                                        stringBoard[k][j] = tileBoard[k][j].getLetter().getLetter()+"";
+                                    }
+                                }
                                 return false;
                             }
-                            else{calculateScore(wordToCheck, currentPlayer);}
+                            else{
+                                calculateScore(wordToCheck, currentPlayer);
+                            }
                         }
                         wordToCheck = "";
                     }
@@ -124,19 +141,15 @@ public class GameBoard {
 
     public void placeWord (String play, Player p) {
         currentPlayer = p;
-        String[][] tempBoard = new String[rows][cols];
-        for (int i = 0; i < rows; i++) {
-            if (cols >= 0) System.arraycopy(board[i], 0, tempBoard[i], 0, cols);
-        }
+
         String word = play.split(" ")[0]; //gets the word
         String place = play.split(" ")[1]; //gets where the word will be placed
 
-        char commonChar = ' ';
-        int commonCharIndex = word.indexOf('(');
+        char commonChar = ' '; //character that is shared between word being places and existing word
+        int commonCharIndex = word.indexOf('('); //index of that char in new word
         //get word and remove brackets
         if (!isBoardEmpty) {
             //find the character between the brackets (to make sure they are placing in the same spot)
-
             Matcher matcher = Pattern.compile(".*\\((.)\\).*").matcher(word);
             if (matcher.find()) {
                 commonChar = matcher.group(1).charAt(0);
@@ -153,8 +166,9 @@ public class GameBoard {
                 row = Character.getNumericValue(place.charAt(0)) - 1;
                 col = place.charAt(1) - 'A'; //cols starts at A, so we find the offset
 
+                //check to see if the overlapping letter is in the right spot
                 if(!isBoardEmpty) {
-                    if (!(board[row][col + commonCharIndex].equals(commonChar + ""))) {
+                    if (!(stringBoard[row][col + commonCharIndex].equals(commonChar + ""))) {
                         System.out.println("Invalid Placement.");
                         return;
                     }
@@ -166,20 +180,26 @@ public class GameBoard {
                     return;
                 }
                 for (int i = 0; i < word.length(); i++) {
-                    if (board[row][i + col].equals("_")|| (board[row][i + col].equals(word.charAt(i)+""))) {
-                        board[row][i + col] = word.charAt(i) + "";
+                    if (stringBoard[row][i + col].equals("_")|| (stringBoard[row][i + col].equals(word.charAt(i)+""))) {
+                        stringBoard[row][i + col] = word.charAt(i) + "";
                     } else {
                         System.out.println("This doesn't fit here.");
                         return;
                     }
 
                 }
+                if (checkSurroundingWords(place, word)) {
+                    for (int i = 0; i < word.length(); i++) {
+                        tileBoard[row][i + col].placeLetter(new Letters(stringBoard[row][i + col].toUpperCase().charAt(0)));
+                    }
+                }
             } else { //else we place vertically
                 col = place.charAt(0) - 'A';
                 row = Character.getNumericValue(place.charAt(1)) - 1;
 
+                //check to see if the overlapping letter is in the right spot
                 if(!isBoardEmpty) {
-                    if (!(board[row + commonCharIndex][col].equals(commonChar + ""))) {
+                    if (!(stringBoard[row + commonCharIndex][col].equals(commonChar + ""))) {
                         System.out.println("Invalid Placement.");
                         return;
                     }
@@ -192,15 +212,20 @@ public class GameBoard {
                 }
 
                 for (int i = 0; i < word.length(); i++) {
-                    if (board[i + row][col].equals("_") || (board[i + row][col].equals(word.charAt(i) + ""))) {
-                        board[i + row][col] = word.charAt(i) + "";
+                    if (stringBoard[i + row][col].equals("_") || (stringBoard[i + row][col].equals(word.charAt(i) + ""))) {
+                        stringBoard[i + row][col] = word.charAt(i) + "";
                     } else {
                         System.out.println("This doesn't fit here");
                         return;
                     }
                 }
+                if (checkSurroundingWords(place, word)) {
+                    for (int i = 0; i < word.length(); i++) {
+                        tileBoard[i + row][col].placeLetter(new Letters(stringBoard[i + row][col].toUpperCase().charAt(0)));
+                    }
+                }
             }
-            checkSurroundingWords(place, word);
+
             calculateScore(word, currentPlayer);
             printBoard();
             isBoardEmpty = false;
@@ -209,17 +234,21 @@ public class GameBoard {
         }
     }
 
-    public void unPlaceWord() {}
 
     private void printBoard() {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                System.out.print(board[i][j]+" ");
+                Tile t = tileBoard[i][j];
+                if (t.isEmpty())
+                    System.out.print("_ ");
+                else
+                    System.out.print(t.getLetter().getLetter() + " ");
             }
             System.out.println();
         }
         System.out.println();
     }
+
 
     private int calculateScore(String word, Player p){
         int score=0;
