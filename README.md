@@ -11,10 +11,16 @@ features.
 
 <!-- Known Issues -->
 ## Known Issues
-These are the known issues that will be fixed in Milestone 2
+These are the known issues that will be fixed in Milestone 2:
+* API does not count certain words as valid words.
+* 
 
 <!-- Roadmap Ahead -->
 ## Roadmap Ahead
+For the next milestone, the goal is to create a GUI-based version of the game.
+Additionally, any known issues in Milestone 1 will be fixed in Milestone 2. Furthermore, any
+issues that arise will also be fixed. The game will allow for 2 players to play against each other,
+rather than just 1 player. 
 
 <!-- Authors -->
 ## Authors
