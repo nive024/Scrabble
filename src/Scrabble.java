@@ -10,7 +10,7 @@ public class Scrabble {
 
     public Scrabble() {
 
-        gameBoard = new GameBoard(5, 5, player1);
+        gameBoard = new GameBoard(7, 7, player1);
         letters = new Letters();
 
         initializePlayers();
@@ -39,8 +39,16 @@ public class Scrabble {
     }
     public void playGame(){
         Scanner scan = new Scanner(System.in);
-        System.out.println("Enter your word: ");
-        this.gameBoard.placeWord(scan.nextLine(), player1);
+        System.out.println("check: " + gameBoard.checkWord("be"));
+//        gameBoard.placeWord("horses 4A", player1);
+//        gameBoard.placeWord("wir(e) E1", player1);
+//        gameBoard.placeWord("xi(s) D2", player1);
+//        gameBoard.placeWord("a(r)s C3", player1);
+        gameBoard.placeWord("horn 4B", player1);
+        gameBoard.placeWord("fa(r)m D2", player1);
+        gameBoard.placeWord("paste 6B", player1);
+        gameBoard.placeWord("mob 5D",player1);
+        //this.gameBoard.placeWord(scan.nextLine(), player1);
     }
 
     public static void main(String[] args) {
