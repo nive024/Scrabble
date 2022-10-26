@@ -1,6 +1,15 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * Scrabble is a word game where players are each given 7 letters and attempt to create words from the letters.
+ * Each word on the board must be connected to another word. Each letter is given a number of points and players
+ * gets points from combining letters to create word. The goal of the game is to have the most points possible.
+ *
+ * The Scrabble class is the main class that starts the game.
+ *
+ * The class creates and initalizes a gameBoard and Players. Additionally, it starts the game.
+ */
 public class Scrabble {
 
     private GameBoard gameBoard;
@@ -8,6 +17,9 @@ public class Scrabble {
     private Player player1;
     private Player player2;
 
+    /**
+     * Constructor that initializes a game board, letters and players.
+     */
     public Scrabble() {
 
         gameBoard = new GameBoard(7, 7, player1);
@@ -16,6 +28,9 @@ public class Scrabble {
         initializePlayers();
     }
 
+    /**
+     * Initializes players by taking in a string from user input, that represents their name.
+     */
     public void initializePlayers(){
         //Player 1
         Scanner scan = new Scanner(System.in);
@@ -37,31 +52,38 @@ public class Scrabble {
         **/
 
     }
+
+    /**
+     * Takes input from the user for their turn. The user inputs a word and the placement on the board.
+     */
     public void playGame(){
         Scanner scan = new Scanner(System.in);
-        System.out.println("check: " + gameBoard.checkWord("be"));
-//        gameBoard.placeWord("horses 4A", player1);
-//        gameBoard.placeWord("wir(e) E1", player1);
-//        gameBoard.placeWord("xi(s) D2", player1);
-//        gameBoard.placeWord("a(r)s C3", player1);
-        gameBoard.placeWord("horn 4B", player1);
-        gameBoard.placeWord("fa(r)m D2", player1);
-        gameBoard.placeWord("paste 6B", player1);
-        gameBoard.placeWord("mob 5D",player1);
-        //this.gameBoard.placeWord(scan.nextLine(), player1);
-    }
 
+        int round = 0;
+        while(round<5){
+            System.out.println("Please enter your word");
+            String word = scan.nextLine();
+            while (!word.contains(" ")){
+                System.out.println("Please enter a word and a placement. Example: WORD 4B");
+                word = scan.nextLine();
+            }
+            gameBoard.placeWord(word, player1);
+
+            String s = "";
+            for(Letters l: player1.getLetters()){
+                s += l.getLetter() + ", ";
+            }
+            System.out.println("These are your letters: " + s);
+        }
+    }
+    /**
+     * Creates a new Scrabble game and starts the game
+     *
+     * @param args Stores command line arguments
+     */
     public static void main(String[] args) {
         Scrabble game = new Scrabble();
         game.playGame();
-
-        /**
-        game.player1 = new Player("Player 1");
-        game.player2 = new Player("Player 2");
-        game.gameBoard.placeWord("fire 3A");
-        game.gameBoard.placeWord("h(i)de B2");
-        int p = game.letters.getPointValue('F');
-        System.out.println(p);
-        **/
     }
 }
+
