@@ -22,7 +22,7 @@ public class Scrabble {
      */
     public Scrabble() {
 
-        gameBoard = new GameBoard(7, 7, player1);
+        gameBoard = new GameBoard(10, 10, player1);
         letters = new Letters();
 
         initializePlayers();
@@ -44,12 +44,18 @@ public class Scrabble {
         }
         System.out.println("These are your letters: " + s);
 
-        /**
+
         //Player 2
-        System.out.println("Enter Player2's Name: ");
-        player2 = new Player(scan.nextLine());
-        player2.setLetters(letters.deal(player2.getLetters()));
-        **/
+//        System.out.println("Enter Player2's Name: ");
+//        player2 = new Player(scan.nextLine());
+//        player2.setLetters(letters.deal(player2.getLetters()));
+//
+//        String s2 = "";
+//        for(Letters l: player2.getLetters()){
+//            s2 += l.getLetter() + ", ";
+//        }
+//        System.out.println("These are your letters: " + s2);
+
 
     }
 
@@ -59,8 +65,15 @@ public class Scrabble {
     public void playGame(){
         Scanner scan = new Scanner(System.in);
         int round = 0;
+        boolean player1Turn = true;
         while(round<5){
-            System.out.println("Please enter your word");
+
+            String s1 = "";
+            for(Letters l: player1.getLetters()){
+                s1 += l.getLetter() + ", ";
+            }
+            System.out.println(player1.getName() + " these are your letters: " + s1);
+            System.out.println(player1.getName() + " please enter your word");
             String word = scan.nextLine();
             while (!word.contains(" ")){
                 System.out.println("Please enter a word and a placement. Example: WORD 4B");
@@ -68,12 +81,11 @@ public class Scrabble {
             }
             gameBoard.placeWord(word, player1);
 
-            String s = "";
-            for(Letters l: player1.getLetters()){
-                s += l.getLetter() + ", ";
-            }
-            System.out.println("These are your letters: " + s);
+            round++;
         }
+
+        System.out.println("GAME OVER! " + player1.getName() + ", you scored " + player1.getScore() + " points!");
+
     }
 
     /**
