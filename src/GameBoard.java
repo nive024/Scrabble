@@ -4,6 +4,18 @@ import java.net.URL;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+/**
+ * The GameBoard class represents the game board logic in Scrabble
+ *
+ * This class checks the validity of the word, places words on the board,
+ * adds up scores to the players’ total, prints the current state of the board to the console
+ * and checks the validity of the placement of the word.
+ *
+ * @author Nivetha Sivasaravanan
+ * @author Nicole Lim
+ * @author Rimsha Atif
+ */
 public class GameBoard {
     private String[][] stringBoard; //used for error checking when placing a word
     private Tile[][] tileBoard; //used for displaying the board
