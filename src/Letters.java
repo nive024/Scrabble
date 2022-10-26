@@ -1,7 +1,7 @@
 import java.util.*;
 
 public class Letters {
-    private static Map<Character, Integer> Alphabet= new HashMap<>();
+    private static final Map<Character, Integer> Alphabet= new HashMap<>();
 
     private Character Letter;
     private Integer Value;
@@ -70,14 +70,12 @@ public class Letters {
     public Character getLetter(){
         return Letter;
     }
-
-    public Map<Character, Integer> getAlphabet(){
-        return Alphabet;
-    }
     public int getPointValue(Character c){ //return the point value associated with the letter
         return Alphabet.get(c);
     }
 
-
+    public Map<Character, Integer> getAlphabet(){
+        return Alphabet;
+    }
 
 }
