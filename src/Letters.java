@@ -1,7 +1,7 @@
 import java.util.*;
 
 public class Letters {
-    private static final Map<Character, Integer> Alphabet= new HashMap<>();
+    private static Map<Character, Integer> Alphabet= new HashMap<>();
 
     private Character Letter;
     private Integer Value;
@@ -70,31 +70,14 @@ public class Letters {
     public Character getLetter(){
         return Letter;
     }
+
+    public Map<Character, Integer> getAlphabet(){
+        return Alphabet;
+    }
     public int getPointValue(Character c){ //return the point value associated with the letter
         return Alphabet.get(c);
     }
 
-    public ArrayList<Letters> deal(ArrayList<Letters> currentLetters){
-        Random r = new Random();
-        Object[] keys = Alphabet.keySet().toArray();
-        ArrayList<Letters> newLetters = new ArrayList<>();
-
-        int n;  //number of letters needed to be dealt
-        n= 7- currentLetters.size();;
-
-        //copy currentLetters into the newList
-        for(Letters l: currentLetters){
-            newLetters.add(l);
-        }
-
-        //randomly deal n new letters to the player
-        for(int i=0; i<n; i++){
-            Letters newLetter = new Letters((Character) keys[r.nextInt(keys.length)]);
-            newLetters.add(newLetter);
-        }
-
-        return newLetters;
-    }
 
 
 }

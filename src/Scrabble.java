@@ -21,7 +21,24 @@ public class Scrabble {
         Scanner scan = new Scanner(System.in);
         System.out.println("Enter Player1's Name: ");
         player1 = new Player(scan.nextLine());
-        player1.setLetters(letters.deal(player1.getLetters()));
+        //player1.setLetters(gameBoard.deal(player1.getLetters()));
+
+
+        ArrayList<Letters> le = new ArrayList<>();
+        Letters m = new Letters('F');
+        Letters n = new Letters('I');
+        Letters q = new Letters('R');
+        Letters mb = new Letters('E');
+        Letters x = new Letters('M');
+
+        le.add(m);
+        le.add(n);
+        le.add(q);
+        le.add(mb);
+        le.add(x);
+        player1.setLetters(le);
+        player1.getLetters().remove(4);
+        player1.setLetters(gameBoard.deal(player1.getLetters()));
 
         String s = "";
         for(Letters l: player1.getLetters()){
@@ -44,7 +61,7 @@ public class Scrabble {
 //        gameBoard.placeWord("wir(e) E1", player1);
 //        gameBoard.placeWord("xi(s) D2", player1);
 //        gameBoard.placeWord("a(r)s C3", player1);
-        gameBoard.placeWord("horn 4B", player1);
+        gameBoard.placeWord("fire 4B", player1);
         gameBoard.placeWord("fa(r)m D2", player1);
         gameBoard.placeWord("paste 6B", player1);
         gameBoard.placeWord("mob 5D",player1);
