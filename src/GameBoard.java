@@ -1,9 +1,7 @@
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 public class GameBoard {
@@ -13,7 +11,6 @@ public class GameBoard {
     private int cols;
     private boolean isBoardEmpty;
     private Set<String> wordsOnBoard;
-
     private Player currentPlayer;
 
     public GameBoard (int rows, int cols, Player currentPlayer) {
@@ -237,11 +234,18 @@ public class GameBoard {
 
     public void placeWord (String play, Player p) {
         currentPlayer = p;
+
+
         int row = 0;
         int col = 0;
 
         String word = play.split(" ")[0]; //gets the word
         String place = play.split(" ")[1]; //gets where the word will be placed
+
+        if(!checkLetters(word)){
+            System.out.println("You do not have the correct letters to place that word. Try again");
+            return;
+        }
 
         char commonChar = ' '; //character that is shared between word being places and existing word
         int commonCharIndex = word.indexOf('('); //index of that char in new word
@@ -367,45 +371,96 @@ public class GameBoard {
                     }
                 }
             }
-            printBoard();
+            printGameStatus();
             isBoardEmpty = false;
         } else {
             System.out.println(word + " is not a valid word.");
         }
     }
 
-    private void printBoard() {
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                Tile t = tileBoard[i][j];
-                if (t.isEmpty())
-                    System.out.print("_ ");
-                else
-                    System.out.print(t.getLetter().getLetter() + " ");
+    public boolean checkLetters(String word) {
+        int i = 0;
+        int n;
+        word = word.toUpperCase();
+
+        while (i < word.length()) {
+
+            for (n=0; n < currentPlayer.getLetters().size(); n++){
+                if(word.charAt(i) == currentPlayer.getLetters().get(n).getLetter()){
+                    currentPlayer.getLetters().remove(n);
+                }
             }
-            System.out.println();
+            i++;
         }
-        System.out.println();
+        if(currentPlayer.getLetters().size() != (7 - word.length())){
+            return false;
+        }
+
+
+        currentPlayer.setLetters(deal(currentPlayer.getLetters()));
+        return true;
     }
 
     private int calculateScore(String word, Player p){
         int score=0;
         int i = 0;
 
-        ArrayList<Letters> letter = new ArrayList<>();
-
         while(i<word.length()){
             Letters nl = new Letters(word.charAt(i));
-            letter.add(nl);
             score += nl.getPointValue(nl.getLetter());
             i++;
         }
 
         p.setScore(score);
         System.out.println("Yay! You scored " + score + " points for " + word);
-        System.out.println("Your total score is now: " + p.getScore());
+
 
         return score;
+    }
+
+    public ArrayList<Letters> deal(ArrayList<Letters> currentLetters){
+        Letters letters = new Letters();
+        Random r = new Random();
+        Object[] keys = letters.getAlphabet().keySet().toArray();
+        ArrayList<Letters> newLetters = new ArrayList<>();
+
+        int n;  //number of letters needed to be dealt
+        n= 7- currentLetters.size();;
+
+        //copy currentLetters into the newList
+        for(Letters l: currentLetters){
+            newLetters.add(l);
+        }
+
+        //randomly deal n new letters to the player
+        for(int i=0; i<n; i++){
+            Letters newLetter = new Letters((Character) keys[r.nextInt(keys.length)]);
+            newLetters.add(newLetter);
+        }
+
+        return newLetters;
+    }
+    public void printGameStatus(){
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    Tile t = tileBoard[i][j];
+                    if (t.isEmpty())
+                        System.out.print("_ ");
+                    else
+                        System.out.print(t.getLetter().getLetter() + " ");
+                }
+                System.out.println();
+            }
+            System.out.println();
+
+        System.out.println(currentPlayer.getName() + " Your total score is now: " + currentPlayer.getScore());
+
+        String s = "";
+        for(Letters l: currentPlayer.getLetters()){
+            s += l.getLetter() + ", ";
+        }
+        System.out.println("Enter another word");
+
     }
 
 

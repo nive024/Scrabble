@@ -1,4 +1,5 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  * Scrabble is a word game where players are each given 7 letters and attempt to create words from the letters.
@@ -9,7 +10,6 @@ import java.util.*;
  *
  * The class creates and initalizes a gameBoard and Players. Additionally, it starts the game.
  */
-
 public class Scrabble {
 
     private GameBoard gameBoard;
@@ -36,7 +36,7 @@ public class Scrabble {
         Scanner scan = new Scanner(System.in);
         System.out.println("Enter Player1's Name: ");
         player1 = new Player(scan.nextLine());
-        player1.setLetters(letters.deal(player1.getLetters()));
+        player1.setLetters(gameBoard.deal(player1.getLetters()));
 
         String s = "";
         for(Letters l: player1.getLetters()){
@@ -64,6 +64,7 @@ public class Scrabble {
      */
     public void playGame(){
         Scanner scan = new Scanner(System.in);
+
         int round = 0;
         boolean player1Turn = true;
         while(round<5){
@@ -87,7 +88,6 @@ public class Scrabble {
         System.out.println("GAME OVER! " + player1.getName() + ", you scored " + player1.getScore() + " points!");
 
     }
-
     /**
      * Creates a new Scrabble game and starts the game
      *
@@ -96,6 +96,6 @@ public class Scrabble {
     public static void main(String[] args) {
         Scrabble game = new Scrabble();
         game.playGame();
-
     }
 }
+

@@ -7,11 +7,10 @@ import java.util.*;
  * @author Rimsha Atif
  * @author Nivetha Sivasaravanan
  */
-
 public class Letters {
     private static final Map<Character, Integer> Alphabet= new HashMap<>();
-    private char letter;
-    private int value;
+    private Character Letter;
+    private Integer Value;
 
     /**
      * Creates a Letters object and initializes the HashMap
@@ -49,10 +48,10 @@ public class Letters {
      * Creates a Letter object with a specific char and sets the point value
      * @param letter Character of the Letters object
      */
-    public Letters(char letter){
+    public Letters(Character letter){
         super();
-        this.letter = letter;
-        value = getPointValue(letter);
+        this.Letter = letter;
+        Value = getPointValue(letter);
     }
 
     /**
@@ -60,8 +59,8 @@ public class Letters {
      *
      * @return the character of the Letters object
      */
-    public char getLetter(){
-        return letter;
+    public Character getLetter(){
+        return Letter;
     }
 
     /**
@@ -70,31 +69,17 @@ public class Letters {
      * @param c Character whose point value is needed
      * @return The point value of the given char
      */
-    public static int getPointValue(Character c){ //return the point value associated with the letter
+    public int getPointValue(Character c){ //return the point value associated with the letter
         return Alphabet.get(c);
     }
 
-    public ArrayList<Letters> deal(ArrayList<Letters> currentLetters){
-        Random r = new Random();
-        Object[] keys = Alphabet.keySet().toArray();
-        ArrayList<Letters> newLetters = new ArrayList<>();
-
-        int n;  //number of letters needed to be dealt
-        n= 7- currentLetters.size();;
-
-        //copy currentLetters into the newList
-        for(Letters l: currentLetters){
-            newLetters.add(l);
-        }
-
-        //randomly deal n new letters to the player
-        for(int i=0; i<n; i++){
-            Letters newLetter = new Letters((Character) keys[r.nextInt(keys.length)]);
-            newLetters.add(newLetter);
-        }
-
-        return newLetters;
+    /**
+     * Gets the hash map of the point value for each letter
+     *
+     * @return The hash map of the point value for each letter
+     */
+    public Map<Character, Integer> getAlphabet(){
+        return Alphabet;
     }
-
 
 }
