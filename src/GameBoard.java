@@ -13,6 +13,13 @@ public class GameBoard {
     private Set<String> wordsOnBoard;
     private Player currentPlayer;
 
+    /**
+     * Constructor to initialize the game board with the specified columns and rows. Also initializes the first player.
+     *
+     * @param rows The number of rows on the board
+     * @param cols The number of rows on the board
+     * @param currentPlayer The first player
+     */
     public GameBoard (int rows, int cols, Player currentPlayer) {
         wordsOnBoard = new HashSet<>();
         this.rows = rows;
@@ -36,6 +43,11 @@ public class GameBoard {
         }
     }
 
+    /**
+     * Check Validaty of the word by comparing it with the API
+     * @param word the word entered by the player
+     * @return true if the word is valid; otherwise false
+     */
     public boolean checkWord (String word) {
         //testing purposes
         if (word.equals("BE"))
@@ -65,6 +77,10 @@ public class GameBoard {
         }
     }
 
+    /**
+     * Check the surrounding words (if any) that are created when the player makes a move
+     * @return true, if the surrounding words are valid otherwise false
+     */
     public boolean checkNewWords() {
         int tempRow = 0;
         int tempCol = 0;
@@ -141,6 +157,11 @@ public class GameBoard {
         return true;
     }
 
+    /**
+     * Place the word entered by the player p on the board
+     * @param play String containing the word and its placement
+     * @param p The player who entered the word
+     */
     public void placeWord (String play, Player p) {
         currentPlayer = p;
 
@@ -251,29 +272,51 @@ public class GameBoard {
         }
     }
 
+    /**
+     * This method checks that word can be created with the letters dealt to the player
+     * @param word the word entered
+     * @return true if the word can be created with the player's letter, false otherwise
+     */
     public boolean checkLetters(String word) {
         int i = 0;
         int n;
+        int count = word.length();
         word = word.toUpperCase();
 
         while (i < word.length()) {
 
             for (n=0; n < currentPlayer.getLetters().size(); n++){
                 if(word.charAt(i) == currentPlayer.getLetters().get(n).getLetter()){
-                    currentPlayer.getLetters().remove(n);
+                    count --;
+                    break;
                 }
+
             }
             i++;
         }
-        if(currentPlayer.getLetters().size() != (7 - word.length())){
+        if(count > 0){
             return false;
+        }else {
+            i=0;
+            while (i < word.length()) {
+                for (n = 0; n < currentPlayer.getLetters().size(); n++) {
+                    if (word.charAt(i) == currentPlayer.getLetters().get(n).getLetter()) {
+                        currentPlayer.getLetters().remove(n);
+                    }
+                }
+                i++;
+            }
+            currentPlayer.setLetters(deal(currentPlayer.getLetters()));
+            return true;
         }
-
-
-        currentPlayer.setLetters(deal(currentPlayer.getLetters()));
-        return true;
     }
 
+    /**
+     * Calculates the score of the player after their turn
+     * @param word the word they entered
+     * @param p the currentPlayer
+     * @return the interger value of the score of the word
+     */
     private int calculateScore(String word, Player p){
         int score=0;
         int i = 0;
@@ -291,6 +334,12 @@ public class GameBoard {
         return score;
     }
 
+    /**
+     * This method deals an ArrayList of random Letters. If the currentLetter already contains some letters, 7- the number of current letters are dealt
+     * Otherwise, 7 random letters are dealt
+     * @param currentLetters the ArrayList representing the letters the player currently has
+     * @return the new list of letters, that was randomly created
+     */
     public ArrayList<Letters> deal(ArrayList<Letters> currentLetters){
         Letters letters = new Letters();
         Random r = new Random();
@@ -313,6 +362,10 @@ public class GameBoard {
 
         return newLetters;
     }
+
+    /**
+     * This method prints the board after the word is placed on it. It also prints the total score of the currentPlayer.
+     */
     public void printGameStatus(){
             for (int i = 0; i < rows; i++) {
                 for (int j = 0; j < cols; j++) {
