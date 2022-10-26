@@ -459,7 +459,6 @@ public class GameBoard {
         for(Letters l: currentPlayer.getLetters()){
             s += l.getLetter() + ", ";
         }
-        System.out.println("Enter another word");
 
     }
 
