@@ -46,7 +46,9 @@ public class Tile {
     }
 
     /**
-     * @param wordPointMultiplier
+     * Sets the point multipier on the tile
+     *
+     * @param wordPointMultiplier The point multiplier of the tile
      */
     public void setWordPointMultiplier(boolean wordPointMultiplier) {
         this.wordPointMultiplier = wordPointMultiplier;
@@ -60,6 +62,8 @@ public class Tile {
     }
 
     /**
+     * Checks if the tile is empty.
+     *
      * @return true if the tile has no letter and false otherwise.
      */
     public boolean isEmpty(){
@@ -68,10 +72,17 @@ public class Tile {
 
     /**
      * When a letter is placed on a tile it is saved here.
+     *
+     * @param letter The letter that gets placed
      */
     public void placeLetter(Letters letter){
         this.letter = letter;
     }
 
+    /**
+     * Gets the letter of the tile
+     *
+     * @return The letter placed on the tile.
+     */
     public Letters getLetter() { return letter; }
 }
