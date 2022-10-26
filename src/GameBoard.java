@@ -114,11 +114,7 @@ public class GameBoard {
                     if(wordToCheck.length() > 1) { //if the word is more than 1 letter
                         if (checkWord(wordToCheck)) { //if its an actual word
                             wordToCheck += " " + (tempRow-wordToCheck.length()+1) + tempCol;
-//                            System.out.println(wordToCheck);
                             tempNewWords.add(wordToCheck); //add to arratList bc we don't know if valid placement or not
-//                            if (wordOnBoard.add(wordToCheck)) { //if it hasnt been added yet
-//
-//                            }
                         } else {
                             System.out.println("Invalid placement: " + wordToCheck + " is not a valid word.");
                             for (int k = 0; k < rows; k++) {
@@ -144,97 +140,9 @@ public class GameBoard {
         }
         return true;
     }
-    public boolean checkSurroundingWords(String place, String word) {
-
-        int row;
-        int col;
-        int tempRow;
-        int tempCol;
-        int wordLength;
-        String wordToCheck = "";
-
-        if(!isBoardEmpty) {
-            wordLength = word.length();
-            // Getting the column and row of the placed word
-            // Horizontal word
-            boolean isHori = false;
-            if (Character.isDigit(place.charAt(0))) {
-                isHori = true;
-                row = Character.getNumericValue(place.charAt(0)) - 1;
-                col = place.charAt(1) - 'A'; //cols starts at A, so we find the offset
-            } else {
-                col = place.charAt(0) - 'A';
-                row = Character.getNumericValue(place.charAt(1)) - 1;
-            }
-
-            // Loops through each letter
-            for (int k = 0; k < wordLength - 1; k++) {
-                if (!isHori) {
-                    tempRow = row + k;
-
-
-                    // Checks if the columns has any attached letters to the letter
-                    // Checks above the letter
-                    for (int i = tempRow; i >= 0; i--) {
-                        if (stringBoard[i][col].equals("_")) {
-                            // Checks below the letter
-                            for (int j = i + 1; j < rows; j++) {
-                                if (!stringBoard[j][col].equals("_")) {
-                                    wordToCheck += stringBoard[j][col];
-                                }
-                            }
-                            if (wordToCheck.length() > 1) {
-                                if (!checkWord(wordToCheck)) {
-                                    System.out.println("Invalid placement: " + wordToCheck + " is not a valid word.");
-                                    for (int n = 0; k < rows; k++) {
-                                        for (int j = 0; j < cols; j++) {
-                                            stringBoard[k][j] = tileBoard[k][j].getLetter().getLetter() + "";
-                                        }
-                                    }
-                                    return false;
-                                }
-                            }
-                            wordToCheck = "";
-                        }
-                    }
-                } else {
-
-                    tempCol = col + k;
-                    // Checks if the rows has any attached letters to the letter
-                    // Checks before the letter
-                    for (int i = tempCol; i >= 0; i--) {
-                        if (stringBoard[row][i].equals("_") || i == 0) {
-
-                            // Checks after the letter
-                            for (int j = i + 1; j < cols; j++) {
-                                if (!stringBoard[row][j].equals("_")) {
-                                    wordToCheck += stringBoard[row][j];
-                                }
-                            }
-                            if (wordToCheck.length() > 1) {
-                                if (!checkWord(wordToCheck)) {
-                                    System.out.println("Invalid placement: " + wordToCheck + " is not a valid word.");
-                                    //reset stringBoard back to tileBoard version
-                                    for (int n = 0; k < rows; k++) {
-                                        for (int j = 0; j < cols; j++) {
-                                            stringBoard[k][j] = tileBoard[k][j].getLetter().getLetter() + "";
-                                        }
-                                    }
-                                    return false;
-                                }
-                            }
-                            wordToCheck = "";
-                        }
-                    }
-                }
-            }
-        }
-        return true;
-    }
 
     public void placeWord (String play, Player p) {
         currentPlayer = p;
-
 
         int row = 0;
         int col = 0;
@@ -253,9 +161,9 @@ public class GameBoard {
         //get the index of the row and col where the word will be placed
         if (Character.isDigit(place.charAt(0))) {
             row = Character.getNumericValue(place.charAt(0)) - 1;
-            col = place.charAt(1) - 'A'; //cols starts at A, so we find the offset
+            col = place.toUpperCase().charAt(1) - 'A'; //cols starts at A, so we find the offset
         } else {
-            col = place.charAt(0) - 'A';
+            col = place.toUpperCase().charAt(0) - 'A';
             row = Character.getNumericValue(place.charAt(1)) - 1;
         }
         Matcher matcher = Pattern.compile(".*\\((.)\\).*").matcher(word);
@@ -271,41 +179,7 @@ public class GameBoard {
                 } else {
                     word = word.split("\\(")[0] + commonChar + word.split("\\)")[1];
                 }
-            } else { //they are placing the word adjacent to existing word, need to check if connected to another word
-//                boolean isValid = false;
-//                try {
-//                    if (Character.isDigit(place.charAt(0))) { //if horizontal
-//                        for (int i = 0; i < word.length(); i++) {
-//                            if (((!(stringBoard[row - 1][col + i]).equals("_") || !(stringBoard[row + 1][col + i]).equals("_")) || !(stringBoard[row][col - 1]).equals("_")) || !(stringBoard[row][col + word.length()]).equals("_")) {
-//                                isValid = true;
-//                                break;
-//                            }
-//                        }
-//                    } else {
-//                        for (int i = 0; i < word.length(); i++) {
-//                            if (((!(stringBoard[row + i][col + 1]).equals("_") || !(stringBoard[row + i][col - 1]).equals("_")) || !(stringBoard[row - 1][col]).equals("_")) || !(stringBoard[row + word.length()][col]).equals("_")) {
-//                                isValid = true;
-//                                break;
-//                            }
-//                        }
-//                    }
-//                } catch (ArrayIndexOutOfBoundsException e ) {
-//                    if (col == 0) {
-//                        if (Character.isDigit(place.charAt(0))) { //horizontal and on first col
-//                            for (int i = 0; i < word.length(); i++) {
-//                                if (!(stringBoard[row + i][col + 1]).equals("_")) {
-//
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//                if (!isValid){
-//                    System.out.println("Invalid placement, floating word");
-//                    return;
-//                }
             }
-
         }
 
         if (checkWord(word)) {
@@ -320,9 +194,9 @@ public class GameBoard {
                 }
 
                 //check to see if the overlapping letter is in the right spot
-                if(!isBoardEmpty && matcher.find()) {
+                if(!isBoardEmpty) {
                     if (!(stringBoard[row][col + commonCharIndex].equals(commonChar + ""))) {
-                        System.out.println("Invalid Placement.");
+                        System.out.println("Invalid Placement." );
                         return;
                     }
                 }
@@ -349,9 +223,8 @@ public class GameBoard {
                 }
 
                 //check to see if the overlapping letter is in the right spot
-                if(!isBoardEmpty && matcher.find()) {
+                if(!isBoardEmpty) {
                     if (!(stringBoard[row + commonCharIndex][col].equals(commonChar + ""))) {
-                        System.out.println(stringBoard[row + commonCharIndex][col] + " " + commonChar);
                         System.out.println("Invalid Placement.");
                         return;
                     }
