@@ -332,7 +332,6 @@ public class GameBoard {
         for(Letters l: currentPlayer.getLetters()){
             s += l.getLetter() + ", ";
         }
-        System.out.println("These are your letters: " + s);
 
     }
 
