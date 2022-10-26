@@ -1,11 +1,21 @@
 import java.util.*;
+/**
+ * The Letters class represents a Letter placed on a Tile on the board.
+ *
+ * This class sets the point value for each Letter and gets the character and point value
+ *
+ * @author Rimsha Atif
+ * @author Nivetha Sivasaravanan
+ */
 
 public class Letters {
     private static final Map<Character, Integer> Alphabet= new HashMap<>();
-
     private char letter;
     private int value;
 
+    /**
+     * Creates a Letters object and initializes the HashMap
+     */
     public Letters(){
         Alphabet.put('A', 1);
         Alphabet.put('B', 3);
@@ -35,15 +45,31 @@ public class Letters {
         Alphabet.put('Z', 10);
     }
 
+    /**
+     * Creates a Letter object with a specific char and sets the point value
+     * @param letter Character of the Letters object
+     */
     public Letters(char letter){
         super();
         this.letter = letter;
         value = getPointValue(letter);
     }
 
+    /**
+     * Gets the character of the Letters object
+     *
+     * @return the character of the Letters object
+     */
     public char getLetter(){
         return letter;
     }
+
+    /**
+     * Gets the point value of the given char
+     *
+     * @param c Character whose point value is needed
+     * @return The point value of the given char
+     */
     public static int getPointValue(Character c){ //return the point value associated with the letter
         return Alphabet.get(c);
     }
