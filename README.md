@@ -25,6 +25,7 @@ These are the known issues that will be fixed in Milestone 2:
 * Program does not check if the word that is placed is not overlapping another word. The program needs to check that the added word is connected and not floating.
 * When placing letters that add onto a word, the program doesn't count that as a valid play as the additional letters are not always a word themselves. 
 * There are currently an infinite number of each letter. The program needs to have a set amount of each letter matching that of the real game. 
+* There are no multiplier tiles on the board.
 
 <!-- Roadmap Ahead -->
 ## Roadmap Ahead
