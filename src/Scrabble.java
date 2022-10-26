@@ -74,6 +74,7 @@ public class Scrabble {
                 s1 += l.getLetter() + ", ";
             }
             System.out.println(player1.getName() + " these are your letters: " + s1);
+            System.out.println(player1.getName() + " please enter your word");
             String word = scan.nextLine();
             while (!word.contains(" ")){
                 System.out.println("Please enter a word and a placement. Example: WORD 4B");
