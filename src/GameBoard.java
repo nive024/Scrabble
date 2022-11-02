@@ -247,6 +247,7 @@ public class GameBoard {
                     for (int i = 0; i < word.length(); i++) {
                         tileBoard[row][i + col].placeLetter(new Letters(stringBoard[row][i + col].toUpperCase().charAt(0)));
                     }
+                    updateLetters(word);
                 }
             } else { //else we place vertically
                 //error check: if the word placement exceeds # of rows, then return
@@ -275,6 +276,7 @@ public class GameBoard {
                     for (int i = 0; i < word.length(); i++) {
                         tileBoard[i + row][col].placeLetter(new Letters(stringBoard[i + row][col].toUpperCase().charAt(0)));
                     }
+                    updateLetters(word);
                 }
             }
             printGameStatus();
@@ -292,35 +294,48 @@ public class GameBoard {
     public boolean checkLetters(String word) {
         int i = 0;
         int n;
-        int count = word.length();
+        boolean contains = true;
+
         word = word.toUpperCase();
 
         while (i < word.length()) {
-
             for (n=0; n < currentPlayer.getLetters().size(); n++){
-                if(word.charAt(i) == currentPlayer.getLetters().get(n).getLetter()){
-                    count --;
+                if(word.charAt(i) == (currentPlayer.getLetters().get(n).getLetter())){
+                    currentPlayer.getLetters().get(n).setLetter(Character.toLowerCase(currentPlayer.getLetters().get(n).getLetter()));
+                    contains = true;
                     break;
                 }
-
+                else{
+                    contains = false;
+                }
             }
             i++;
         }
-        if(count > 0){
-            return false;
-        }else {
-            i=0;
-            while (i < word.length()) {
-                for (n = 0; n < currentPlayer.getLetters().size(); n++) {
-                    if (word.charAt(i) == currentPlayer.getLetters().get(n).getLetter()) {
-                        currentPlayer.getLetters().remove(n);
-                    }
-                }
-                i++;
-            }
-            currentPlayer.setLetters(deal(currentPlayer.getLetters()));
-            return true;
+
+        for(Letters l: currentPlayer.getLetters()){
+            l.setLetter(Character.toUpperCase(l.getLetter()));
         }
+        return contains;
+    }
+
+    /**
+     * This method deletes the used letters from the currentPlayers Letters list
+     * @param word The word entered by the currentPlayer
+     */
+    public void updateLetters(String word){
+        int i = 0;
+        int n = 0;
+        while (i < word.length()) {
+            for (n=0; n < currentPlayer.getLetters().size(); n++){
+                if(word.charAt(i)==currentPlayer.getLetters().get(n).getLetter()){
+                    currentPlayer.getLetters().remove(n);
+                    System.out.println("");
+                    break;
+                }
+            }
+            i++;
+        }
+        currentPlayer.setLetters(deal(currentPlayer.getLetters()));
     }
 
     /**

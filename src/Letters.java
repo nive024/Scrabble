@@ -63,6 +63,10 @@ public class Letters {
         return Letter;
     }
 
+    public void setLetter(Character c){
+        Letter = c;
+    }
+
     /**
      * Gets the point value of the given char
      *
@@ -81,5 +85,7 @@ public class Letters {
     public Map<Character, Integer> getAlphabet(){
         return Alphabet;
     }
+
+
 
 }
