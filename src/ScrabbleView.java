@@ -1,3 +1,5 @@
+import org.w3c.dom.css.RGBColor;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -60,10 +62,17 @@ public class ScrabbleView extends JFrame {
     }
 
     private void addButtons(){
+        int count = 1;
         for (int i = 0; i < 15; i++) {
             for (int j = 0; j < 15; j++) {
                 JButton b = new JButton(" ");
+                if(count % 2 != 0){
+                    b.setBackground(new Color(77, 141, 182));
+                    b.setBorderPainted(false);
+                    b.setOpaque(true);
+                }
                 buttonsPanel.add(b);
+                count++;
             }
         }
     }
