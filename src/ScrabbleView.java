@@ -68,9 +68,12 @@ public class ScrabbleView extends JFrame {
                 JButton b = new JButton(" ");
                 if(count % 2 != 0){
                     b.setBackground(new Color(77, 141, 182));
-                    b.setBorderPainted(false);
-                    b.setOpaque(true);
                 }
+                else{
+                    b.setBackground(Color.WHITE);
+                }
+                b.setBorderPainted(false);
+                b.setOpaque(true);
                 buttonsPanel.add(b);
                 count++;
             }
@@ -93,10 +96,17 @@ public class ScrabbleView extends JFrame {
 
     private void addPlayerLabel(){
         JLabel lettersLabel = new JLabel("Player's Letters: ");
+        JPanel playerLettersPanel = new JPanel();
+        playerLettersPanel.add(lettersLabel);
+        for (int i = 0; i < 7; i++){
+            JButton b = new JButton();
+            b.setPreferredSize(new Dimension(35,35));
+            playerLettersPanel.add(b);
+        }
         lettersLabel.setFont(new Font("Verdana", Font.PLAIN, 20));
         JLabel scoreLabel = new JLabel("Player's Score: ");
         scoreLabel.setFont(new Font("Verdana", Font.PLAIN, 20));
-        playerPanel.add(lettersLabel, BorderLayout.WEST);
+        playerPanel.add(playerLettersPanel, BorderLayout.WEST);
         playerPanel.add(scoreLabel, BorderLayout.EAST);
     }
 
