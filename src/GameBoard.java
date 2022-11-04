@@ -2,6 +2,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,6 +25,7 @@ public class GameBoard {
     private boolean isBoardEmpty;
     private Set<String> wordsOnBoard;
     private Player currentPlayer;
+    private BagOfLetters BagOfLetters;
 
     /**
      * Constructor to initialize the game board with the specified columns and rows. Also initializes the first player.
@@ -38,6 +40,8 @@ public class GameBoard {
         this.cols = cols;
         isBoardEmpty = true;
         this.currentPlayer = currentPlayer;
+        this.BagOfLetters = new BagOfLetters();
+
         stringBoard = new String[rows][cols];
         tileBoard = new Tile[rows][cols];
         //initialize places in the board
@@ -299,6 +303,11 @@ public class GameBoard {
         word = word.toUpperCase();
 
         while (i < word.length()) {
+            if(!contains){
+               // i= word.length();
+                break;
+            }
+
             for (n=0; n < currentPlayer.getLetters().size(); n++){
                 if(word.charAt(i) == (currentPlayer.getLetters().get(n).getLetter())){
                     currentPlayer.getLetters().get(n).setLetter(Character.toLowerCase(currentPlayer.getLetters().get(n).getLetter()));
@@ -317,6 +326,7 @@ public class GameBoard {
         }
         return contains;
     }
+
 
     /**
      * This method deletes the used letters from the currentPlayers Letters list
@@ -368,9 +378,8 @@ public class GameBoard {
      * @return the new list of letters, that was randomly created
      */
     public ArrayList<Letters> deal(ArrayList<Letters> currentLetters){
-        Letters letters = new Letters();
         Random r = new Random();
-        Object[] keys = letters.getAlphabet().keySet().toArray();
+        Object[] keys = BagOfLetters.getBag().keySet().toArray();
         ArrayList<Letters> newLetters = new ArrayList<>();
 
         int n;  //number of letters needed to be dealt
@@ -383,7 +392,13 @@ public class GameBoard {
 
         //randomly deal n new letters to the player
         for(int i=0; i<n; i++){
-            Letters newLetter = new Letters((Character) keys[r.nextInt(keys.length)]);
+
+            Letters newLetter = (Letters) keys[r.nextInt(keys.length)];
+
+            while(!BagOfLetters.inBag(newLetter)){
+                newLetter = (Letters) keys[r.nextInt(keys.length)];
+            }
+
             newLetters.add(newLetter);
         }
 

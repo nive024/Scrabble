@@ -23,7 +23,7 @@ public class Scrabble {
     public Scrabble() {
 
         gameBoard = new GameBoard(10, 10, player1);
-        letters = new Letters();
+        //letters = new Letters();
 
         initializePlayers();
     }

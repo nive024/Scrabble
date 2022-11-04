@@ -9,13 +9,7 @@ import java.util.*;
  */
 public class Letters {
     private static final Map<Character, Integer> Alphabet= new HashMap<>();
-    private Character Letter;
-    private Integer Value;
-
-    /**
-     * Creates a Letters object and initializes the HashMap
-     */
-    public Letters(){
+    static{
         Alphabet.put('A', 1);
         Alphabet.put('B', 3);
         Alphabet.put('C', 3);
@@ -43,6 +37,8 @@ public class Letters {
         Alphabet.put('Y', 4);
         Alphabet.put('Z', 10);
     }
+    private Character Letter;
+    private Integer Value;
 
     /**
      * Creates a Letter object with a specific char and sets the point value
@@ -73,8 +69,13 @@ public class Letters {
      * @param c Character whose point value is needed
      * @return The point value of the given char
      */
-    public int getPointValue(Character c){ //return the point value associated with the letter
-        return Alphabet.get(c);
+    public int getPointValue(Character c) { //return the point value associated with the letter
+        for (Character character : Alphabet.keySet()) {
+            if (character.equals(c)) {
+                return Alphabet.get(character);
+            }
+        }
+        return 0;
     }
 
     /**
