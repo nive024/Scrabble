@@ -187,11 +187,16 @@ public class GameBoard {
         String word = play.split(" ")[0]; //gets the word
         String place = play.split(" ")[1]; //gets where the word will be placed
 
+        if(isBoardEmpty){
+            if(!checkCenterSquare(word, place)){ //if not placed on center square return
+                return;
+            }
+        }
+
         if(!checkLetters(word)){
             System.out.println("You do not have the correct letters to place that word. Try again");
             return;
         }
-
         char commonChar = ' '; //character that is shared between word being places and existing word
         int commonCharIndex = word.indexOf('('); //index of that char in new word
 
@@ -288,6 +293,38 @@ public class GameBoard {
         } else {
             System.out.println(word + " is not a valid word.");
         }
+    }
+
+    public boolean checkCenterSquare(String word, String place){
+        int centerRow = 7;
+        Character c = 'H';
+        int centerCol = c - 'A';
+
+
+
+        if (Character.isDigit(place.charAt(0))){ //check horizontal placement
+            int row = Character.getNumericValue(place.charAt(0)) - 1;
+            int col = place.toUpperCase().charAt(1) - 'A';
+
+            for(int i = 0; i<word.length(); i++){
+                col ++;
+                if (row == centerRow && col == centerCol){
+                    return true;
+                }
+            }
+        }
+        else { //check vertical placement
+            int col = place.toUpperCase().charAt(0) - 'A';
+            int row = Character.getNumericValue(place.charAt(1)) - 1;
+           for(int i = 0; i< word.length(); i++){
+               row ++;
+               if(col == centerCol && row == centerRow){
+                   return true;
+               }
+           }
+        }
+        System.out.println("The first word must be placed on the center square");
+        return false;
     }
 
     /**
