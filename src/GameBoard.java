@@ -2,7 +2,6 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
-import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -208,11 +207,16 @@ public class GameBoard {
             col = place.toUpperCase().charAt(0) - 'A';
             row = Character.getNumericValue(place.charAt(1)) - 1;
         }
-        Matcher matcher = Pattern.compile(".*\\((.)\\).*").matcher(word);
+        Matcher matcher = Pattern.compile("\\((.)\\)").matcher(word);
+        boolean matched = matcher.find();
         //get word and remove brackets
         if (!isBoardEmpty) {
             //find the character between the brackets (to make sure they are placing in the same spot)
-            if (matcher.find()) {
+            if (matched) {
+                if(word.length()==3) {
+                    System.out.println("Cannot place overlapping single letter.");
+                    return;
+                }
                 commonChar = matcher.group(1).toUpperCase().charAt(0);
                 if (word.charAt(0) == '(') {
                     word = commonChar + word.split("\\)")[1];
@@ -220,6 +224,11 @@ public class GameBoard {
                     word = word.split("\\(")[0] + commonChar;
                 } else {
                     word = word.split("\\(")[0] + commonChar + word.split("\\)")[1];
+                }
+            } else { //if there is no overlapping letter, check if floating
+                if(isFloating(word, place)) {
+                    System.out.println(word + " is floating, invalid play");
+                    return;
                 }
             }
         }
@@ -231,14 +240,13 @@ public class GameBoard {
             if (Character.isDigit(place.charAt(0))) {
                 //error check: if the word placement exceeds # of cols, then return
                 if (col + word.length() > cols) {
-                    System.out.println("This doesn't fit on the board");
+                    System.out.println(word + ": This doesn't fit on the board");
                     return;
                 }
-
                 //check to see if the overlapping letter is in the right spot
-                if(!isBoardEmpty) {
+                if((!isBoardEmpty) && (matched)) {
                     if (!(stringBoard[row][col + commonCharIndex].equals(commonChar + ""))) {
-                        System.out.println("Invalid Placement." );
+                        System.out.println(word + ": Invalid placement, overlapping char not in right spot." );
                         return;
                     }
                 }
@@ -247,7 +255,7 @@ public class GameBoard {
                     if (stringBoard[row][i + col].equals("_")|| (stringBoard[row][i + col].equals(word.charAt(i)+""))) {
                         stringBoard[row][i + col] = word.charAt(i) + "";
                     } else {
-                        System.out.println("This doesn't fit here.");
+                        System.out.println(word + ": This doesn't fit here.");
                         return;
                     }
 
@@ -261,14 +269,14 @@ public class GameBoard {
             } else { //else we place vertically
                 //error check: if the word placement exceeds # of rows, then return
                 if (row + word.length() > rows) {
-                    System.out.println("This doesn't fit on the board");
+                    System.out.println(word + ": This doesn't fit on the board");
                     return;
                 }
 
-                //check to see if the overlapping letter is in the right spot
-                if(!isBoardEmpty) {
+                //check to see if the overlapping letter is in the right spot if there is an overlapping letter
+                if((!isBoardEmpty) && (matched)) {
                     if (!(stringBoard[row + commonCharIndex][col].equals(commonChar + ""))) {
-                        System.out.println("Invalid Placement.");
+                        System.out.println(word + ": Invalid placement, overlapping char not in right spot.");
                         return;
                     }
                 }
@@ -277,7 +285,7 @@ public class GameBoard {
                     if (stringBoard[i + row][col].equals("_") || (stringBoard[i + row][col].equals(word.charAt(i) + ""))) {
                         stringBoard[i + row][col] = word.charAt(i) + "";
                     } else {
-                        System.out.println("This doesn't fit here");
+                        System.out.println(word + ": This doesn't fit here");
                         return;
                     }
                 }
@@ -293,6 +301,103 @@ public class GameBoard {
         } else {
             System.out.println(word + " is not a valid word.");
         }
+    }
+
+    public boolean isFloating(String word, String place) {
+        int row, col;
+        boolean horizontal;
+        if (Character.isDigit(place.charAt(0))) { //horizontal
+            horizontal = true;
+            row = Character.getNumericValue(place.charAt(0)) - 1;
+            col = place.toUpperCase().charAt(1) - 'A'; //cols starts at A, so we find the offset
+        } else {
+            horizontal = false;
+            col = place.toUpperCase().charAt(0) - 'A';
+            row = Character.getNumericValue(place.charAt(1)) - 1;
+        }
+
+
+        if (word.length() == 1) {
+            int emptySpace = 0; //how many empty spaces there are around the letter
+            int totalEmptySpace = 4; //how many empty spaces there would be if floating. decremented if edge case.
+            //if top is empty for single char, then its floating
+            try {
+                emptySpace = (stringBoard[row - 1][col].equals("_")) ? emptySpace + 1 : emptySpace;
+            } catch (ArrayIndexOutOfBoundsException e) {totalEmptySpace--;}
+
+            //if bottom is empty for single char, then its floating
+            try {
+                emptySpace = (stringBoard[row + 1][col].equals("_")) ? emptySpace + 1 : emptySpace;
+            } catch (ArrayIndexOutOfBoundsException ignored) {totalEmptySpace--;}
+
+            //if left is empty for single char, then its floating
+            try {
+                emptySpace = (stringBoard[row][col - 1].equals("_")) ? emptySpace + 1 : emptySpace;
+            } catch (ArrayIndexOutOfBoundsException ignored) {totalEmptySpace--;}
+
+            //if right is empty for single char, then its floating
+            try {
+                emptySpace = (stringBoard[row][col + 1].equals("_")) ? emptySpace + 1 : emptySpace;
+            } catch (ArrayIndexOutOfBoundsException ignored) {totalEmptySpace--;}
+
+            return emptySpace == totalEmptySpace; //if 4 empty spaces, then floating
+        } else {
+            if (horizontal) {
+                for (int i = 0; i < word.length(); i++) { //for each letter, check above below
+                    //check space above the word
+                    try {
+                        if (!(stringBoard[row - 1][col+i].equals("_")))
+                            return false;
+                    } catch (ArrayIndexOutOfBoundsException ignored) {}
+
+                    //check space below the word
+                    try {
+                        if (!(stringBoard[row + 1][col-1].equals("_"))) //if there is a letter, automatically return false
+                            return false;
+                    } catch (ArrayIndexOutOfBoundsException ignored) {}
+
+                    //check beside first letter
+                    try {
+                        if (!(stringBoard[row][col-1].equals("_"))) //if there is a letter, automatically return false
+                            return false;
+                    } catch (ArrayIndexOutOfBoundsException ignored) {}
+
+                    //check beside last letter
+                    try {
+                        if (!(stringBoard[row][col+word.length()].equals("_"))) //if there is a letter, automatically return false
+                            return false;
+                    } catch (ArrayIndexOutOfBoundsException ignored) {}
+                }
+            } else { //if vertical
+                for (int i = 0; i < word.length(); i++) { //for each letter, check above below
+                    //check space to the left of word
+                    try {
+                        if (!(stringBoard[row+i][col-1].equals("_")))
+                            return false;
+                    } catch (ArrayIndexOutOfBoundsException ignored) {}
+
+                    //check space to the right of word
+                    try {
+                        if (!(stringBoard[row+i][col+1].equals("_"))) //if there is a letter, automatically return false
+                            return false;
+                    } catch (ArrayIndexOutOfBoundsException ignored) {}
+
+                    //check above top letter
+                    try {
+                        if (!(stringBoard[row-1][col].equals("_"))) //if there is a letter, automatically return false
+                            return false;
+                    } catch (ArrayIndexOutOfBoundsException ignored) {}
+
+                    //check below bottom letter
+                    try {
+                        if (!(stringBoard[row+word.length()][col].equals("_"))) //if there is a letter, automatically return false
+                            return false;
+                    } catch (ArrayIndexOutOfBoundsException ignored) {}
+                }
+            }
+        }
+
+        return true;
     }
 
     public boolean checkCenterSquare(String word, String place){
@@ -446,13 +551,13 @@ public class GameBoard {
      * This method prints the board after the word is placed on it. It also prints the total score of the currentPlayer.
      */
     public void printGameStatus(){
-            for (int i = 0; i < rows; i++) {
-                for (int j = 0; j < cols; j++) {
-                    Tile t = tileBoard[i][j];
-                    if (t.isEmpty())
-                        System.out.print("_ ");
-                    else
-                        System.out.print(t.getLetter().getLetter() + " ");
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                Tile t = tileBoard[i][j];
+                if (t.isEmpty())
+                    System.out.print("_ ");
+                else
+                    System.out.print(t.getLetter().getLetter() + " ");
                 }
                 System.out.println();
             }
