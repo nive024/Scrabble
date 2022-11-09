@@ -15,8 +15,6 @@ public class BagOfLetters {
         initializeBag(12);
     }
 
-    public BagOfLetters() {
-    }
 
     public static void initializeBag(int value) {
 
@@ -74,7 +72,7 @@ public class BagOfLetters {
         }
     }
 
-    public boolean inBag(Letters l){
+    public  boolean inBag(Letters l){
         for(Entry<Letters, Integer> entry : BagOfLetters.getBag().entrySet()){
             if(entry.getKey().equals(l)){
                 BagOfLetters.getBag().put(entry.getKey(), entry.getValue() -1);

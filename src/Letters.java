@@ -83,7 +83,7 @@ public class Letters {
      *
      * @return The hash map of the point value for each letter
      */
-    public Map<Character, Integer> getAlphabet(){
+    public static Map<Character, Integer> getAlphabet(){
         return Alphabet;
     }
 

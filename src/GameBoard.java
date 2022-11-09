@@ -186,16 +186,12 @@ public class GameBoard {
         String word = play.split(" ")[0]; //gets the word
         String place = play.split(" ")[1]; //gets where the word will be placed
 
-//        if(isBoardEmpty){
-//            if(!checkCenterSquare(word, place)){ //if not placed on center square return
-//                return;
-//            }
-//        }
-//
-//        if(!checkLetters(word)){
-//            System.out.println("You do not have the correct letters to place that word. Try again");
-//            return;
-//        }
+        if(isBoardEmpty){
+            if(!checkCenterSquare(word, place)){ //if not placed on center square return
+                return;
+            }
+        }
+
         char commonChar = ' '; //character that is shared between word being places and existing word
         int commonCharIndex = word.indexOf('('); //index of that char in new word
 
@@ -232,6 +228,11 @@ public class GameBoard {
                     return;
                 }
             }
+        }
+
+        if(!checkLetters(word, commonChar)){
+            System.out.println("You do not have the correct letters to place that word. Try again");
+            return;
         }
 
         //check if a word already starts at this spot
@@ -418,8 +419,7 @@ public class GameBoard {
             int row = Character.getNumericValue(place.charAt(0)) - 1;
             int col = place.toUpperCase().charAt(1) - 'A';
 
-            for(int i = 0; i<word.length(); i++){
-                col ++;
+            for(int i = 0; i<word.length(); i++, col ++){
                 if (row == centerRow && col == centerCol){
                     return true;
                 }
@@ -428,8 +428,7 @@ public class GameBoard {
         else { //check vertical placement
             int col = place.toUpperCase().charAt(0) - 'A';
             int row = Character.getNumericValue(place.charAt(1)) - 1;
-           for(int i = 0; i< word.length(); i++){
-               row ++;
+           for(int i = 0; i< word.length(); i++, row ++){
                if(col == centerCol && row == centerRow){
                    return true;
                }
@@ -444,7 +443,7 @@ public class GameBoard {
      * @param word the word entered
      * @return true if the word can be created with the player's letter, false otherwise
      */
-    public boolean checkLetters(String word) {
+    public boolean checkLetters(String word, char commonChar) {
         int i = 0;
         int n;
         boolean contains = true;
@@ -458,6 +457,9 @@ public class GameBoard {
             }
 
             for (n=0; n < currentPlayer.getLetters().size(); n++){
+                if(word.charAt(i) == commonChar){
+                    break;
+                }
                 if(word.charAt(i) == (currentPlayer.getLetters().get(n).getLetter())){
                     currentPlayer.getLetters().get(n).setLetter(Character.toLowerCase(currentPlayer.getLetters().get(n).getLetter()));
                     contains = true;
