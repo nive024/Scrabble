@@ -10,17 +10,22 @@ public class ScrabbleView extends JFrame {
     private JPanel yPanel;
     private JPanel playerPanel;
     private JPanel gameboardPanel;
+    private JPanel gamePanel;
+    private String[] numberofPlayers = {"1 player", "2 players", "3 players", "4 players"};
 
     public ScrabbleView(){
         super("Scrabble");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setLayout(new BorderLayout());
+        gamePanel=new JPanel();
+//        this.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
+        this.setLayout(new BoxLayout(gamePanel, BoxLayout.X_AXIS));
+
 
         // Panel for the title label
         JPanel titlePanel = new JPanel();
         titlePanel.setLayout(new GridLayout(2,1));
         JLabel titleLabel = new JLabel("SCRABBLE");
-        titleLabel.setFont(new Font("Verdana", Font.PLAIN, 35));
+        titleLabel.setFont(new Font("Verdana", Font.PLAIN, 30));
         titleLabel.setHorizontalAlignment(JLabel.CENTER);
         titlePanel.add(titleLabel);
 
@@ -28,19 +33,10 @@ public class ScrabbleView extends JFrame {
         numberPlayersPanel.setLayout(new FlowLayout());
         JLabel numberLabel = new JLabel("Please enter the number of players: ");
         numberLabel.setFont(new Font("Verdana", Font.PLAIN, 15));
-        JRadioButton player1RB=new JRadioButton("1 Player");
-        player1RB.setSelected(true);
-        JRadioButton player2RB=new JRadioButton("2 Players");
-        JRadioButton player3RB = new JRadioButton("3 Players");
-        JRadioButton player4RB = new JRadioButton("4 Players");
-        Box radioBox = Box.createHorizontalBox();
-        radioBox.add(player1RB);
-        radioBox.add(player2RB);
-        radioBox.add(player3RB);
-        radioBox.add(player4RB);
+        JComboBox<String> playerCB = new JComboBox<>(numberofPlayers);
         JButton playBtn = new JButton("Play");
         numberPlayersPanel.add(numberLabel);
-        numberPlayersPanel.add(radioBox);
+        numberPlayersPanel.add(playerCB);
         numberPlayersPanel.add(playBtn);
         titlePanel.add(numberPlayersPanel);
 
@@ -48,6 +44,7 @@ public class ScrabbleView extends JFrame {
         // Panel for the buttons of the board
         buttonsPanel = new JPanel();
         buttonsPanel.setLayout(new GridLayout(15,15));
+        buttonsPanel.setPreferredSize(new Dimension(675,675));
         addButtons();
 
         // Panel for the X axis letter labels
@@ -63,7 +60,7 @@ public class ScrabbleView extends JFrame {
         // Panel for the player information
         playerPanel = new JPanel();
         playerPanel.setLayout(new GridLayout(4,1));
-        addPlayerToPanel(2);
+        addPlayerToPanel(4);
 
         // Panel to combine the game board components
         gameboardPanel = new JPanel();
@@ -72,13 +69,13 @@ public class ScrabbleView extends JFrame {
         gameboardPanel.add(yPanel, BorderLayout.LINE_START);
         gameboardPanel.add(buttonsPanel, BorderLayout.CENTER);
 
-        // Adds each panel to the frame
-        this.add(titlePanel, BorderLayout.PAGE_START);
-        this.add(gameboardPanel, BorderLayout.CENTER);
-        this.add(playerPanel, BorderLayout.SOUTH);
+        gamePanel.add(titlePanel);
+        gamePanel.add(gameboardPanel);
+        gamePanel.add(playerPanel);
+        this.setContentPane(gamePanel);
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(750,750);
+        this.setSize(800,1000);
         this.setResizable(false);
         this.setVisible(true);
 
@@ -88,7 +85,7 @@ public class ScrabbleView extends JFrame {
         int count = 1;
         for (int i = 0; i < 15; i++) {
             for (int j = 0; j < 15; j++) {
-                JButton b = new JButton(" ");
+                JButton b = new JButton("W");
                 if(count % 2 != 0){
                     b.setBackground(new Color(77, 141, 182));
                 }
@@ -97,6 +94,9 @@ public class ScrabbleView extends JFrame {
                 }
                 b.setBorderPainted(false);
                 b.setOpaque(true);
+                b.setFont(new Font("Verdana", Font.PLAIN, 8));
+                b.setMargin(new Insets(0, 0, 0, 0));
+
                 buttonsPanel.add(b);
                 count++;
             }
@@ -133,9 +133,9 @@ public class ScrabbleView extends JFrame {
             b.setPreferredSize(new Dimension(35,35));
             playerLettersPanel.add(b);
         }
-        lettersLabel.setFont(new Font("Verdana", Font.PLAIN, 20));
+        lettersLabel.setFont(new Font("Verdana", Font.PLAIN, 18));
         JLabel scoreLabel = new JLabel("Player's Score: " + 0);
-        scoreLabel.setFont(new Font("Verdana", Font.PLAIN, 20));
+        scoreLabel.setFont(new Font("Verdana", Font.PLAIN, 18));
         playerP.add(playerLettersPanel, BorderLayout.WEST);
         playerP.add(scoreLabel, BorderLayout.EAST);
         playerPanel.add(playerP);
