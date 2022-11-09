@@ -233,7 +233,7 @@ public class GameBoard {
             }
         }
 
-        if (checkWord(word)) {
+//        if (checkWord(word)) {
             word = word.toUpperCase();
             place = place.toUpperCase();
             //if first char is a digit then we place horizontally
@@ -298,9 +298,9 @@ public class GameBoard {
             }
             printGameStatus();
             isBoardEmpty = false;
-        } else {
-            System.out.println(word + " is not a valid word.");
-        }
+//        } else {
+//            System.out.println(word + " is not a valid word.");
+//        }
     }
 
     public boolean isFloating(String word, String place) {
