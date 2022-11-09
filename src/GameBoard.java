@@ -186,16 +186,16 @@ public class GameBoard {
         String word = play.split(" ")[0]; //gets the word
         String place = play.split(" ")[1]; //gets where the word will be placed
 
-        if(isBoardEmpty){
-            if(!checkCenterSquare(word, place)){ //if not placed on center square return
-                return;
-            }
-        }
-
-        if(!checkLetters(word)){
-            System.out.println("You do not have the correct letters to place that word. Try again");
-            return;
-        }
+//        if(isBoardEmpty){
+//            if(!checkCenterSquare(word, place)){ //if not placed on center square return
+//                return;
+//            }
+//        }
+//
+//        if(!checkLetters(word)){
+//            System.out.println("You do not have the correct letters to place that word. Try again");
+//            return;
+//        }
         char commonChar = ' '; //character that is shared between word being places and existing word
         int commonCharIndex = word.indexOf('('); //index of that char in new word
 
@@ -207,6 +207,7 @@ public class GameBoard {
             col = place.toUpperCase().charAt(0) - 'A';
             row = Character.getNumericValue(place.charAt(1)) - 1;
         }
+
         Matcher matcher = Pattern.compile("\\((.)\\)").matcher(word);
         boolean matched = matcher.find();
         //get word and remove brackets
@@ -227,10 +228,16 @@ public class GameBoard {
                 }
             } else { //if there is no overlapping letter, check if floating
                 if(isFloating(word, place)) {
-                    System.out.println(word + " is floating, invalid play");
+                    System.out.println(word.toUpperCase() + " is floating, invalid play");
                     return;
                 }
             }
+        }
+
+        //check if a word already starts at this spot
+        if (!stringBoard[row][col].equals("_")) {
+            System.out.println(word.toUpperCase() + ": There is already a word that starts here.");
+            return;
         }
 
 //        if (checkWord(word)) {
@@ -240,13 +247,13 @@ public class GameBoard {
             if (Character.isDigit(place.charAt(0))) {
                 //error check: if the word placement exceeds # of cols, then return
                 if (col + word.length() > cols) {
-                    System.out.println(word + ": This doesn't fit on the board");
+                    System.out.println(word.toUpperCase() + ": This doesn't fit on the board");
                     return;
                 }
                 //check to see if the overlapping letter is in the right spot
                 if((!isBoardEmpty) && (matched)) {
                     if (!(stringBoard[row][col + commonCharIndex].equals(commonChar + ""))) {
-                        System.out.println(word + ": Invalid placement, overlapping char not in right spot." );
+                        System.out.println(word.toUpperCase() + ": Invalid placement, overlapping char not in right spot." );
                         return;
                     }
                 }
@@ -255,7 +262,7 @@ public class GameBoard {
                     if (stringBoard[row][i + col].equals("_")|| (stringBoard[row][i + col].equals(word.charAt(i)+""))) {
                         stringBoard[row][i + col] = word.charAt(i) + "";
                     } else {
-                        System.out.println(word + ": This doesn't fit here.");
+                        System.out.println(word.toUpperCase() + ": This doesn't fit here.");
                         return;
                     }
 
@@ -269,14 +276,14 @@ public class GameBoard {
             } else { //else we place vertically
                 //error check: if the word placement exceeds # of rows, then return
                 if (row + word.length() > rows) {
-                    System.out.println(word + ": This doesn't fit on the board");
+                    System.out.println(word.toUpperCase() + ": This doesn't fit on the board");
                     return;
                 }
 
                 //check to see if the overlapping letter is in the right spot if there is an overlapping letter
                 if((!isBoardEmpty) && (matched)) {
                     if (!(stringBoard[row + commonCharIndex][col].equals(commonChar + ""))) {
-                        System.out.println(word + ": Invalid placement, overlapping char not in right spot.");
+                        System.out.println(word.toUpperCase()   + ": Invalid placement, overlapping char not in right spot.");
                         return;
                     }
                 }
