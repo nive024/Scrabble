@@ -74,7 +74,7 @@ public class BagOfLetters {
 
     public  boolean inBag(Letters l){
         for(Entry<Letters, Integer> entry : BagOfLetters.getBag().entrySet()){
-            if(entry.getKey().equals(l)){
+            if(entry.getKey().getLetter().equals(l.getLetter())){
                 BagOfLetters.getBag().put(entry.getKey(), entry.getValue() -1);
 
                 if(entry.getValue() == (0)){
@@ -85,6 +85,15 @@ public class BagOfLetters {
             }
         }
         return false;
+    }
+
+    public Integer getQuantity(Letters l) {
+        for (Entry<Letters, Integer> entry : BagOfLetters.getBag().entrySet()) {
+            if (entry.getKey().getLetter().equals(l.getLetter())) {
+                return entry.getValue();
+            }
+        }
+        return 100;
     }
 
     public static HashMap<Letters, Integer> getBag() {

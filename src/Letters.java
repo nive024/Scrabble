@@ -56,6 +56,9 @@ public class Letters {
      * @return the character of the Letters object
      */
     public Character getLetter(){
+        if(Letter == null){
+            return null;
+        }
         return Letter;
     }
 
@@ -75,7 +78,7 @@ public class Letters {
                 return Alphabet.get(character);
             }
         }
-        return 0;
+        return 0; //for invalid letter
     }
 
     /**

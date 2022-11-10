@@ -41,7 +41,6 @@ public class GameBoard {
         this.rows = rows;
         this.cols = cols;
         isBoardEmpty = true;
-        //this.currentPlayer = currentPlayer;
         this.BagOfLetters = new BagOfLetters();
 
         stringBoard = new String[rows][cols];
@@ -63,6 +62,7 @@ public class GameBoard {
 
     public void setCurrentPlayer(Player currentPlayer) {
         this.currentPlayer = currentPlayer;
+        players.add(currentPlayer);
     }
 
     public void addView(ScrabbleView view) {
@@ -178,7 +178,7 @@ public class GameBoard {
         }
         for (String s: tempNewWords) { //only add the word if the placement of the new word is valid
             if (wordsOnBoard.add(s)) {
-                calculateScore(s.split(" ")[0], currentPlayer);
+                calculateScore(s.split(" ")[0]);
             }
         }
         return true;
@@ -238,11 +238,6 @@ public class GameBoard {
                     return;
                 }
             }
-        }
-
-        if(!checkLetters(word, commonChar)){
-            System.out.println("You do not have the correct letters to place that word. Try again");
-            return;
         }
 
         //check if a word already starts at this spot
@@ -458,46 +453,6 @@ public class GameBoard {
         return false;
     }
 
-    /**
-     * This method checks that word can be created with the letters dealt to the player
-     * @param word the word entered
-     * @return true if the word can be created with the player's letter, false otherwise
-     */
-    public boolean checkLetters(String word, char commonChar) {
-        int i = 0;
-        int n;
-        boolean contains = true;
-
-        word = word.toUpperCase();
-
-        while (i < word.length()) {
-            if(!contains){
-               // i= word.length();
-                break;
-            }
-
-            for (n=0; n < currentPlayer.getLetters().size(); n++){
-                if(word.charAt(i) == commonChar){
-                    break;
-                }
-                if(word.charAt(i) == (currentPlayer.getLetters().get(n).getLetter())){
-                    currentPlayer.getLetters().get(n).setLetter(Character.toLowerCase(currentPlayer.getLetters().get(n).getLetter()));
-                    contains = true;
-                    break;
-                }
-                else{
-                    contains = false;
-                }
-            }
-            i++;
-        }
-
-        for(Letters l: currentPlayer.getLetters()){
-            l.setLetter(Character.toUpperCase(l.getLetter()));
-        }
-        return contains;
-    }
-
 
     /**
      * This method deletes the used letters from the currentPlayers Letters list
@@ -522,10 +477,9 @@ public class GameBoard {
     /**
      * Calculates the score of the player after their turn
      * @param word the word they entered
-     * @param p the currentPlayer
-     * @return the interger value of the score of the word
+     * @return the integer value of the score of the word
      */
-    private int calculateScore(String word, Player p){
+    private int calculateScore(String word){
         int score=0;
         int i = 0;
 
@@ -535,7 +489,7 @@ public class GameBoard {
             i++;
         }
 
-        p.setScore(score);
+        this.currentPlayer.setScore(score);
         System.out.println("Yay! You scored " + score + " points for " + word);
 
 
@@ -600,13 +554,37 @@ public class GameBoard {
         }
 
     }
-
     public void addPlayers(int n) {
         for (int i = 0; i < n; i++) {
             Player p = new Player("Player " + (i+1));
             players.add(p);
         }
         currentPlayer = players.get(0);
+    }
+
+
+    //Methods for tests
+
+    public boolean isBoardEmpty(){
+        for(int i=0; i<rows; i++){
+            for(int j =0; j<cols; j++){
+                if(!tileBoard[i][j].isEmpty()){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    public Tile[][] getTileBoard(){
+        return tileBoard;
+    }
+
+    public String[][] getStringBoard(){
+        return stringBoard;
+    }
+
+    public BagOfLetters getBagOfLetters(){
+        return BagOfLetters;
     }
 
 

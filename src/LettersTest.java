@@ -4,10 +4,15 @@ import java.util.HashMap;
 import org.junit.*;
 
 public class LettersTest {
+    private HashMap<Character, Integer> Alphabet;
+    private Letters l;
+    private Letters l1;
+    private Letters l2;
+    private Letters l3;
 
-    @Test
-    public void checkAlphabet() {
-        HashMap<Character, Integer> Alphabet = new HashMap<>();
+    @Before
+    public void setUp(){
+        Alphabet = new HashMap<>();
         Alphabet.put('A', 1);
         Alphabet.put('B', 3);
         Alphabet.put('C', 3);
@@ -35,38 +40,49 @@ public class LettersTest {
         Alphabet.put('Y', 4);
         Alphabet.put('Z', 10);
 
+        l = new Letters('A');
+        l1 = new Letters('Z');
+        l2 = new Letters('M');
+        l3 = new Letters('*');
+
+    }
+
+    @Test
+    public void checkAlphabet() {
         assertEquals(Letters.getAlphabet(), Alphabet);
     }
 
     @Test
     public void checkpointValueA() {
-        Letters l = new Letters('A');
+
         assertEquals(1, l.getPointValue(l.getLetter()));
     }
 
     @Test
     public void checkpointValueZ() {
-        Letters l = new Letters('Z');
+
         assertEquals(10, l.getPointValue(l.getLetter()));
     }
 
     @Test
     public void checkpointValueM() {
-        Letters l = new Letters('M');
+
         assertEquals(3, l.getPointValue(l.getLetter()));
     }
 
     @Test
-    public void PointValueShouldNotbeEqual(){
-        Letters l = new Letters('F');
-        Letters l1 = new Letters('Q');
+    public void pointValueForInvalidLetter(){
 
+        assertEquals(0, l.getPointValue(l.getLetter()));
+    }
+
+    @Test
+    public void PointValueShouldNotbeEqual(){
         assertNotEquals(l.getPointValue(l.getLetter()), l1.getPointValue(l1.getLetter()));
     }
 
     @Test
     public void setLetter(){
-        Letters l = new Letters('E');
         l.setLetter('X');
 
         assertTrue('X' == l.getLetter());
@@ -74,9 +90,6 @@ public class LettersTest {
 
     @Test
     public void settingLettersShouldChangePoints(){
-        Letters l = new Letters('K');
-        Letters l1 = new Letters('B');
-
         l.setLetter(l1.getLetter());
 
         assertEquals(l1.getPointValue(l1.getLetter()), l.getPointValue(l1.getLetter()));
