@@ -18,7 +18,7 @@ features.
 
 <!-- Known Issues -->
 ## Known Issues
-These are the known issues that will be fixed in Milestone 2:
+These are the known issues that will be fixed in Milestone 3:
 * There are no multiplier tiles on the board.
 
 <!-- Roadmap Ahead -->
