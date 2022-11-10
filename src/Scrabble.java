@@ -22,7 +22,7 @@ public class Scrabble {
      */
     public Scrabble() {
 
-        gameBoard = new GameBoard(15, 15, player1);
+        gameBoard = new GameBoard(15, 15);
         //letters = new Letters();
 
         initializePlayers();
@@ -63,29 +63,36 @@ public class Scrabble {
      * Takes input from the user for their turn. The user inputs a word and the placement on the board.
      */
     public void playGame(){
-        Scanner scan = new Scanner(System.in);
+        //gameBoard.placeWord("fire 4B", player1);
+        gameBoard.placeWord("ho(r)n 4B");
+        gameBoard.placeWord("fa(r)m D2");
+        gameBoard.placeWord("so D7");
+//        gameBoard.placeWord("(m)ob 5D",player1);
+//        gameBoard.placeWord("bit 8A", player1);
 
-        int round = 0;
-        boolean player1Turn = true;
-        while(round<5){
-
-            String s1 = "";
-            for(Letters l: player1.getLetters()){
-                s1 += l.getLetter() + ", ";
-            }
-            System.out.println(player1.getName() + " these are your letters: " + s1);
-            System.out.println(player1.getName() + " please enter your word");
-            String word = scan.nextLine();
-            while (!word.contains(" ")){
-                System.out.println("Please enter a word and a placement. Example: WORD 4B");
-                word = scan.nextLine();
-            }
-            gameBoard.placeWord(word, player1);
-
-            round++;
-        }
-
-        System.out.println("GAME OVER! " + player1.getName() + ", you scored " + player1.getScore() + " points!");
+//        Scanner scan = new Scanner(System.in);
+//
+//        int round = 0;
+//        boolean player1Turn = true;
+//        while(round<5){
+//
+//            String s1 = "";
+//            for(Letters l: player1.getLetters()){
+//                s1 += l.getLetter() + ", ";
+//            }
+//            System.out.println(player1.getName() + " these are your letters: " + s1);
+//            System.out.println(player1.getName() + " please enter your word");
+//            String word = scan.nextLine();
+//            while (!word.contains(" ")){
+//                System.out.println("Please enter a word and a placement. Example: WORD 4B");
+//                word = scan.nextLine();
+//            }
+//            gameBoard.placeWord(word, player1);
+//
+//            round++;
+//        }
+//
+//        System.out.println("GAME OVER! " + player1.getName() + ", you scored " + player1.getScore() + " points!");
 
     }
     /**

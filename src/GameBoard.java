@@ -24,21 +24,24 @@ public class GameBoard {
     private boolean isBoardEmpty;
     private Set<String> wordsOnBoard;
     private Player currentPlayer;
+    private ArrayList<Player> players;
     private BagOfLetters BagOfLetters;
+    private List<ScrabbleView> views;
 
     /**
      * Constructor to initialize the game board with the specified columns and rows. Also initializes the first player.
      *
      * @param rows The number of rows on the board
      * @param cols The number of rows on the board
-     * @param currentPlayer The first player
      */
-    public GameBoard (int rows, int cols, Player currentPlayer) {
+    public GameBoard (int rows, int cols) {
+        players = new ArrayList<>();
+        views = new ArrayList<>();
         wordsOnBoard = new HashSet<>();
         this.rows = rows;
         this.cols = cols;
         isBoardEmpty = true;
-        this.currentPlayer = currentPlayer;
+        //this.currentPlayer = currentPlayer;
         this.BagOfLetters = new BagOfLetters();
 
         stringBoard = new String[rows][cols];
@@ -56,6 +59,15 @@ public class GameBoard {
                 tileBoard[i][j] = new Tile();
             }
         }
+    }
+
+    public void setCurrentPlayer(Player currentPlayer) {
+        this.currentPlayer = currentPlayer;
+    }
+
+    public void addView(ScrabbleView view) {
+        System.out.println("GameBoard: addView");
+        views.add(view);
     }
 
     /**
@@ -175,10 +187,8 @@ public class GameBoard {
     /**
      * Place the word entered by the player p on the board
      * @param play String containing the word and its placement
-     * @param p The player who entered the word
      */
-    public void placeWord (String play, Player p) {
-        currentPlayer = p;
+    public void placeWord (String play) {
 
         int row = 0;
         int col = 0;
@@ -305,10 +315,20 @@ public class GameBoard {
                 }
             }
             printGameStatus();
+            //change the player to the next in line if the valid is played
+            currentPlayer = players.get((players.indexOf(currentPlayer) + 1 ) % players.size());
+
             isBoardEmpty = false;
 //        } else {
 //            System.out.println(word + " is not a valid word.");
 //        }
+    }
+
+    public void addLetter(String letter, String place) {
+        System.out.println("GameBoard: addLetter");
+        for (ScrabbleView view: views) {
+            view.update(letter, place);
+        }
     }
 
     public boolean isFloating(String word, String place) {
@@ -579,6 +599,14 @@ public class GameBoard {
             s += l.getLetter() + ", ";
         }
 
+    }
+
+    public void addPlayers(int n) {
+        for (int i = 0; i < n; i++) {
+            Player p = new Player("Player " + (i+1));
+            players.add(p);
+        }
+        currentPlayer = players.get(0);
     }
 
 
