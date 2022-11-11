@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import javax.swing.*;
 import java.awt.*;
 
@@ -13,6 +14,8 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
     private ScrabbleController sc;
     private JComboBox<String> playerCB;
     private JButton[][] grid;
+
+    private ArrayList<JButton>[] playersButtonsArray;
 
     public ScrabbleFrame(){
         super("Scrabble");
@@ -56,7 +59,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         // Panel for the buttons of the board
         buttonsPanel = new JPanel();
         buttonsPanel.setLayout(new GridLayout(15,15));
-        buttonsPanel.setPreferredSize(new Dimension(675,675));
+        buttonsPanel.setPreferredSize(new Dimension(375,375));
         addButtons();
 
         // Panel for the X axis letter labels
@@ -88,8 +91,8 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
 
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(800,1000);
-        this.setResizable(false);
+        this.setSize(400,500);
+        this.setResizable(true);
         this.setVisible(true);
 
     }
@@ -137,21 +140,33 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
     }
 
     private void addPlayerToPanel(int number){
+        playersButtonsArray = new ArrayList[number];
         for (int i = 0; i < number; i++){
-            addPlayerLabel();
+            playersButtonsArray[i] = new ArrayList<>(); //initialize arraylists
+            addPlayerLabel(i);
         }
     }
-    private void addPlayerLabel(){
+    private void addPlayerLabel(int i){
         JPanel playerP = new JPanel();
         playerP.setLayout(new BorderLayout());
         JLabel lettersLabel = new JLabel("Player's Letters: ");
         JPanel playerLettersPanel = new JPanel();
         playerLettersPanel.add(lettersLabel);
+
+
         for (int j = 0; j< 7; j++){
             JButton b = new JButton();
-            b.setPreferredSize(new Dimension(35,35));
+            b.setPreferredSize(new Dimension(50,35));
+            b.setFont(new Font("Verdana", Font.PLAIN, 8));
+            b.setActionCommand("Player Button");
+            b.addActionListener(sc);
             playerLettersPanel.add(b);
+            b.setEnabled(false);
+
+            playersButtonsArray[i].add(b); //add buttons to each player's list
         }
+
+
         lettersLabel.setFont(new Font("Verdana", Font.PLAIN, 18));
         JLabel scoreLabel = new JLabel("Player's Score: " + 0);
         scoreLabel.setFont(new Font("Verdana", Font.PLAIN, 18));
@@ -164,6 +179,8 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         String s = String.valueOf(playerCB.getSelectedItem());
         return Integer.parseInt(s.charAt(0)+"");
     }
+
+    //public ArrayList<JButton>[] getPlayersButtonsArrays(){return playersButtonsArray;}
 
 
     public static void main(String[] args) {
@@ -178,4 +195,34 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         row = Character.getNumericValue(place.charAt(1)) - 1;
         grid[row][col].setText(letter);
     }
+
+    /**
+     * When new letters are dealt update the view
+     * @param s the string representation of all the new letters
+     * @param playersNumber the index of the player who we want to deal the letters to.
+     */
+    @Override
+    public void updatePlayersLetters(String s, int playersNumber){
+        int charIndex=0;
+        for(JButton b: playersButtonsArray[playersNumber]){
+            if(!b.isEnabled()){
+                System.out.println("disabled");
+                b.setText(Character.toString(s.charAt(charIndex)));
+                charIndex++;
+                b.setEnabled(true);
+            }
+        }
+    }
+
+    /**
+     * if a word is invalid we want to re-enable all the used buttons
+     * @param indexOfCurrentPlayer the index of the current player
+     */
+    @Override
+    public void enableUsedButtons(int indexOfCurrentPlayer){
+        for(JButton b: playersButtonsArray[indexOfCurrentPlayer]){
+            b.setEnabled(true);
+        }
+    }
+
 }

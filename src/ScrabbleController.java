@@ -9,7 +9,7 @@ public class ScrabbleController implements ActionListener {
     GameBoard model;
     ScrabbleFrame frame;
     private ArrayList<JButton> wordButtons;
-    int index = 0;
+    private String currentLetter;
 
     public ScrabbleController (GameBoard g, ScrabbleFrame frame) {
         model = g;
@@ -23,18 +23,26 @@ public class ScrabbleController implements ActionListener {
         //if the player presses play then get num players and tell model
         if (b.getText().equals("Play")) {
             model.addPlayers(frame.getNumberofPlayers());
+            for (int i = 0; i < frame.getNumberofPlayers(); i++){
+                model.deal(7, i);
+                }
         }
 
-        String word = "fire";
+        //checking if it is a player letter?
+        if(b.getActionCommand().equals("Player Button")){
+            b.setEnabled(false); //when button is clicked disable
+            currentLetter = b.getText();
+        }
+
 
         //if it is a letter button
-        if (!b.getActionCommand().equals("")) {
+        if (b.getActionCommand().length()== 2) {
 //            b.setText(""+word.charAt(index));
             //System.out.println(b.getActionCommand());
 //            String place = b.getActionCommand();
             wordButtons.add(b);
-            model.addLetter(""+word.charAt(index), b.getActionCommand());
-            index++;
+            model.addLetter(""+ currentLetter, b.getActionCommand());
+
             //get letter from player that is selected
             //model.addLetter();
         }
@@ -93,4 +101,6 @@ public class ScrabbleController implements ActionListener {
         wordButtons.clear();
         return word + " " + place;
     }
+
+
 }

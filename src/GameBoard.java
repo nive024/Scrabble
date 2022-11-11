@@ -198,6 +198,9 @@ public class GameBoard {
 
         if(isBoardEmpty){
             if(!checkCenterSquare(word, place)){ //if not placed on center square return
+                for(ScrabbleView v: views){
+                    v.enableUsedButtons(players.indexOf(currentPlayer));
+                }
                 return;
             }
         }
@@ -222,6 +225,9 @@ public class GameBoard {
             if (matched) {
                 if(word.length()==3) {
                     System.out.println("Cannot place overlapping single letter.");
+                    for(ScrabbleView v: views){
+                        v.enableUsedButtons(players.indexOf(currentPlayer));
+                    }
                     return;
                 }
                 commonChar = matcher.group(1).toUpperCase().charAt(0);
@@ -235,6 +241,9 @@ public class GameBoard {
             } else { //if there is no overlapping letter, check if floating
                 if(isFloating(word, place)) {
                     System.out.println(word.toUpperCase() + " is floating, invalid play");
+                    for(ScrabbleView v: views){
+                        v.enableUsedButtons(players.indexOf(currentPlayer));
+                    }
                     return;
                 }
             }
@@ -243,6 +252,9 @@ public class GameBoard {
         //check if a word already starts at this spot
         if (!stringBoard[row][col].equals("_")) {
             System.out.println(word.toUpperCase() + ": There is already a word that starts here.");
+            for(ScrabbleView v: views){
+                v.enableUsedButtons(players.indexOf(currentPlayer));
+            }
             return;
         }
 
@@ -254,12 +266,18 @@ public class GameBoard {
                 //error check: if the word placement exceeds # of cols, then return
                 if (col + word.length() > cols) {
                     System.out.println(word.toUpperCase() + ": This doesn't fit on the board");
+                    for(ScrabbleView v: views){
+                        v.enableUsedButtons(players.indexOf(currentPlayer));
+                    }
                     return;
                 }
                 //check to see if the overlapping letter is in the right spot
                 if((!isBoardEmpty) && (matched)) {
                     if (!(stringBoard[row][col + commonCharIndex].equals(commonChar + ""))) {
                         System.out.println(word.toUpperCase() + ": Invalid placement, overlapping char not in right spot." );
+                        for(ScrabbleView v: views){
+                            v.enableUsedButtons(players.indexOf(currentPlayer));
+                        }
                         return;
                     }
                 }
@@ -269,6 +287,9 @@ public class GameBoard {
                         stringBoard[row][i + col] = word.charAt(i) + "";
                     } else {
                         System.out.println(word.toUpperCase() + ": This doesn't fit here.");
+                        for(ScrabbleView v: views){
+                            v.enableUsedButtons(players.indexOf(currentPlayer));
+                        }
                         return;
                     }
 
@@ -277,12 +298,15 @@ public class GameBoard {
                     for (int i = 0; i < word.length(); i++) {
                         tileBoard[row][i + col].placeLetter(new Letters(stringBoard[row][i + col].toUpperCase().charAt(0)));
                     }
-                    updateLetters(word);
+                    deal(word.length(), players.indexOf(currentPlayer));
                 }
             } else { //else we place vertically
                 //error check: if the word placement exceeds # of rows, then return
                 if (row + word.length() > rows) {
                     System.out.println(word.toUpperCase() + ": This doesn't fit on the board");
+                    for(ScrabbleView v: views){
+                        v.enableUsedButtons(players.indexOf(currentPlayer));
+                    }
                     return;
                 }
 
@@ -290,6 +314,9 @@ public class GameBoard {
                 if((!isBoardEmpty) && (matched)) {
                     if (!(stringBoard[row + commonCharIndex][col].equals(commonChar + ""))) {
                         System.out.println(word.toUpperCase()   + ": Invalid placement, overlapping char not in right spot.");
+                        for(ScrabbleView v: views){
+                            v.enableUsedButtons(players.indexOf(currentPlayer));
+                        }
                         return;
                     }
                 }
@@ -299,6 +326,9 @@ public class GameBoard {
                         stringBoard[i + row][col] = word.charAt(i) + "";
                     } else {
                         System.out.println(word + ": This doesn't fit here");
+                        for(ScrabbleView v: views){
+                            v.enableUsedButtons(players.indexOf(currentPlayer));
+                        }
                         return;
                     }
                 }
@@ -306,7 +336,7 @@ public class GameBoard {
                     for (int i = 0; i < word.length(); i++) {
                         tileBoard[i + row][col].placeLetter(new Letters(stringBoard[i + row][col].toUpperCase().charAt(0)));
                     }
-                    updateLetters(word);
+                    deal(word.length(), players.indexOf(currentPlayer));
                 }
             }
             printGameStatus();
@@ -453,27 +483,6 @@ public class GameBoard {
         return false;
     }
 
-
-    /**
-     * This method deletes the used letters from the currentPlayers Letters list
-     * @param word The word entered by the currentPlayer
-     */
-    public void updateLetters(String word){
-        int i = 0;
-        int n = 0;
-        while (i < word.length()) {
-            for (n=0; n < currentPlayer.getLetters().size(); n++){
-                if(word.charAt(i)==currentPlayer.getLetters().get(n).getLetter()){
-                    currentPlayer.getLetters().remove(n);
-                    System.out.println("");
-                    break;
-                }
-            }
-            i++;
-        }
-        currentPlayer.setLetters(deal(currentPlayer.getLetters()));
-    }
-
     /**
      * Calculates the score of the player after their turn
      * @param word the word they entered
@@ -499,35 +508,29 @@ public class GameBoard {
     /**
      * This method deals an ArrayList of random Letters. If the currentLetter already contains some letters, 7- the number of current letters are dealt
      * Otherwise, 7 random letters are dealt
-     * @param currentLetters the ArrayList representing the letters the player currently has
-     * @return the new list of letters, that was randomly created
+     * @param amountToDeal the number of new letters to deal
+     * @return the String representation of all the new letters
      */
-    public ArrayList<Letters> deal(ArrayList<Letters> currentLetters){
+    public String deal(int amountToDeal, int playerNumber){
         Random r = new Random();
         Object[] keys = BagOfLetters.getBag().keySet().toArray();
-        ArrayList<Letters> newLetters = new ArrayList<>();
-
-        int n;  //number of letters needed to be dealt
-        n= 7- currentLetters.size();;
-
-        //copy currentLetters into the newList
-        for(Letters l: currentLetters){
-            newLetters.add(l);
-        }
+        String s= "";
 
         //randomly deal n new letters to the player
-        for(int i=0; i<n; i++){
+        for(int i=0; i<amountToDeal; i++){
 
             Letters newLetter = (Letters) keys[r.nextInt(keys.length)];
 
             while(!BagOfLetters.inBag(newLetter)){
                 newLetter = (Letters) keys[r.nextInt(keys.length)];
             }
-
-            newLetters.add(newLetter);
+            s += newLetter.getLetter();
         }
-
-        return newLetters;
+        for (ScrabbleView view: views) {
+            System.out.println(s + "updatePlayersLetters");
+            view.updatePlayersLetters(s, playerNumber);
+        }
+        return s;
     }
 
     /**

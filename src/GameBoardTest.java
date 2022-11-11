@@ -28,9 +28,9 @@ public class GameBoardTest {
         gameBoardCopy.setCurrentPlayer(p1);
 
         letters = new ArrayList<>();
-        letters = gameBoard.deal(letters);
+        //letters = gameBoard.deal(letters);
         letters1 = new ArrayList<>();
-        letters1 = gameBoard.deal(letters1);
+        //letters1 = gameBoard.deal(letters1);
 
     }
 
@@ -215,7 +215,7 @@ public class GameBoardTest {
         letters.remove(0);
         letters.remove(1);
 
-        letters = gameBoard.deal(letters);
+       // letters = gameBoard.deal(letters);
         assertEquals(7, letters.size());
     }
 
@@ -223,7 +223,6 @@ public class GameBoardTest {
 ////////To do
     //floatingLetter()
     //adding a letter on to a word
-    //update letters
     // score (initially zero, after word is played, adding on to previous score, entering invalid word doesn't change score)
 
 }

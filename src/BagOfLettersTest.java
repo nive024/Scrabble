@@ -71,7 +71,7 @@ public class BagOfLettersTest {
         letters = new ArrayList<>();
         gameBoard = new GameBoard(15, 15);
         gameBoard.setCurrentPlayer(new Player("p1"));
-        letters = gameBoard.deal(letters);
+       // letters = gameBoard.deal(letters);
          letter = letters.get(0);
     }
 

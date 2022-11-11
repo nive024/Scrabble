@@ -36,7 +36,7 @@ public class Scrabble {
         Scanner scan = new Scanner(System.in);
         System.out.println("Enter Player1's Name: ");
         player1 = new Player(scan.nextLine());
-        player1.setLetters(gameBoard.deal(player1.getLetters()));
+        //player1.setLetters(gameBoard.deal(player1.getLetters()));
 
         String s = "";
         for(Letters l: player1.getLetters()){
