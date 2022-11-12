@@ -19,7 +19,9 @@ public class ScrabbleController implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
 
+
         JButton b = (JButton) e.getSource();
+        //System.out.println(b.getActionCommand());
         //if the player presses play then get num players and tell model
         if (b.getText().equals("Play")) {
             model.addPlayers(frame.getNumberofPlayers());
@@ -29,26 +31,28 @@ public class ScrabbleController implements ActionListener {
         }
 
         //checking if it is a player letter?
-        if(b.getActionCommand().equals("Player Button")){
+        else if(b.getActionCommand().equals("Player Button")){
             b.setEnabled(false); //when button is clicked disable
             currentLetter = b.getText();
         }
 
+        //check if its end turn
+        else if (b.getText().equals("End Turn")) {
+            model.placeWord(getWord());
+        }
 
-        //if it is a letter button
-        if (b.getActionCommand().length()== 2) {
+        //else it has to be a grid button
+        else {
+            System.out.println("else");
 //            b.setText(""+word.charAt(index));
             //System.out.println(b.getActionCommand());
 //            String place = b.getActionCommand();
             wordButtons.add(b);
-            model.addLetter(""+ currentLetter, b.getActionCommand());
+            System.out.println("current lettrer " + currentLetter);
+            model.addLetter(currentLetter, b.getActionCommand());
 
             //get letter from player that is selected
             //model.addLetter();
-        }
-
-        if (b.getText().equals("End Turn")) {
-            model.placeWord(getWord());
         }
     }
 
@@ -73,7 +77,6 @@ public class ScrabbleController implements ActionListener {
         }
         //get first and last and then get button values from in that range
         char first = letter.get(0);
-        char last = letter.get(letter.size()-1);
         String word = "";
         if (horizontal) {
             for (int i = 0; i < wordButtons.size(); i++) {
@@ -95,7 +98,9 @@ public class ScrabbleController implements ActionListener {
             }
         }
 
-        String place = (horizontal) ? (wordButtons.get(0).getActionCommand().charAt(1)+""+letter.get(0)) : wordButtons.get(0).getActionCommand().charAt(0)+""+letter.get(0);
+        //int first means horizontal
+        //letter first means vertical
+        String place = (horizontal) ? ((wordButtons.get(0).getActionCommand().charAt(1)-'A'+1)+""+letter.get(0)) : wordButtons.get(0).getActionCommand().charAt(0)+""+(letter.get(0)-'A'+1);
 
         System.out.println(word + " " + place);
         wordButtons.clear();

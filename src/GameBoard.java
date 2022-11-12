@@ -208,14 +208,16 @@ public class GameBoard {
         char commonChar = ' '; //character that is shared between word being places and existing word
         int commonCharIndex = word.indexOf('('); //index of that char in new word
 
+        row = getRowAndCol(place)[0];
+        col = getRowAndCol(place)[1];
         //get the index of the row and col where the word will be placed
-        if (Character.isDigit(place.charAt(0))) {
-            row = Character.getNumericValue(place.charAt(0)) - 1;
-            col = place.toUpperCase().charAt(1) - 'A'; //cols starts at A, so we find the offset
-        } else {
-            col = place.toUpperCase().charAt(0) - 'A';
-            row = Character.getNumericValue(place.charAt(1)) - 1;
-        }
+//        if (Character.isDigit(place.charAt(0))) {
+//            row = Character.getNumericValue(place.charAt(0)) - 1;
+//            col = place.toUpperCase().charAt(1) - 'A'; //cols starts at A, so we find the offset
+//        } else {
+//            col = place.toUpperCase().charAt(0) - 'A';
+//            row = Character.getNumericValue(place.charAt(1)) - 1;
+//        }
 
         Matcher matcher = Pattern.compile("\\((.)\\)").matcher(word);
         boolean matched = matcher.find();
@@ -262,7 +264,7 @@ public class GameBoard {
             word = word.toUpperCase();
             place = place.toUpperCase();
             //if first char is a digit then we place horizontally
-            if (Character.isDigit(place.charAt(0))) {
+            if (isHorizontal(place)) {
                 //error check: if the word placement exceeds # of cols, then return
                 if (col + word.length() > cols) {
                     System.out.println(word.toUpperCase() + ": This doesn't fit on the board");
@@ -339,6 +341,7 @@ public class GameBoard {
                     deal(word.length(), players.indexOf(currentPlayer));
                 }
             }
+
             printGameStatus();
             //change the player to the next in line if the valid is played
             currentPlayer = players.get((players.indexOf(currentPlayer) + 1 ) % players.size());
@@ -358,16 +361,19 @@ public class GameBoard {
 
     public boolean isFloating(String word, String place) {
         int row, col;
-        boolean horizontal;
-        if (Character.isDigit(place.charAt(0))) { //horizontal
-            horizontal = true;
-            row = Character.getNumericValue(place.charAt(0)) - 1;
-            col = place.toUpperCase().charAt(1) - 'A'; //cols starts at A, so we find the offset
-        } else {
-            horizontal = false;
-            col = place.toUpperCase().charAt(0) - 'A';
-            row = Character.getNumericValue(place.charAt(1)) - 1;
-        }
+        boolean horizontal = isHorizontal(place);
+
+        row = getRowAndCol(place)[0];
+        col = getRowAndCol(place)[1];
+//        if (isHorizontal(place)) { //horizontal
+//            horizontal = true;
+//            row = Character.getNumericValue(place.charAt(0)) - 1;
+//            col = place.toUpperCase().charAt(1) - 'A'; //cols starts at A, so we find the offset
+//        } else {
+//            horizontal = false;
+//            col = place.toUpperCase().charAt(0) - 'A';
+//            row = Character.getNumericValue(place.charAt(1)) - 1;
+//        }
 
 
         if (word.length() == 1) {
@@ -455,14 +461,17 @@ public class GameBoard {
 
     public boolean checkCenterSquare(String word, String place){
         int centerRow = 7;
-        Character c = 'H';
+        char c = 'H';
         int centerCol = c - 'A';
 
 
+        int row, col;
+        row = getRowAndCol(place)[0];
+        col = getRowAndCol(place)[1];
 
-        if (Character.isDigit(place.charAt(0))){ //check horizontal placement
-            int row = Character.getNumericValue(place.charAt(0)) - 1;
-            int col = place.toUpperCase().charAt(1) - 'A';
+        if (isHorizontal(place)){ //check horizontal placement
+//            int row = Character.getNumericValue(place.charAt(0)) - 1;
+//            int col = place.toUpperCase().charAt(1) - 'A';
 
             for(int i = 0; i<word.length(); i++, col ++){
                 if (row == centerRow && col == centerCol){
@@ -471,8 +480,8 @@ public class GameBoard {
             }
         }
         else { //check vertical placement
-            int col = place.toUpperCase().charAt(0) - 'A';
-            int row = Character.getNumericValue(place.charAt(1)) - 1;
+//            int col = place.toUpperCase().charAt(0) - 'A';
+//            int row = Character.getNumericValue(place.charAt(1)) - 1;
            for(int i = 0; i< word.length(); i++, row ++){
                if(col == centerCol && row == centerRow){
                    return true;
@@ -590,5 +599,29 @@ public class GameBoard {
         return BagOfLetters;
     }
 
+    public int[] getRowAndCol (String place) {
+        int row, col;
+        if (isHorizontal(place)) { //horizontal
+            if (place.length() == 3) {
+                row = Integer.parseInt(place.substring(0,1))-1;
+            } else {
+                row = Character.getNumericValue(place.charAt(0)) - 1;
+            }
+            col = place.toUpperCase().charAt(1) - 'A'; //cols starts at A, so we find the offset
+        } else {
+            col = place.toUpperCase().charAt(0) - 'A';
+            if (place.length() == 3) {
+                row = Integer.parseInt(place.substring(0,1))-1;
+            } else {
+                row = Character.getNumericValue(place.charAt(0)) - 1;
+            }
+        }
+        return new int[] {row, col};
+    }
+
+    public boolean isHorizontal(String place) {
+        System.out.println(place);
+        return Character.isDigit(place.charAt(0));
+    }
 
 }

@@ -96,14 +96,14 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         this.setVisible(true);
 
     }
-
     private void addButtons(){
         int count = 1;
         char col = 'A';
+        char row = 'A';
         for (int i = 0; i < 15; i++) {
             for (int j = 0; j < 15; j++) {
                 JButton b = new JButton("W");
-                b.setActionCommand(col+""+(i+1)+"");
+                b.setActionCommand(col+""+row+"");
                 if(count % 2 != 0){
                     b.setBackground(new Color(77, 141, 182));
                 }
@@ -121,6 +121,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
                 col++;
             }
             col = 'A';
+            row++;
         }
 
     }
@@ -190,9 +191,14 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
     @Override
     public void update(String letter, String place) {
         int row, col;
-        System.out.println("View: update");
+        System.out.println("View: update " + place);
         col = place.toUpperCase().charAt(0) - 'A';
-        row = Character.getNumericValue(place.charAt(1)) - 1;
+        row = place.toUpperCase().charAt(1) - 'A';
+//        if (place.length() == 3) {
+//            row = Integer.parseInt(place.substring(1)) - 1;
+//        } else {
+//            row = Character.getNumericValue(place.charAt(1)) - 1;
+//        }
         grid[row][col].setText(letter);
     }
 
@@ -204,6 +210,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
     @Override
     public void updatePlayersLetters(String s, int playersNumber){
         int charIndex=0;
+
         for(JButton b: playersButtonsArray[playersNumber]){
             if(!b.isEnabled()){
                 System.out.println("disabled");
