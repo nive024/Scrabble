@@ -28,7 +28,8 @@ public class ScrabbleController implements ActionListener {
             model.addPlayers(frame.getNumberofPlayers());
             for (int i = 0; i < frame.getNumberofPlayers(); i++){
                 model.deal(7, i);
-                }
+            }
+            frame.disableOtherPlayers(0);
         }
 
         //checking if it is a player letter?
@@ -41,7 +42,12 @@ public class ScrabbleController implements ActionListener {
 
         //check if its end turn
         else if (b.getText().equals("End Turn")) {
-            model.placeWord(getWord());
+            try {
+                model.placeWord(getWord());
+            } catch (IndexOutOfBoundsException exception) {
+                JOptionPane.showMessageDialog(null, "You didn't place any letters. If you want to skip" +
+                        " your turn, click Skip Turn");
+            }
         }
 
         //else it has to be a grid button

@@ -27,6 +27,7 @@ public class GameBoard {
     private ArrayList<Player> players;
     private BagOfLetters bagOfLetters;
     private List<ScrabbleView> views;
+    private String wordToCheck;
 
     /**
      * Constructor to initialize the game board with the specified columns and rows. Also initializes the first player.
@@ -112,7 +113,7 @@ public class GameBoard {
         int tempCol = 0;
         ArrayList<String> tempNewWords = new ArrayList<>();
         //check the row and col of the word that was just added
-        String wordToCheck = "";
+        wordToCheck = "";
 
         //go through the board left to right and look for complete words
         for (int i = 0; i < rows; i++) {
@@ -211,16 +212,6 @@ public class GameBoard {
                 return;
             }
         }
-        //get the index of the row and col where the word will be placed
-//        if (Character.isDigit(place.charAt(0))) {
-//            row = Character.getNumericValue(place.charAt(0)) - 1;
-//            col = place.toUpperCase().charAt(1) - 'A'; //cols starts at A, so we find the offset
-//        } else {
-//            col = place.toUpperCase().charAt(0) - 'A';
-//            row = Character.getNumericValue(place.charAt(1)) - 1;
-//        }
-
-
 
         Matcher matcher = Pattern.compile("\\((.)\\)").matcher(word);
         boolean matched = matcher.find();
@@ -322,7 +313,7 @@ public class GameBoard {
                     for(ScrabbleView v: views){
                         v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
                         v.enableGridButtons(word,place, row, col);
-                        v.displayErrorMessage(word, "iv");
+                        v.displayErrorMessage(wordToCheck, "iv");
                     }
                 }
             } else { //else we place vertically
@@ -375,19 +366,19 @@ public class GameBoard {
                     for (ScrabbleView v : views) {
                         v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
                         v.enableGridButtons(word, place, row, col);
-                        v.displayErrorMessage(word, "iv");
+                        v.displayErrorMessage(wordToCheck, "iv");
                     }
                 }
             }
 
             printGameStatus();
             //change the player to the next in line if the valid is played
-            currentPlayer = players.get((players.indexOf(currentPlayer) + 1 ) % players.size());
-
+            int currentIndex = (players.indexOf(currentPlayer) + 1 ) % players.size();
+            currentPlayer = players.get(currentIndex);
+            for (ScrabbleView view: views) {
+                view.disableOtherPlayers(currentIndex);
+            }
             isBoardEmpty = false;
-//        } else {
-//            System.out.println(word + " is not a valid word.");
-//        }
     }
 
     public void addLetter(String letter, String place) {
@@ -402,16 +393,7 @@ public class GameBoard {
 
         row = getRowAndCol(place)[0];
         col = getRowAndCol(place)[1];
-//        if (isHorizontal(place)) { //horizontal
-//            horizontal = true;
-//            row = Character.getNumericValue(place.charAt(0)) - 1;
-//            col = place.toUpperCase().charAt(1) - 'A'; //cols starts at A, so we find the offset
-//        } else {
-//            horizontal = false;
-//            col = place.toUpperCase().charAt(0) - 'A';
-//            row = Character.getNumericValue(place.charAt(1)) - 1;
-//        }
-
+        System.out.println("Row: " + row + " Col: " + col);
 
         if (word.length() == 1) {
             int emptySpace = 0; //how many empty spaces there are around the letter
@@ -448,7 +430,7 @@ public class GameBoard {
 
                     //check space below the word
                     try {
-                        if (!(stringBoard[row + 1][col-1].equals("_"))) //if there is a letter, automatically return false
+                        if (!(stringBoard[row + 1][col+i].equals("_"))) //if there is a letter, automatically return false
                             return false;
                     } catch (ArrayIndexOutOfBoundsException ignored) {}
 
@@ -507,8 +489,6 @@ public class GameBoard {
         col = getRowAndCol(place)[1];
 
         if (isHorizontal(place)){ //check horizontal placement
-//            int row = Character.getNumericValue(place.charAt(0)) - 1;
-//            int col = place.toUpperCase().charAt(1) - 'A';
 
             for(int i = 0; i<word.length(); i++, col ++){
                 if (row == centerRow && col == centerCol){
@@ -517,8 +497,6 @@ public class GameBoard {
             }
         }
         else { //check vertical placement
-//            int col = place.toUpperCase().charAt(0) - 'A';
-//            int row = Character.getNumericValue(place.charAt(1)) - 1;
            for(int i = 0; i< word.length(); i++, row ++){
                if(col == centerCol && row == centerRow){
                    return true;
@@ -607,6 +585,10 @@ public class GameBoard {
             players.add(p);
         }
         currentPlayer = players.get(0);
+//        for (ScrabbleView view: views) {
+//            view.disableOtherPlayers(0);
+//        }
+
     }
 
 

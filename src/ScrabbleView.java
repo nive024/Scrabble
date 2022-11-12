@@ -11,4 +11,6 @@ public interface ScrabbleView {
 
     void displayErrorMessage(String word, String message);
 
+    void disableOtherPlayers(int playerIndex);
+
 }

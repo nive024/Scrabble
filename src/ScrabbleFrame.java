@@ -261,7 +261,21 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
                 }
             }
         }
+    }
 
+    @Override
+    public void disableOtherPlayers(int playerIndex) {
+        for (int i = 0; i < 4; i++) {
+            if (i != playerIndex) {
+                for (JButton b: playersButtonsArray[i]) {
+                    b.setEnabled(false);
+                }
+            } else {
+                for (JButton b: playersButtonsArray[i]) {
+                    b.setEnabled(true);
+                }
+            }
+        }
     }
 
     public static void main(String[] args) {
