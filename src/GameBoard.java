@@ -61,17 +61,25 @@ public class GameBoard {
         }
     }
 
+    /**
+     * Sets the current player
+     * @param currentPlayer the current player
+     */
     public void setCurrentPlayer(Player currentPlayer) {
         this.currentPlayer = currentPlayer;
         players.add(currentPlayer);
     }
 
+    /**
+     * Add view to model for MVC structure
+     * @param view the view that will be added to this model
+     */
     public void addView(ScrabbleView view) {
         views.add(view);
     }
 
     /**
-     * Check Validaty of the word by comparing it with the API
+     * Check validity of the word by comparing it with the API
      * @param word the word entered by the player
      * @return true if the word is valid; otherwise false
      */
@@ -381,12 +389,23 @@ public class GameBoard {
             isBoardEmpty = false;
     }
 
+    /**
+     * Adds a letter on the GUI
+     * @param letter the letter to add on the GUI
+     * @param place the place where to add it
+     */
     public void addLetter(String letter, String place) {
         for (ScrabbleView view: views) {
             view.update(letter, place);
         }
     }
 
+    /**
+     * Checks to see if the new word placed is connected to another word on the board
+     * @param word the new word being placed
+     * @param place the place of the first letter of the new word
+     * @return true if the word is floating, false otherwise
+     */
     public boolean isFloating(String word, String place) {
         int row, col;
         boolean horizontal = isHorizontal(place);
@@ -478,6 +497,12 @@ public class GameBoard {
         return true;
     }
 
+    /**
+     * Check to see if the first word is being placed in the center square
+     * @param word the word being placed
+     * @param place the place of the first letter in the word
+     * @return true if the word is on the center square, false otherwise
+     */
     public boolean checkCenterSquare(String word, String place){
         int centerRow = 7;
         char c = 'H';
@@ -579,21 +604,27 @@ public class GameBoard {
         }
 
     }
-    public void addPlayers(int n) {
-        for (int i = 0; i < n; i++) {
+
+    /**
+     * Initializes the Player objects based on the number of players selected
+     * @param numPlayers the number of players playing
+     */
+    public void addPlayers(int numPlayers) {
+        for (int i = 0; i < numPlayers; i++) {
             Player p = new Player("Player " + (i+1));
             players.add(p);
         }
         currentPlayer = players.get(0);
-//        for (ScrabbleView view: views) {
-//            view.disableOtherPlayers(0);
-//        }
 
     }
 
 
     //Methods for tests
 
+    /**
+     * Check to see if the board is empty
+     * @return true if the board is empty false otherwise
+     */
     public boolean isBoardEmpty(){
         for(int i=0; i<rows; i++){
             for(int j =0; j<cols; j++){
@@ -608,14 +639,27 @@ public class GameBoard {
         return tileBoard;
     }
 
+    /**
+     * Returns the string version of the board
+     * @return the string version of the board
+     */
     public String[][] getStringBoard(){
         return stringBoard;
     }
 
+    /**
+     * Returns the bag of letters
+     * @return the bag of letters
+     */
     public BagOfLetters getBagOfLetters(){
         return bagOfLetters;
     }
 
+    /**
+     * Returns the coordinates (row and col) of the word being placed
+     * @param place the place of the letter/word being placed
+     * @return an array containing the row and col
+     */
     public int[] getRowAndCol (String place) {
         int row, col;
         if (isHorizontal(place)) { //horizontal means number first 10H
@@ -638,6 +682,11 @@ public class GameBoard {
         return new int[] {row, col};
     }
 
+    /**
+     * Returns true if the word is horizontal and false otherwise
+     * @param place the place of the first letter of the word
+     * @return true if the word is horizontal and false otherwise
+     */
     public boolean isHorizontal(String place) {
         return Character.isDigit(place.charAt(0));
     }
