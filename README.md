@@ -33,6 +33,7 @@ These are the known issues that will be fixed in Milestone 3:
 * Still issues accessing the rows 10 and above (for example placing the first word in a row greater than 10 will throw an outof bounds exception) (fixed)
 * update the score on the GUI
 * if overlapping letter is the first letter of the new word, it causes an overlapping error 
+* can place letters all over the board, no check to make sure its vertical or horizontal
 
 <!-- Roadmap Ahead -->
 ## Roadmap Ahead
