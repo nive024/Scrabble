@@ -34,6 +34,7 @@ These are the known issues that will be fixed in Milestone 3:
 * update the score on the GUI
 * if overlapping letter is the first letter of the new word, it causes an overlapping error 
 * can place letters all over the board, no check to make sure its vertical or horizontal
+* can use all players letter to place their own word (no regulation on only using their own letters)
 
 <!-- Roadmap Ahead -->
 ## Roadmap Ahead
