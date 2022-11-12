@@ -5,5 +5,11 @@ public interface ScrabbleView {
     void updatePlayersLetters(String s, int playersNumber);
 
 
-    void enableUsedButtons(int indexOfCurrentPlayer);
+    void enableUsedPlayerButtons(int indexOfCurrentPlayer);
+
+    void enableGridButtons(String word, String place, int row, int col);
+
+    void updateScore(int score, int indexOfCurrentPlayer);
+
+    void displayErrorMessage(String word, String message);
 }

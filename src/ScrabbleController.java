@@ -14,6 +14,7 @@ public class ScrabbleController implements ActionListener {
     public ScrabbleController (GameBoard g, ScrabbleFrame frame) {
         model = g;
         this.frame = frame;
+        currentLetter = "";
         wordButtons = new ArrayList<>();
     }
     @Override
@@ -31,9 +32,11 @@ public class ScrabbleController implements ActionListener {
         }
 
         //checking if it is a player letter?
-        else if(b.getActionCommand().equals("Player Button")){
-            b.setEnabled(false); //when button is clicked disable
-            currentLetter = b.getText();
+        else if(b.getActionCommand().equals("Player Button")) {
+            if (currentLetter.equals("")) {
+                b.setEnabled(false); //when button is clicked disable
+                currentLetter = b.getText();
+            }
         }
 
         //check if its end turn
@@ -44,15 +47,16 @@ public class ScrabbleController implements ActionListener {
         //else it has to be a grid button
         else {
             System.out.println("else");
+            if (!currentLetter.equals("")){
+                 b.setEnabled(false);
 //            b.setText(""+word.charAt(index));
             //System.out.println(b.getActionCommand());
 //            String place = b.getActionCommand();
-            wordButtons.add(b);
-            System.out.println("current lettrer " + currentLetter);
-            model.addLetter(currentLetter, b.getActionCommand());
-
-            //get letter from player that is selected
-            //model.addLetter();
+                wordButtons.add(b);
+                System.out.println("current letter " + currentLetter);
+                model.addLetter(currentLetter, b.getActionCommand());
+                currentLetter = "";
+             }
         }
     }
 

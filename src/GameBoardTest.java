@@ -11,9 +11,8 @@ public class GameBoardTest {
 
     private GameBoard gameBoardCopy;
     private Player p1;
-
-    private ArrayList<Letters> letters;
-    private ArrayList<Letters> letters1;
+    private String s;
+    private String s1;
 
     @Before
     public void setUp(){
@@ -27,10 +26,11 @@ public class GameBoardTest {
         gameBoardCopy = new GameBoard(15, 15);
         gameBoardCopy.setCurrentPlayer(p1);
 
-        letters = new ArrayList<>();
-        //letters = gameBoard.deal(letters);
-        letters1 = new ArrayList<>();
-        //letters1 = gameBoard.deal(letters1);
+        s = "";
+        s1 ="";
+        s = gameBoard.deal(7, 0);
+
+        s1 = gameBoardCopy.deal(7, 0);
 
     }
 
@@ -47,7 +47,7 @@ public class GameBoardTest {
 
     @Test
     public void checkingValidWordbe(){
-        assertEquals(true, gameBoard.checkWord("be"));
+        assertEquals(true, gameBoard.checkWord("BE"));
     }
 
     @Test
@@ -202,21 +202,19 @@ public class GameBoardTest {
     @Test
     public void initiallyDeal7Letters(){
 
-        assertEquals(7, letters.size());
+        assertEquals(7, gameBoard.deal(7, 0).length());
     }
 
     @Test
     public void CheckThatLettersAreRandom(){
-        assertEquals(false, letters.equals(letters1));
+        assertEquals(false, s.equals(s1));
     }
 
     @Test
     public void dealAfterWordIsPlayed(){
-        letters.remove(0);
-        letters.remove(1);
 
        // letters = gameBoard.deal(letters);
-        assertEquals(7, letters.size());
+        assertEquals(4, gameBoard.deal(4, 0).length());
     }
 
 

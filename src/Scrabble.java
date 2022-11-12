@@ -64,9 +64,9 @@ public class Scrabble {
      */
     public void playGame(){
         //gameBoard.placeWord("fire 4B", player1);
-        gameBoard.placeWord("ho(r)n 4B");
-        gameBoard.placeWord("fa(r)m D2");
-        gameBoard.placeWord("so D7");
+        gameBoard.placeWord("horn H8");
+       // gameBoard.placeWord("fa(r)m D2");
+        //gameBoard.placeWord("so D7");
 //        gameBoard.placeWord("(m)ob 5D",player1);
 //        gameBoard.placeWord("bit 8A", player1);
 

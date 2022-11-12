@@ -196,20 +196,23 @@ public class GameBoard {
         String word = play.split(" ")[0]; //gets the word
         String place = play.split(" ")[1]; //gets where the word will be placed
 
-        if(isBoardEmpty){
-            if(!checkCenterSquare(word, place)){ //if not placed on center square return
-                for(ScrabbleView v: views){
-                    v.enableUsedButtons(players.indexOf(currentPlayer));
-                }
-                return;
-            }
-        }
-
         char commonChar = ' '; //character that is shared between word being places and existing word
         int commonCharIndex = word.indexOf('('); //index of that char in new word
 
         row = getRowAndCol(place)[0];
         col = getRowAndCol(place)[1];
+
+        if(isBoardEmpty){
+            if(!checkCenterSquare(word, place)){ //if not placed on center square return
+                System.out.print("good");
+                for(ScrabbleView v: views){
+                    v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
+                    v.enableGridButtons(word,place, row, col);
+                    v.displayErrorMessage(word, "center");
+                }
+                return;
+            }
+        }
         //get the index of the row and col where the word will be placed
 //        if (Character.isDigit(place.charAt(0))) {
 //            row = Character.getNumericValue(place.charAt(0)) - 1;
@@ -228,7 +231,9 @@ public class GameBoard {
                 if(word.length()==3) {
                     System.out.println("Cannot place overlapping single letter.");
                     for(ScrabbleView v: views){
-                        v.enableUsedButtons(players.indexOf(currentPlayer));
+                        v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
+                        v.enableGridButtons(word,place, row, col);
+                        v.displayErrorMessage(word, "overlapping");
                     }
                     return;
                 }
@@ -244,7 +249,9 @@ public class GameBoard {
                 if(isFloating(word, place)) {
                     System.out.println(word.toUpperCase() + " is floating, invalid play");
                     for(ScrabbleView v: views){
-                        v.enableUsedButtons(players.indexOf(currentPlayer));
+                        v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
+                        v.enableGridButtons(word,place, row, col);
+                        v.displayErrorMessage(word, "floating");
                     }
                     return;
                 }
@@ -255,7 +262,9 @@ public class GameBoard {
         if (!stringBoard[row][col].equals("_")) {
             System.out.println(word.toUpperCase() + ": There is already a word that starts here.");
             for(ScrabbleView v: views){
-                v.enableUsedButtons(players.indexOf(currentPlayer));
+                v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
+                v.enableGridButtons(word,place, row, col);
+                v.displayErrorMessage(word, "overlapping");
             }
             return;
         }
@@ -269,7 +278,8 @@ public class GameBoard {
                 if (col + word.length() > cols) {
                     System.out.println(word.toUpperCase() + ": This doesn't fit on the board");
                     for(ScrabbleView v: views){
-                        v.enableUsedButtons(players.indexOf(currentPlayer));
+                        v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
+                        v.enableGridButtons(word,place, row, col);
                     }
                     return;
                 }
@@ -278,7 +288,8 @@ public class GameBoard {
                     if (!(stringBoard[row][col + commonCharIndex].equals(commonChar + ""))) {
                         System.out.println(word.toUpperCase() + ": Invalid placement, overlapping char not in right spot." );
                         for(ScrabbleView v: views){
-                            v.enableUsedButtons(players.indexOf(currentPlayer));
+                            v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
+                            v.enableGridButtons(word,place, row, col);
                         }
                         return;
                     }
@@ -290,7 +301,9 @@ public class GameBoard {
                     } else {
                         System.out.println(word.toUpperCase() + ": This doesn't fit here.");
                         for(ScrabbleView v: views){
-                            v.enableUsedButtons(players.indexOf(currentPlayer));
+                            v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
+                            v.enableGridButtons(word,place, row, col);
+                            v.displayErrorMessage(word, "fit");
                         }
                         return;
                     }
@@ -301,13 +314,25 @@ public class GameBoard {
                         tileBoard[row][i + col].placeLetter(new Letters(stringBoard[row][i + col].toUpperCase().charAt(0)));
                     }
                     deal(word.length(), players.indexOf(currentPlayer));
+                    for(ScrabbleView v : views){
+                        v.updateScore(currentPlayer.getScore(), players.indexOf(currentPlayer));
+                    }
+                }
+                else{ //if word is not valid
+                    for(ScrabbleView v: views){
+                        v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
+                        v.enableGridButtons(word,place, row, col);
+                        v.displayErrorMessage(word, "iv");
+                    }
                 }
             } else { //else we place vertically
                 //error check: if the word placement exceeds # of rows, then return
                 if (row + word.length() > rows) {
                     System.out.println(word.toUpperCase() + ": This doesn't fit on the board");
                     for(ScrabbleView v: views){
-                        v.enableUsedButtons(players.indexOf(currentPlayer));
+                        v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
+                        v.enableGridButtons(word,place, row, col);
+                        v.displayErrorMessage(word, "fit");
                     }
                     return;
                 }
@@ -317,7 +342,8 @@ public class GameBoard {
                     if (!(stringBoard[row + commonCharIndex][col].equals(commonChar + ""))) {
                         System.out.println(word.toUpperCase()   + ": Invalid placement, overlapping char not in right spot.");
                         for(ScrabbleView v: views){
-                            v.enableUsedButtons(players.indexOf(currentPlayer));
+                            v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
+                            v.enableGridButtons(word,place, row, col);
                         }
                         return;
                     }
@@ -329,7 +355,9 @@ public class GameBoard {
                     } else {
                         System.out.println(word + ": This doesn't fit here");
                         for(ScrabbleView v: views){
-                            v.enableUsedButtons(players.indexOf(currentPlayer));
+                            v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
+                            v.enableGridButtons(word,place, row, col);
+                            v.displayErrorMessage(word, "fit");
                         }
                         return;
                     }
@@ -339,6 +367,16 @@ public class GameBoard {
                         tileBoard[i + row][col].placeLetter(new Letters(stringBoard[i + row][col].toUpperCase().charAt(0)));
                     }
                     deal(word.length(), players.indexOf(currentPlayer));
+                    for(ScrabbleView v : views){
+                        v.updateScore(currentPlayer.getScore(), players.indexOf(currentPlayer));
+                    }
+                }
+                else {
+                    for (ScrabbleView v : views) {
+                        v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
+                        v.enableGridButtons(word, place, row, col);
+                        v.displayErrorMessage(word, "iv");
+                    }
                 }
             }
 
@@ -613,7 +651,7 @@ public class GameBoard {
             if (place.length() == 3) {
                 row = Integer.parseInt(place.substring(0,1))-1;
             } else {
-                row = Character.getNumericValue(place.charAt(0)) - 1;
+                row = Character.getNumericValue(place.charAt(1)) - 1;
             }
         }
         return new int[] {row, col};

@@ -2,6 +2,8 @@ import java.util.ArrayList;
 import javax.swing.*;
 import java.awt.*;
 
+import static javax.swing.BoxLayout.*;
+
 public class ScrabbleFrame extends JFrame implements ScrabbleView{
 
     private JPanel buttonsPanel;
@@ -14,7 +16,6 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
     private ScrabbleController sc;
     private JComboBox<String> playerCB;
     private JButton[][] grid;
-
     private ArrayList<JButton>[] playersButtonsArray;
 
     public ScrabbleFrame(){
@@ -32,7 +33,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
 
         // Panel for the title label
         JPanel titlePanel = new JPanel();
-        titlePanel.setLayout(new GridLayout(2,1));
+        titlePanel.setLayout(new GridLayout(2,0));
         JLabel titleLabel = new JLabel("SCRABBLE");
         titleLabel.setFont(new Font("Verdana", Font.PLAIN, 30));
         titleLabel.setHorizontalAlignment(JLabel.CENTER);
@@ -153,8 +154,6 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         JLabel lettersLabel = new JLabel("Player's Letters: ");
         JPanel playerLettersPanel = new JPanel();
         playerLettersPanel.add(lettersLabel);
-
-
         for (int j = 0; j< 7; j++){
             JButton b = new JButton();
             b.setPreferredSize(new Dimension(50,35));
@@ -163,11 +162,8 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
             b.addActionListener(sc);
             playerLettersPanel.add(b);
             b.setEnabled(false);
-
             playersButtonsArray[i].add(b); //add buttons to each player's list
         }
-
-
         lettersLabel.setFont(new Font("Verdana", Font.PLAIN, 18));
         JLabel scoreLabel = new JLabel("Player's Score: " + 0);
         scoreLabel.setFont(new Font("Verdana", Font.PLAIN, 18));
@@ -180,10 +176,6 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         String s = String.valueOf(playerCB.getSelectedItem());
         return Integer.parseInt(s.charAt(0)+"");
     }
-
-    //public ArrayList<JButton>[] getPlayersButtonsArrays(){return playersButtonsArray;}
-
-
     public static void main(String[] args) {
         new ScrabbleFrame();
     }
@@ -212,12 +204,12 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         int charIndex=0;
 
         for(JButton b: playersButtonsArray[playersNumber]){
-            if(!b.isEnabled()){
-                System.out.println("disabled");
-                b.setText(Character.toString(s.charAt(charIndex)));
-                charIndex++;
-                b.setEnabled(true);
-            }
+                if (!b.isEnabled()) {
+                    System.out.println("disabled");
+                    b.setText(Character.toString(s.charAt(charIndex)));
+                    b.setEnabled(true);
+                    charIndex++;
+                }
         }
     }
 
@@ -226,10 +218,52 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
      * @param indexOfCurrentPlayer the index of the current player
      */
     @Override
-    public void enableUsedButtons(int indexOfCurrentPlayer){
+    public void enableUsedPlayerButtons(int indexOfCurrentPlayer){
         for(JButton b: playersButtonsArray[indexOfCurrentPlayer]){
             b.setEnabled(true);
         }
     }
 
+    @Override
+    public void enableGridButtons(String word, String place, int row, int cols){
+       if(Character.isDigit(place.charAt(0))){
+          for(int i = 0; i<word.length(); i++){
+              grid[row][i + cols].setEnabled(true);
+              grid[row][i + cols].setText("W");
+          }
+        }
+       else{
+           for(int i = 0; i<word.length(); i++){
+               grid[i + row][cols].setEnabled(true);
+               grid[row +i][cols].setText("W");
+           }
+       }
+
+    }
+    @Override
+    public void updateScore(int score, int indexOfPlayer){
+
+    }
+    @Override
+    public void displayErrorMessage(String word, String message) {
+        JOptionPane op = new JOptionPane();
+        op.setSize(200, 200);
+        if(message.compareTo("ov") == 0){
+            op.showMessageDialog(this, "The word overlaps another");
+        }
+        if(message.compareTo("fit") == 0){
+            op.showMessageDialog(this,  " does not fit here");
+        }
+        if(message.compareTo("iv") == 0){
+            op.showMessageDialog(this, " is not a valid word");
+        }
+        if(message.equals("floating")){
+            op.showMessageDialog(this, "Cannot place a floating word");
+        }
+        if(message.compareTo("center") == 0){
+            op.showMessageDialog(this, "The first word must be placed on the center square");
+        }
+        op.setVisible(true);
+        this.add(op);
+    }
 }
