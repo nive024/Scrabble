@@ -37,6 +37,7 @@ These are the known issues that will be fixed in Milestone 3:
 * can use all players letter to place their own word (no regulation on only using their own letters)
 * adding letters to multiple words at once causes errors 
 * if invalid word, it will remove the overlapping letter too 
+* sometimes the error message is weird because overlapping letters aren't counted in the word if not clicked 
 
 <!-- Roadmap Ahead -->
 ## Roadmap Ahead
