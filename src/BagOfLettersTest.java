@@ -78,9 +78,9 @@ public class BagOfLettersTest {
     @Test
     public void InitialBag() {
         for(Letters key: Bag.keySet()){
-            for(Letters letter: BagOfLetters.getBag().keySet()){
+            for(Letters letter: bagOfLetters.getBag().keySet()){
                 if(letter.equals(key)){
-                    assertEquals(BagOfLetters.getBag().get(letter), Bag.get(key));
+                    assertEquals(bagOfLetters.getBag().get(letter), Bag.get(key));
                 }
             }
         }

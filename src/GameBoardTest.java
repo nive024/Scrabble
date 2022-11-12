@@ -36,23 +36,23 @@ public class GameBoardTest {
 
     @Test
     public void initialBoardShouldBeEmpty(){
-        assertEquals(true, emptygameBoard.isBoardEmpty());
+        assertTrue(emptygameBoard.isBoardEmpty());
     }
 
  /////////////////////////////////////////////////Testing CheckWord()////////////////////////////////////////////////////////////
     @Test
     public void checkingValidWords(){
-        assertEquals(true, gameBoard.checkWord("word"));
+        assertTrue(gameBoard.checkWord("word"));
     }
 
     @Test
     public void checkingValidWordbe(){
-        assertEquals(true, gameBoard.checkWord("BE"));
+        assertTrue(gameBoard.checkWord("BE"));
     }
 
     @Test
     public void checkingInvalidWords(){
-        assertEquals(false, gameBoard.checkWord("hfhjdkj"));
+        assertFalse(gameBoard.checkWord("hfhjdkj"));
     }
 
 
@@ -60,32 +60,32 @@ public class GameBoardTest {
 ///////////////////////////////////////////Testing CheckCenterSquare()/////////////////////////////////////////////////////////////
     @Test
     public void checkingCenterSquareHorizontalStartingOnCenter() {
-        assertEquals(true, gameBoard.checkCenterSquare("fire", "8h"));
+        assertTrue(gameBoard.checkCenterSquare("fire", "8h"));
     }
 
     @Test
     public void checkingCenterSquareHorizontal() {
-        assertEquals(true, gameBoard.checkCenterSquare("fire", "8f"));
+        assertTrue(gameBoard.checkCenterSquare("fire", "8f"));
     }
 
     @Test
     public void checkingCenterSquareVerticalStartingOnCenter() {
-        assertEquals(true, gameBoard.checkCenterSquare("fire", "h8"));
+        assertTrue(gameBoard.checkCenterSquare("fire", "h8"));
     }
 
     @Test
     public void checkingCenterSquareVerticalS() {
-        assertEquals(true, gameBoard.checkCenterSquare("fire", "h6"));
+        assertTrue(gameBoard.checkCenterSquare("fire", "h6"));
     }
 
     @Test
     public void checkNotOnCenterSquareHorizontal(){
-        assertEquals(false, gameBoard.checkCenterSquare("fire", "3b"));
+        assertFalse(gameBoard.checkCenterSquare("fire", "3b"));
     }
 
     @Test
     public void checkNotOnCenterSquareVertical(){
-        assertEquals(false, gameBoard.checkCenterSquare("fire", "k4"));
+        assertFalse(gameBoard.checkCenterSquare("fire", "k4"));
     }
 
 
@@ -140,6 +140,7 @@ public class GameBoardTest {
 
     @Test
     public void placingOverAnotherWordShouldNotBePlaced(){
+        gameBoard.placeWord("fire h8");
         gameBoard.placeWord("true h8");
 
         String s= "";
@@ -170,7 +171,7 @@ public class GameBoardTest {
     @Test
     public void placingInvalidWordShouldNotChangeBoard(){
         gameBoard.placeWord("hfj 8h");
-        assertEquals(true, gameBoard.isBoardEmpty());
+        assertTrue(gameBoard.isBoardEmpty());
     }
 
 /////////////////////////////////Testing CheckNewWords()/////////////////////////////////////////////////
@@ -179,7 +180,7 @@ public class GameBoardTest {
         gameBoard.placeWord("fire 8h");
         gameBoard.placeWord("t(i)e i7");
 
-        assertEquals(true, gameBoard.checkNewWords());
+        assertTrue(gameBoard.checkNewWords());
     }
 
     @Test
@@ -207,7 +208,7 @@ public class GameBoardTest {
 
     @Test
     public void CheckThatLettersAreRandom(){
-        assertEquals(false, s.equals(s1));
+        assertFalse(s.equals(s1));
     }
 
     @Test

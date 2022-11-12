@@ -46,29 +46,33 @@ public class ScrabbleController implements ActionListener {
 
         //else it has to be a grid button
         else {
-            System.out.println("else");
-            if (!currentLetter.equals("")){
-                 b.setEnabled(false);
-//            b.setText(""+word.charAt(index));
-            //System.out.println(b.getActionCommand());
-//            String place = b.getActionCommand();
-                wordButtons.add(b);
-                System.out.println("current letter " + currentLetter);
-                model.addLetter(currentLetter, b.getActionCommand());
-                currentLetter = "";
-             }
+            if (!b.getText().equals("")) {
+                if (currentLetter.equals("")) {
+                    wordButtons.add(b);
+                    currentLetter = "";
+                } else {
+                    JOptionPane.showMessageDialog(null, "There is already a letter here, you can't place one here");
+                }
+            } else {
+                if (!currentLetter.equals("")) {
+                    wordButtons.add(b);
+                    model.addLetter(currentLetter, b.getActionCommand());
+                    currentLetter = "";
+                } else {
+                    JOptionPane.showMessageDialog(null, "Please select a letter to place from your letters first.");
+                }
+            }
+
         }
     }
 
     private String getWord () {
         boolean horizontal = false;
-
         ArrayList<Character> letter = new ArrayList<>();
         if (wordButtons.size()> 1) {
             //if first letters of place are not equal, then the word is horizontal
             horizontal = wordButtons.get(0).getActionCommand().charAt(0) != wordButtons.get(1).getActionCommand().charAt(0);
         }
-        System.out.println(horizontal + " " + wordButtons.size());
 
         for (JButton b: wordButtons) {
             if (horizontal) { //if horizontal, sort based on col

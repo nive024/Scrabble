@@ -1,9 +1,7 @@
 public interface ScrabbleView {
     void update(String letter, String place);
 
-
     void updatePlayersLetters(String s, int playersNumber);
-
 
     void enableUsedPlayerButtons(int indexOfCurrentPlayer);
 
@@ -12,4 +10,5 @@ public interface ScrabbleView {
     void updateScore(int score, int indexOfCurrentPlayer);
 
     void displayErrorMessage(String word, String message);
+
 }

@@ -25,7 +25,7 @@ public class GameBoard {
     private Set<String> wordsOnBoard;
     private Player currentPlayer;
     private ArrayList<Player> players;
-    private BagOfLetters BagOfLetters;
+    private BagOfLetters bagOfLetters;
     private List<ScrabbleView> views;
 
     /**
@@ -41,7 +41,7 @@ public class GameBoard {
         this.rows = rows;
         this.cols = cols;
         isBoardEmpty = true;
-        this.BagOfLetters = new BagOfLetters();
+        this.bagOfLetters = new BagOfLetters();
 
         stringBoard = new String[rows][cols];
         tileBoard = new Tile[rows][cols];
@@ -66,7 +66,6 @@ public class GameBoard {
     }
 
     public void addView(ScrabbleView view) {
-        System.out.println("GameBoard: addView");
         views.add(view);
     }
 
@@ -204,7 +203,6 @@ public class GameBoard {
 
         if(isBoardEmpty){
             if(!checkCenterSquare(word, place)){ //if not placed on center square return
-                System.out.print("good");
                 for(ScrabbleView v: views){
                     v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
                     v.enableGridButtons(word,place, row, col);
@@ -221,6 +219,8 @@ public class GameBoard {
 //            col = place.toUpperCase().charAt(0) - 'A';
 //            row = Character.getNumericValue(place.charAt(1)) - 1;
 //        }
+
+
 
         Matcher matcher = Pattern.compile("\\((.)\\)").matcher(word);
         boolean matched = matcher.find();
@@ -259,15 +259,15 @@ public class GameBoard {
         }
 
         //check if a word already starts at this spot
-        if (!stringBoard[row][col].equals("_")) {
-            System.out.println(word.toUpperCase() + ": There is already a word that starts here.");
-            for(ScrabbleView v: views){
-                v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
-                v.enableGridButtons(word,place, row, col);
-                v.displayErrorMessage(word, "overlapping");
-            }
-            return;
-        }
+//        if (!stringBoard[row][col].equals("_")) {
+//            System.out.println(word.toUpperCase() + ": There is already a word that starts here.");
+//            for(ScrabbleView v: views){
+//                v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
+//                v.enableGridButtons(word,place, row, col);
+//                v.displayErrorMessage(word, "overlapping");
+//            }
+//            return;
+//        }
 
 //        if (checkWord(word)) {
             word = word.toUpperCase();
@@ -391,7 +391,6 @@ public class GameBoard {
     }
 
     public void addLetter(String letter, String place) {
-        System.out.println("GameBoard: addLetter");
         for (ScrabbleView view: views) {
             view.update(letter, place);
         }
@@ -560,21 +559,19 @@ public class GameBoard {
      */
     public String deal(int amountToDeal, int playerNumber){
         Random r = new Random();
-        Object[] keys = BagOfLetters.getBag().keySet().toArray();
+        Object[] keys = bagOfLetters.getBag().keySet().toArray();
         String s= "";
 
         //randomly deal n new letters to the player
         for(int i=0; i<amountToDeal; i++){
-
             Letters newLetter = (Letters) keys[r.nextInt(keys.length)];
 
-            while(!BagOfLetters.inBag(newLetter)){
+            while(!bagOfLetters.inBag(newLetter)){
                 newLetter = (Letters) keys[r.nextInt(keys.length)];
             }
             s += newLetter.getLetter();
         }
         for (ScrabbleView view: views) {
-            System.out.println(s + "updatePlayersLetters");
             view.updatePlayersLetters(s, playerNumber);
         }
         return s;
@@ -634,22 +631,24 @@ public class GameBoard {
     }
 
     public BagOfLetters getBagOfLetters(){
-        return BagOfLetters;
+        return bagOfLetters;
     }
 
     public int[] getRowAndCol (String place) {
         int row, col;
-        if (isHorizontal(place)) { //horizontal
+        if (isHorizontal(place)) { //horizontal means number first 10H
             if (place.length() == 3) {
-                row = Integer.parseInt(place.substring(0,1))-1;
+                row = Integer.parseInt(place.substring(0,2))-1;
+                col = place.toUpperCase().charAt(2) - 'A'; //cols starts at A, so we find the offset
             } else {
                 row = Character.getNumericValue(place.charAt(0)) - 1;
+                col = place.toUpperCase().charAt(1) - 'A'; //cols starts at A, so we find the offset
             }
-            col = place.toUpperCase().charAt(1) - 'A'; //cols starts at A, so we find the offset
-        } else {
+
+        } else { //vertical means letter first H10
             col = place.toUpperCase().charAt(0) - 'A';
             if (place.length() == 3) {
-                row = Integer.parseInt(place.substring(0,1))-1;
+                row = Integer.parseInt(place.substring(1))-1;
             } else {
                 row = Character.getNumericValue(place.charAt(1)) - 1;
             }
@@ -658,7 +657,6 @@ public class GameBoard {
     }
 
     public boolean isHorizontal(String place) {
-        System.out.println(place);
         return Character.isDigit(place.charAt(0));
     }
 
