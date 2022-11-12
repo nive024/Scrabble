@@ -31,11 +31,12 @@ These are the known issues that will be fixed in Milestone 3:
 * JOptionPane if invalid play (fixed)
 * catch exception if end game is clicked before placing letters 
 * Still issues accessing the rows 10 and above (for example placing the first word in a row greater than 10 will throw an outof bounds exception) (fixed)
-* update the score on the GUI
+* update the score on the GUI (fixed)
 * if overlapping letter is the first letter of the new word, it causes an overlapping error 
 * can place letters all over the board, no check to make sure its vertical or horizontal
 * can use all players letter to place their own word (no regulation on only using their own letters)
 * adding letters to multiple words at once causes errors 
+* if invalid word, it will remove the overlapping letter too 
 
 <!-- Roadmap Ahead -->
 ## Roadmap Ahead
