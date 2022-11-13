@@ -353,6 +353,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
                 }
             }
         }
+        skipBtn.setEnabled(true);
     }
 
     /**
