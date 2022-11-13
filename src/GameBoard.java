@@ -378,11 +378,8 @@ public class GameBoard {
 
             printGameStatus();
             //change the player to the next in line if the valid is played
-            int currentIndex = (players.indexOf(currentPlayer) + 1 ) % players.size();
-            currentPlayer = players.get(currentIndex);
-            for (ScrabbleView view: views) {
-                view.disableOtherPlayers(currentIndex);
-            }
+//            int currentIndex = (players.indexOf(currentPlayer) + 1 ) % players.size();
+            getNextPlayer();
             isBoardEmpty = false;
 //        } else {
 //            System.out.println(word + " is not a valid word.");
@@ -615,7 +612,9 @@ public class GameBoard {
             players.add(p);
         }
         currentPlayer = players.get(0);
-
+        for (ScrabbleView view: views) {
+            view.setEnableOtherComponents(true);
+        }
     }
 
 
@@ -689,6 +688,14 @@ public class GameBoard {
      */
     public boolean isHorizontal(String place) {
         return Character.isDigit(place.charAt(0));
+    }
+
+    public void getNextPlayer() {
+        int currentIndex = (players.indexOf(currentPlayer) + 1 ) % players.size();
+        currentPlayer = players.get(currentIndex);
+        for (ScrabbleView view: views) {
+            view.disableOtherPlayers(players.indexOf(currentPlayer));
+        }
     }
 
 }

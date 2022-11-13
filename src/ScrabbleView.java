@@ -13,4 +13,6 @@ public interface ScrabbleView {
 
     void disableOtherPlayers(int playerIndex);
 
+    void setEnableOtherComponents(boolean isEnabled);
+
 }

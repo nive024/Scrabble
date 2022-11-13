@@ -1,5 +1,3 @@
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.*;
 import java.awt.*;
@@ -31,8 +29,10 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
     private JButton[][] grid;
     private ArrayList<JButton>[] playersButtonsArray;
     private ArrayList<JPanel> playerPanelArray;
-    private int numPlayers;
     private JLabel turn;
+    private JButton skipBtn;
+    private JButton endTurnBtn;
+    private JButton playBtn;
 
     /**
      * Constructor to initialize the JFrame and add the components on to it
@@ -44,7 +44,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         gamePanel=new JPanel();
 //        this.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
-        this.setLayout(new BoxLayout(gamePanel, BoxLayout.X_AXIS));
+        this.setLayout(new BoxLayout(gamePanel, X_AXIS));
 
         //add model
         GameBoard gameBoardModel = new GameBoard(15, 15);
@@ -64,7 +64,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         JLabel numberLabel = new JLabel("Please enter the number of players: ");
         numberLabel.setFont(new Font("Verdana", Font.PLAIN, 15));
         playerCB = new JComboBox<>(numberofPlayers);
-        JButton playBtn = new JButton("Play");
+        playBtn = new JButton("Play");
 //        playBtn.addActionListener(new ActionListener() {
 //            @Override
 //            public void actionPerformed(ActionEvent e) {
@@ -81,14 +81,14 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         numberPlayersPanel.add(playerCB);
         numberPlayersPanel.add(playBtn);
         titlePanel.add(numberPlayersPanel);
-        JButton remove = new JButton("End Turn");
-        remove.setActionCommand("");
-        remove.addActionListener(sc);
-        numberPlayersPanel.add(remove);
+        endTurnBtn = new JButton("End Turn");
+        endTurnBtn.setActionCommand("");
+        endTurnBtn.addActionListener(sc);
+        numberPlayersPanel.add(endTurnBtn);
         turn = new JLabel("");
         numberLabel.setFont(new Font("Verdana", Font.PLAIN, 15));
         numberPlayersPanel.add(turn);
-        JButton skipBtn = new JButton("Skip Turn");
+        skipBtn = new JButton("Skip Turn");
         skipBtn.setActionCommand("");
         skipBtn.addActionListener(sc);
         numberPlayersPanel.add(skipBtn);
@@ -128,7 +128,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         gamePanel.add(playerPanel);
         this.setContentPane(gamePanel);
 
-
+        setEnableOtherComponents(false);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(800,800);
         this.setResizable(true);
@@ -259,6 +259,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         col = place.toUpperCase().charAt(0) - 'A';
         row = place.toUpperCase().charAt(1) - 'A';
         grid[row][col].setText(letter);
+        skipBtn.setEnabled(false);
     }
 
     /**
@@ -371,6 +372,20 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
                 }
             }
         }
+    }
+
+    @Override
+    public void setEnableOtherComponents(boolean isEnabled) {
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < 15; j++) {
+                grid[i][j].setEnabled(isEnabled);
+            }
+        }
+        skipBtn.setEnabled(isEnabled);
+        endTurnBtn.setEnabled(isEnabled);
+        playBtn.setEnabled(!isEnabled);
+        playerCB.setEnabled(!isEnabled);
+
     }
 
     public static void main(String[] args) {
