@@ -11,9 +11,9 @@
  */
 public class Tile {
 
-    Letters letter;
-    int pointMultiplier;
-    boolean wordPointMultiplier;
+    private Letters letter;
+    private int pointMultiplier;
+    private boolean wordPointMultiplier;
 
     /**
      * default constructor that will create tiles with a point multiplier value of 1. The wordPointMultiplier
