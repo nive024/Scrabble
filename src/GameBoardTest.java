@@ -217,11 +217,38 @@ public class GameBoardTest {
        // letters = gameBoard.deal(letters);
         assertEquals(4, gameBoard.deal(4, 0).length());
     }
-
-
-////////To do
-    //floatingLetter()
-    //adding a letter on to a word
-    // score (initially zero, after word is played, adding on to previous score, entering invalid word doesn't change score)
+    
+    @Test
+    public void floatingLetter(){
+        gameBoard.placeWord("fire 8h");
+        gameBoard.placeWord("fur 6h");
+        assertEquals(5, p1.getScore());
+    }
+    @Test
+    public void initialScore(){
+        assertEquals(0, p1.getScore());
+    }
+    @Test
+    public void scoreAfterWordPlaced(){
+        gameBoard.placeWord("fire 8h");
+        assertEquals(5, p1.getScore());
+    }
+    @Test
+    public void addingToExistingScore(){
+        gameBoard.placeWord("fire 8h"); // 5 points
+        gameBoard.placeWord("t(i)e i7"); // 3 points
+        assertEquals(8, p1.getScore());
+    }
+    @Test
+    public void invalidWordDoesNotChangeScore(){
+        gameBoard.placeWord("hfj 8h");
+        assertEquals(0, p1.getScore());
+    }
+    @Test
+    public void addingASingleLetter(){
+        gameBoard.placeWord("fire 8h"); // 5 points
+        gameBoard.placeWord("h(i) i7"); // 5 points
+        assertEquals(10, p1.getScore());
+    }
 
 }
