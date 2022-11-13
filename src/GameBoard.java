@@ -70,10 +70,19 @@ public class GameBoard {
         players.add(currentPlayer);
     }
 
+    /**
+     * Gets the list of players in the game
+     * @return ArrayList of players playing the game
+     */
     public ArrayList<Player> getPlayers(){
         return this.players;
     }
 
+
+    /**
+     * Gets the current player whose turn it is
+     * @return The player whose turn it is
+     */
     public Player getCurrentPlayer(){
         return this.currentPlayer;
     }

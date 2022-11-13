@@ -174,6 +174,13 @@ public class GameBoardTest {
         assertTrue(gameBoard.isBoardEmpty());
     }
 
+    @Test
+    public void placingFirstWordNotOnCenterSquare(){
+        gameBoard.placeWord("fire a1");
+        assertEquals(0,p1.getScore());
+    }
+
+
 /////////////////////////////////Testing CheckNewWords()/////////////////////////////////////////////////
     @Test
     public void NoInvalidNewWordsShouldBeFound(){
@@ -208,7 +215,7 @@ public class GameBoardTest {
 
     @Test
     public void CheckThatLettersAreRandom(){
-        assertFalse(s.equals(s1));
+        assertNotEquals(s, s1);
     }
 
     @Test
