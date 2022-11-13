@@ -24,15 +24,15 @@ These are the known issues that will be fixed in Milestone 3:
 * Sometimes we get the not in center square error even though it is (fixed)
 * Clicking the player tile and then multiple grid tiles changes the tile to that letter (fixed)
 * We need to disable other players tile when its not their turn (fixed)
-* need to add a skip turn button
+* need to add a skip turn button (fixed)
 * some placements cause index out of bounds (should be fixed)
 * need to check to select a letter before placing on the grid (fixed)
 * need to check if a letter already exists on the board when player tries to click it (fixed)
 * JOptionPane if invalid play (fixed)
-* catch exception if end game is clicked before placing letters 
+* catch exception if end game is clicked before placing letters (fixed)
 * Still issues accessing the rows 10 and above (for example placing the first word in a row greater than 10 will throw an outof bounds exception) (fixed)
 * update the score on the GUI (fixed)
-* if overlapping letter is the first letter of the new word, it causes an overlapping error 
+* if overlapping letter is the first letter of the new word, it causes an overlapping error (removed check for first letter --> maybe something else broke)
 * can place letters all over the board, no check to make sure its vertical or horizontal
 * can use all players letter to place their own word (no regulation on only using their own letters) (fixed --> disable player letters)
 * adding letters to multiple words at once causes errors/unwanted results
