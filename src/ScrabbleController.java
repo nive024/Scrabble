@@ -6,8 +6,8 @@ import java.util.Collections;
 import java.util.Comparator;
 
 public class ScrabbleController implements ActionListener {
-    GameBoard model;
-    ScrabbleFrame frame;
+    private GameBoard model;
+    private ScrabbleFrame frame;
     private ArrayList<JButton> wordButtons;
     private String currentLetter;
 

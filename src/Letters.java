@@ -90,16 +90,6 @@ public class Letters {
         return Alphabet;
     }
 
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) {
-//            return true;
-//        } else if (!(o instanceof Letters)){
-//            return false;
-//        } else {
-//            return ((Letters) o).getLetter() == this.getLetter();
-//        }
-//    }
 
 
 }

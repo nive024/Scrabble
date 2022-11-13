@@ -71,15 +71,6 @@ public class GameBoard {
     }
 
     /**
-     * Gets the list of players in the game
-     * @return ArrayList of players playing the game
-     */
-    public ArrayList<Player> getPlayers(){
-        return this.players;
-    }
-
-
-    /**
      * Gets the current player whose turn it is
      * @return The player whose turn it is
      */
@@ -643,9 +634,6 @@ public class GameBoard {
         }
         return true;
     }
-    public Tile[][] getTileBoard(){
-        return tileBoard;
-    }
 
     /**
      * Returns the string version of the board
@@ -653,14 +641,6 @@ public class GameBoard {
      */
     public String[][] getStringBoard(){
         return stringBoard;
-    }
-
-    /**
-     * Returns the bag of letters
-     * @return the bag of letters
-     */
-    public BagOfLetters getBagOfLetters(){
-        return bagOfLetters;
     }
 
     /**
