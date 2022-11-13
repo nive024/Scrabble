@@ -1,5 +1,21 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import javax.swing.*;
 import java.awt.*;
+
+import static javax.swing.BoxLayout.*;
+
+/**
+ * This ScrabbleFrame extends JFrame representing the GUI of scrabble
+ *
+ * This class updates the GUI whenever the status of Scrabble game is changed. This includes displaying buttons and their test,
+ * disabling and enabling buttons, updating score, and displaying error messages.
+ *
+ * @author Nicole Lim
+ * @author Nivetha Sivasaravanan
+ * @author Rimsha Atif
+ */
 
 public class ScrabbleFrame extends JFrame implements ScrabbleView{
 
@@ -13,10 +29,18 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
     private ScrabbleController sc;
     private JComboBox<String> playerCB;
     private JButton[][] grid;
+    private ArrayList<JButton>[] playersButtonsArray;
+    private ArrayList<JPanel> playerPanelArray;
+    private int numPlayers;
+    private JLabel turn;
 
+    /**
+     * Constructor to initialize the JFrame and add the components on to it
+     */
     public ScrabbleFrame(){
         super("Scrabble");
         grid = new JButton[15][15];
+        playerPanelArray = new ArrayList<>();
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         gamePanel=new JPanel();
 //        this.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
@@ -29,7 +53,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
 
         // Panel for the title label
         JPanel titlePanel = new JPanel();
-        titlePanel.setLayout(new GridLayout(2,1));
+        titlePanel.setLayout(new GridLayout(2,0));
         JLabel titleLabel = new JLabel("SCRABBLE");
         titleLabel.setFont(new Font("Verdana", Font.PLAIN, 30));
         titleLabel.setHorizontalAlignment(JLabel.CENTER);
@@ -41,6 +65,16 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         numberLabel.setFont(new Font("Verdana", Font.PLAIN, 15));
         playerCB = new JComboBox<>(numberofPlayers);
         JButton playBtn = new JButton("Play");
+//        playBtn.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                playBtn.setEnabled(false);
+//                playerCB.setEnabled(false);
+//                gameboardPanel.setVisible(true);
+//                playerPanel.setVisible(true);
+//                numPlayers = getNumberofPlayers();
+//            }
+//        });
         playBtn.addActionListener(sc);
         playBtn.setActionCommand("");
         numberPlayersPanel.add(numberLabel);
@@ -51,12 +85,19 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         remove.setActionCommand("");
         remove.addActionListener(sc);
         numberPlayersPanel.add(remove);
+        turn = new JLabel("");
+        numberLabel.setFont(new Font("Verdana", Font.PLAIN, 15));
+        numberPlayersPanel.add(turn);
+        JButton skipBtn = new JButton("Skip Turn");
+        skipBtn.setActionCommand("");
+        skipBtn.addActionListener(sc);
+        numberPlayersPanel.add(skipBtn);
 
 
         // Panel for the buttons of the board
         buttonsPanel = new JPanel();
         buttonsPanel.setLayout(new GridLayout(15,15));
-        buttonsPanel.setPreferredSize(new Dimension(675,675));
+        buttonsPanel.setPreferredSize(new Dimension(375,375));
         addButtons();
 
         // Panel for the X axis letter labels
@@ -80,6 +121,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         gameboardPanel.add(xPanel, BorderLayout.PAGE_START);
         gameboardPanel.add(yPanel, BorderLayout.LINE_START);
         gameboardPanel.add(buttonsPanel, BorderLayout.CENTER);
+        //gameboardPanel.setVisible(false);
 
         gamePanel.add(titlePanel);
         gamePanel.add(gameboardPanel);
@@ -88,21 +130,33 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
 
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(800,1000);
-        this.setResizable(false);
+        this.setSize(800,800);
+        this.setResizable(true);
         this.setVisible(true);
 
     }
 
+    /**
+     * This method returns the JLabel turn
+     * @return the JLabel
+     */
+    public JLabel getTurn(){
+        return turn;
+    }
+
+    /**
+     * This method creates the grid of JButtons
+     */
     private void addButtons(){
         int count = 1;
         char col = 'A';
+        char row = 'A';
         for (int i = 0; i < 15; i++) {
             for (int j = 0; j < 15; j++) {
-                JButton b = new JButton("W");
-                b.setActionCommand(col+""+(i+1)+"");
+                JButton b = new JButton("");
+                b.setActionCommand(col+""+row+"");
                 if(count % 2 != 0){
-                    b.setBackground(new Color(77, 141, 182));
+                    b.setBackground(new Color(120, 190, 232));
                 }
                 else{
                     b.setBackground(Color.WHITE);
@@ -118,10 +172,14 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
                 col++;
             }
             col = 'A';
+            row++;
         }
 
     }
 
+    /**
+     * This method create the label for the x-axis of the grid. The letters range from a to p representing the column coordinate.
+     */
     private void addXAxisLabel(){
         xPanel.add(new JLabel(""));
         for (char alphabet = 'a'; alphabet < 'p'; alphabet ++){
@@ -129,6 +187,10 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
             xPanel.add(l);
         }
     }
+
+    /**
+     * This method creates the label for the y-axis of the grid. The numbers range from 1-15 representing the row coordinate.
+     */
     private void addYAxisLabel(){
         for (int i = 0; i < 15; i++){
             JLabel l = new JLabel(String.valueOf(i+1));
@@ -136,46 +198,182 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         }
     }
 
+    /**
+     * This method initializes the players panel
+     * @param number The number of players in the game.
+     */
     private void addPlayerToPanel(int number){
+        playersButtonsArray = new ArrayList[number];
         for (int i = 0; i < number; i++){
-            addPlayerLabel();
+            playersButtonsArray[i] = new ArrayList<>(); //initialize arraylists
+            addPlayerLabel(i);
         }
     }
-    private void addPlayerLabel(){
+
+    /**
+     * This method initializes the players label, inluding the letter buttons and the score.
+     * @param i an integer representing the index of the current player's label to initialze
+     */
+    private void addPlayerLabel(int i){
         JPanel playerP = new JPanel();
         playerP.setLayout(new BorderLayout());
-        JLabel lettersLabel = new JLabel("Player's Letters: ");
+        JLabel lettersLabel = new JLabel("Player " + (i+1) + "'s Letters: ");
         JPanel playerLettersPanel = new JPanel();
         playerLettersPanel.add(lettersLabel);
         for (int j = 0; j< 7; j++){
             JButton b = new JButton();
-            b.setPreferredSize(new Dimension(35,35));
+            b.setPreferredSize(new Dimension(50,35));
+            b.setFont(new Font("Verdana", Font.PLAIN, 8));
+            b.setActionCommand("Player Button");
+            b.addActionListener(sc);
             playerLettersPanel.add(b);
+            b.setEnabled(false);
+            playersButtonsArray[i].add(b); //add buttons to each player's list
         }
         lettersLabel.setFont(new Font("Verdana", Font.PLAIN, 18));
-        JLabel scoreLabel = new JLabel("Player's Score: " + 0);
+        JLabel scoreLabel = new JLabel("Player " + (i+1) + "'s Score: " + 0);
         scoreLabel.setFont(new Font("Verdana", Font.PLAIN, 18));
         playerP.add(playerLettersPanel, BorderLayout.WEST);
         playerP.add(scoreLabel, BorderLayout.EAST);
         playerPanel.add(playerP);
+        playerPanelArray.add(playerP);
     }
 
+    /**
+     * This method returns the number of players in the game.
+     * @return the number of players in the game
+     */
     public int getNumberofPlayers() {
         String s = String.valueOf(playerCB.getSelectedItem());
         return Integer.parseInt(s.charAt(0)+"");
     }
 
-
-    public static void main(String[] args) {
-        new ScrabbleFrame();
-    }
-
+    /**
+     * This method updates the view by changing the text of the grid button that was clicked to represent the letter
+     * @param letter the letter we want to set the grid button to
+     * @param place the string representation of the button coordinate
+     */
     @Override
     public void update(String letter, String place) {
         int row, col;
-        System.out.println("View: update");
         col = place.toUpperCase().charAt(0) - 'A';
-        row = Character.getNumericValue(place.charAt(1)) - 1;
+        row = place.toUpperCase().charAt(1) - 'A';
         grid[row][col].setText(letter);
+    }
+
+    /**
+     * When new letters are dealt update the view
+     * @param s the string representation of all the new letters
+     * @param playersNumber the index of the player who we want to deal the letters to.
+     */
+    @Override
+    public void updatePlayersLetters(String s, int playersNumber){
+        int charIndex=0;
+
+        for(JButton b: playersButtonsArray[playersNumber]){
+                if (!b.isEnabled()) {
+                    b.setText(Character.toString(s.charAt(charIndex)));
+                    b.setEnabled(true);
+                    charIndex++;
+                }
+        }
+    }
+
+    /**
+     * if a word is invalid we want to re-enable all the used buttons
+     * @param indexOfCurrentPlayer the index of the current player
+     */
+    @Override
+    public void enableUsedPlayerButtons(int indexOfCurrentPlayer){
+        for(JButton b: playersButtonsArray[indexOfCurrentPlayer]){
+            b.setEnabled(true);
+        }
+    }
+
+    /**
+     * if an invalid play was made we want to re-enable all the grid buttons that were clicked
+     * @param word The word that was tried to be played
+     * @param place The string representation of the grid coordinates
+     * @param row the row coordinate of the buttton
+     * @param cols the column coordinate of the button
+     */
+    @Override
+    public void enableGridButtons(String word, String place, int row, int cols){
+       if(Character.isDigit(place.charAt(0))){
+          for(int i = 0; i<word.length(); i++){
+              grid[row][i + cols].setEnabled(true);
+              grid[row][i + cols].setText("");
+          }
+        }
+       else{
+           for(int i = 0; i<word.length(); i++){
+               grid[i + row][cols].setEnabled(true);
+               grid[row +i][cols].setText("");
+           }
+       }
+
+    }
+
+    /**
+     * This method displays the appropriate error message when an invalid move is made
+     * @param word the word that was played
+     * @param message the string representation of the message to be displayed
+     */
+    @Override
+    public void displayErrorMessage(String word, String message) {
+        if(message.compareTo("ov") == 0){
+            JOptionPane.showMessageDialog(this, "The word overlaps another");
+        }
+        if(message.compareTo("fit") == 0){
+            JOptionPane.showMessageDialog(this,  word +" does not fit here");
+        }
+        if(message.compareTo("iv") == 0){
+            JOptionPane.showMessageDialog(this, word+" is not a valid word");
+        }
+        if(message.equals("floating")){
+            JOptionPane.showMessageDialog(this, "Cannot place a floating word");
+        }
+        if(message.compareTo("center") == 0){
+            JOptionPane.showMessageDialog(this, "The first word must be placed on the center square");
+        }
+    }
+
+    /**
+     * This method updates the view to show the current score of the player
+     * @param score the score of the current player
+     * @param indexOfPlayer the index of the current player
+     */
+    @Override
+    public void updateScore(int score, int indexOfPlayer){
+        for (Component component: playerPanelArray.get(indexOfPlayer).getComponents()) {
+            if (component instanceof JLabel) {
+                if (((JLabel) component).getText().contains("Score:")) {
+                    ((JLabel) component).setText("Player " + (indexOfPlayer+1) + "'s Score: " + score);
+                }
+            }
+        }
+    }
+
+    /**
+     * This method disables the buttons of players while they are not the current player
+     * @param playerIndex the index of the current player
+     */
+    @Override
+    public void disableOtherPlayers(int playerIndex) {
+        for (int i = 0; i < 4; i++) {
+            if (i != playerIndex) {
+                for (JButton b: playersButtonsArray[i]) {
+                    b.setEnabled(false);
+                }
+            } else {
+                for (JButton b: playersButtonsArray[i]) {
+                    b.setEnabled(true);
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        new ScrabbleFrame();
     }
 }

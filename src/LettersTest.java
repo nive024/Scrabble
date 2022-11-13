@@ -1,5 +1,4 @@
 import static org.junit.Assert.*;
-
 import java.util.HashMap;
 import org.junit.*;
 
@@ -61,19 +60,19 @@ public class LettersTest {
     @Test
     public void checkpointValueZ() {
 
-        assertEquals(10, l.getPointValue(l.getLetter()));
+        assertEquals(10, l1.getPointValue(l1.getLetter()));
     }
 
     @Test
     public void checkpointValueM() {
 
-        assertEquals(3, l.getPointValue(l.getLetter()));
+        assertEquals(3, l2.getPointValue(l2.getLetter()));
     }
 
     @Test
     public void pointValueForInvalidLetter(){
 
-        assertEquals(0, l.getPointValue(l.getLetter()));
+        assertEquals(0, l3.getPointValue(l3.getLetter()));
     }
 
     @Test

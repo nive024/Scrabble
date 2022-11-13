@@ -18,12 +18,4 @@ public class PlayerTest {
         assertEquals(p.getScore(), 30);
     }
 
-    @Test
-    public void testSetLetters(){
-        Player p = new Player("Homer");
-        ArrayList<Letters> l = new ArrayList<>();
-
-        p.setLetters(l);
-    }
-
 }

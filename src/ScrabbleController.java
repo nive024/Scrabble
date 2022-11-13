@@ -9,50 +9,85 @@ public class ScrabbleController implements ActionListener {
     GameBoard model;
     ScrabbleFrame frame;
     private ArrayList<JButton> wordButtons;
-    int index = 0;
+    private String currentLetter;
 
     public ScrabbleController (GameBoard g, ScrabbleFrame frame) {
         model = g;
         this.frame = frame;
+        currentLetter = "";
         wordButtons = new ArrayList<>();
     }
     @Override
     public void actionPerformed(ActionEvent e) {
 
+
         JButton b = (JButton) e.getSource();
+        //System.out.println(b.getActionCommand());
         //if the player presses play then get num players and tell model
         if (b.getText().equals("Play")) {
             model.addPlayers(frame.getNumberofPlayers());
+            for (int i = 0; i < frame.getNumberofPlayers(); i++){
+                model.deal(7, i);
+            }
+            frame.disableOtherPlayers(0);
+            frame.getTurn().setText(model.getCurrentPlayer().getName()+"'s turn");
         }
 
-        String word = "fire";
-
-        //if it is a letter button
-        if (!b.getActionCommand().equals("")) {
-//            b.setText(""+word.charAt(index));
-            //System.out.println(b.getActionCommand());
-//            String place = b.getActionCommand();
-            wordButtons.add(b);
-            model.addLetter(""+word.charAt(index), b.getActionCommand());
-            index++;
-            //get letter from player that is selected
-            //model.addLetter();
+        //checking if it is a player letter?
+        else if(b.getActionCommand().equals("Player Button")) {
+            if (currentLetter.equals("")) {
+                b.setEnabled(false); //when button is clicked disable
+                currentLetter = b.getText();
+            }
         }
 
-        if (b.getText().equals("End Turn")) {
+        //check if its end turn
+        else if (b.getText().equals("End Turn")) {
+            try {
+                model.placeWord(getWord());
+            } catch (IndexOutOfBoundsException exception) {
+                JOptionPane.showMessageDialog(null, "You didn't place any letters. If you want to skip" +
+                        " your turn, click Skip Turn");
+            }
             model.placeWord(getWord());
+            frame.getTurn().setText(model.getCurrentPlayer().getName()+"'s turn");
+        }
+
+        else if (b.getText().equals("Skip Turn")){
+            ArrayList<Player> players = model.getPlayers();
+            model.setCurrentPlayer(players.get((players.indexOf(model.getCurrentPlayer())+1) % players.size()));
+            frame.getTurn().setText(model.getCurrentPlayer().getName()+"'s turn");
+        }
+
+        //else it has to be a grid button
+        else {
+            if (!b.getText().equals("")) {
+                if (currentLetter.equals("")) {
+                    wordButtons.add(b);
+                    currentLetter = "";
+                } else {
+                    JOptionPane.showMessageDialog(null, "There is already a letter here, you can't place one here");
+                }
+            } else {
+                if (!currentLetter.equals("")) {
+                    wordButtons.add(b);
+                    model.addLetter(currentLetter, b.getActionCommand());
+                    currentLetter = "";
+                } else {
+                    JOptionPane.showMessageDialog(null, "Please select a letter to place from your letters first.");
+                }
+            }
+
         }
     }
 
     private String getWord () {
         boolean horizontal = false;
-
         ArrayList<Character> letter = new ArrayList<>();
         if (wordButtons.size()> 1) {
             //if first letters of place are not equal, then the word is horizontal
             horizontal = wordButtons.get(0).getActionCommand().charAt(0) != wordButtons.get(1).getActionCommand().charAt(0);
         }
-        System.out.println(horizontal + " " + wordButtons.size());
 
         for (JButton b: wordButtons) {
             if (horizontal) { //if horizontal, sort based on col
@@ -65,7 +100,6 @@ public class ScrabbleController implements ActionListener {
         }
         //get first and last and then get button values from in that range
         char first = letter.get(0);
-        char last = letter.get(letter.size()-1);
         String word = "";
         if (horizontal) {
             for (int i = 0; i < wordButtons.size(); i++) {
@@ -87,10 +121,14 @@ public class ScrabbleController implements ActionListener {
             }
         }
 
-        String place = (horizontal) ? (wordButtons.get(0).getActionCommand().charAt(1)+""+letter.get(0)) : wordButtons.get(0).getActionCommand().charAt(0)+""+letter.get(0);
+        //int first means horizontal
+        //letter first means vertical
+        String place = (horizontal) ? ((wordButtons.get(0).getActionCommand().charAt(1)-'A'+1)+""+letter.get(0)) : wordButtons.get(0).getActionCommand().charAt(0)+""+(letter.get(0)-'A'+1);
 
         System.out.println(word + " " + place);
         wordButtons.clear();
         return word + " " + place;
     }
+
+
 }
