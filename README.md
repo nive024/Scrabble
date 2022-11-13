@@ -24,6 +24,7 @@ These are the known issues that will be fixed in Milestone 3:
 * If letters are placed all over the board (like adding to multiple words at once) the logic will break and might be counted as floating. 
 * If multiple words are created and one of the words are invalid it might not remove all the newly placed letters. 
 * If the word is invalid, it will remove the overlapping letter too.
+* If the overlapping letter is not clicked, and the word is invalid, it will remove the wrong number of letters (it is in the rules that the overlapping letter should be clicked).
 * Sometimes the error message contains the wrong word/missing letters if player chooses to overlap letters but doesn't click the overlapping letter. 
 * if multiple wrong words are placed then only one gets removed (other letters are left).
 
