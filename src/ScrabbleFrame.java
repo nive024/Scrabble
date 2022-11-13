@@ -43,7 +43,6 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         playerPanelArray = new ArrayList<>();
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         gamePanel=new JPanel();
-//        this.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
         this.setLayout(new BoxLayout(gamePanel, X_AXIS));
 
         //add model
@@ -65,16 +64,6 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         numberLabel.setFont(new Font("Verdana", Font.PLAIN, 15));
         playerCB = new JComboBox<>(numberofPlayers);
         playBtn = new JButton("Play");
-//        playBtn.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                playBtn.setEnabled(false);
-//                playerCB.setEnabled(false);
-//                gameboardPanel.setVisible(true);
-//                playerPanel.setVisible(true);
-//                numPlayers = getNumberofPlayers();
-//            }
-//        });
         playBtn.addActionListener(sc);
         playBtn.setActionCommand("");
         numberPlayersPanel.add(numberLabel);
@@ -121,7 +110,6 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         gameboardPanel.add(xPanel, BorderLayout.PAGE_START);
         gameboardPanel.add(yPanel, BorderLayout.LINE_START);
         gameboardPanel.add(buttonsPanel, BorderLayout.CENTER);
-        //gameboardPanel.setVisible(false);
 
         gamePanel.add(titlePanel);
         gamePanel.add(gameboardPanel);
@@ -375,6 +363,11 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         }
     }
 
+    /**
+     * Enables the Play button and the player number combo box when starting and disables the rest if false
+     * and enables the rest of the buttons if true
+     * @param isEnabled true if the game is starting and the game buttons need to be disabled
+     */
     @Override
     public void setEnableOtherComponents(boolean isEnabled) {
         for (int i = 0; i < 15; i++) {
