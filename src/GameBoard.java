@@ -70,6 +70,14 @@ public class GameBoard {
         players.add(currentPlayer);
     }
 
+    public ArrayList<Player> getPlayers(){
+        return this.players;
+    }
+
+    public Player getCurrentPlayer(){
+        return this.currentPlayer;
+    }
+
     /**
      * Add view to model for MVC structure
      * @param view the view that will be added to this model
@@ -257,17 +265,6 @@ public class GameBoard {
             }
         }
 
-        //check if a word already starts at this spot
-//        if (!stringBoard[row][col].equals("_")) {
-//            System.out.println(word.toUpperCase() + ": There is already a word that starts here.");
-//            for(ScrabbleView v: views){
-//                v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
-//                v.enableGridButtons(word,place, row, col);
-//                v.displayErrorMessage(word, "overlapping");
-//            }
-//            return;
-//        }
-
 //        if (checkWord(word)) {
             word = word.toUpperCase();
             place = place.toUpperCase();
@@ -387,6 +384,9 @@ public class GameBoard {
                 view.disableOtherPlayers(currentIndex);
             }
             isBoardEmpty = false;
+//        } else {
+//            System.out.println(word + " is not a valid word.");
+//        }
     }
 
     /**

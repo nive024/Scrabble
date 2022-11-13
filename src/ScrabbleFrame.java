@@ -1,3 +1,5 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.*;
 import java.awt.*;
@@ -18,6 +20,8 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
     private JButton[][] grid;
     private ArrayList<JButton>[] playersButtonsArray;
     private ArrayList<JPanel> playerPanelArray;
+    private int numPlayers;
+    private JLabel turn;
 
     public ScrabbleFrame(){
         super("Scrabble");
@@ -47,6 +51,16 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         numberLabel.setFont(new Font("Verdana", Font.PLAIN, 15));
         playerCB = new JComboBox<>(numberofPlayers);
         JButton playBtn = new JButton("Play");
+//        playBtn.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                playBtn.setEnabled(false);
+//                playerCB.setEnabled(false);
+//                gameboardPanel.setVisible(true);
+//                playerPanel.setVisible(true);
+//                numPlayers = getNumberofPlayers();
+//            }
+//        });
         playBtn.addActionListener(sc);
         playBtn.setActionCommand("");
         numberPlayersPanel.add(numberLabel);
@@ -57,6 +71,13 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         remove.setActionCommand("");
         remove.addActionListener(sc);
         numberPlayersPanel.add(remove);
+        turn = new JLabel("");
+        numberLabel.setFont(new Font("Verdana", Font.PLAIN, 15));
+        numberPlayersPanel.add(turn);
+        JButton skipBtn = new JButton("Skip Turn");
+        skipBtn.setActionCommand("");
+        skipBtn.addActionListener(sc);
+        numberPlayersPanel.add(skipBtn);
 
 
         // Panel for the buttons of the board
@@ -86,6 +107,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         gameboardPanel.add(xPanel, BorderLayout.PAGE_START);
         gameboardPanel.add(yPanel, BorderLayout.LINE_START);
         gameboardPanel.add(buttonsPanel, BorderLayout.CENTER);
+        //gameboardPanel.setVisible(false);
 
         gamePanel.add(titlePanel);
         gamePanel.add(gameboardPanel);
@@ -99,6 +121,11 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         this.setVisible(true);
 
     }
+
+    public JLabel getTurn(){
+        return turn;
+    }
+
     private void addButtons(){
         int count = 1;
         char col = 'A';

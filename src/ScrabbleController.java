@@ -30,6 +30,7 @@ public class ScrabbleController implements ActionListener {
                 model.deal(7, i);
             }
             frame.disableOtherPlayers(0);
+            frame.getTurn().setText(model.getCurrentPlayer().getName()+"'s turn");
         }
 
         //checking if it is a player letter?
@@ -48,6 +49,14 @@ public class ScrabbleController implements ActionListener {
                 JOptionPane.showMessageDialog(null, "You didn't place any letters. If you want to skip" +
                         " your turn, click Skip Turn");
             }
+            model.placeWord(getWord());
+            frame.getTurn().setText(model.getCurrentPlayer().getName()+"'s turn");
+        }
+
+        else if (b.getText().equals("Skip Turn")){
+            ArrayList<Player> players = model.getPlayers();
+            model.setCurrentPlayer(players.get((players.indexOf(model.getCurrentPlayer())+1) % players.size()));
+            frame.getTurn().setText(model.getCurrentPlayer().getName()+"'s turn");
         }
 
         //else it has to be a grid button
