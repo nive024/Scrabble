@@ -1,10 +1,19 @@
 import java.util.*;
 import java.util.Map.Entry;
 
+/**
+ * The BagOfLetters represents the finite amount of letters in the scrabble game
+ *
+ * This class includes a hashmap of each letter and their quantities, it checks that a letter is in a bag,
+ * updates the quantity of a letter, and also determines the quantity of a letter.
+ */
 
 public class BagOfLetters {
     private HashMap<Letters, Integer> bag = new HashMap<>();
 
+    /**
+     * The constructor initializes the bag.
+     */
     public BagOfLetters() {
         initializeBag(1);
         initializeBag(2);
@@ -17,6 +26,10 @@ public class BagOfLetters {
     }
 
 
+    /**
+     * This method initializes the bag to be a hashmap with key: Letters and value: the quantity of the letter
+     * @param value the quantity of the letter.
+     */
     public void initializeBag(int value) {
 
         Character[] ones = {'J', 'K', 'Q', 'X', 'Z'};
@@ -73,6 +86,11 @@ public class BagOfLetters {
         }
     }
 
+    /**
+     * This method returns true if the letter is in the bag and false otherwise. It also updates the quantity of the letter.
+     * @param l the letter we want to search for
+     * @return true if the letter is in the bag and false otherwise.
+     */
     public  boolean inBag(Letters l){
         for(Entry<Letters, Integer> entry : bag.entrySet()){
             if(entry.getKey().getLetter().equals(l.getLetter())){
@@ -88,6 +106,11 @@ public class BagOfLetters {
         return false;
     }
 
+    /**
+     * This method checks the quantity of a letter.
+     * @param l the letter we want to check
+     * @return the quantity of the letter
+     */
     public Integer getQuantity(Letters l) {
         for (Entry<Letters, Integer> entry : bag.entrySet()) {
             if (entry.getKey().getLetter().equals(l.getLetter())) {
@@ -97,6 +120,10 @@ public class BagOfLetters {
         return 100;
     }
 
+    /**
+     * This method returns the HashMap bag;
+     * @return bag
+     */
     public HashMap<Letters, Integer> getBag() {
         return bag;
     }

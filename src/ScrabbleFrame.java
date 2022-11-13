@@ -6,6 +6,17 @@ import java.awt.*;
 
 import static javax.swing.BoxLayout.*;
 
+/**
+ * This ScrabbleFrame extends JFrame representing the GUI of scrabble
+ *
+ * This class updates the GUI whenever the status of Scrabble game is changed. This includes displaying buttons and their test,
+ * disabling and enabling buttons, updating score, and displaying error messages.
+ *
+ * @author Nicole Lim
+ * @author Nivetha Sivasaravanan
+ * @author Rimsha Atif
+ */
+
 public class ScrabbleFrame extends JFrame implements ScrabbleView{
 
     private JPanel buttonsPanel;
@@ -23,6 +34,9 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
     private int numPlayers;
     private JLabel turn;
 
+    /**
+     * Constructor to initialize the JFrame and add the components on to it
+     */
     public ScrabbleFrame(){
         super("Scrabble");
         grid = new JButton[15][15];
@@ -122,10 +136,17 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
 
     }
 
+    /**
+     * This method returns the JLabel turn
+     * @return the JLabel
+     */
     public JLabel getTurn(){
         return turn;
     }
 
+    /**
+     * This method creates the grid of JButtons
+     */
     private void addButtons(){
         int count = 1;
         char col = 'A';
@@ -156,6 +177,9 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
 
     }
 
+    /**
+     * This method create the label for the x-axis of the grid. The letters range from a to p representing the column coordinate.
+     */
     private void addXAxisLabel(){
         xPanel.add(new JLabel(""));
         for (char alphabet = 'a'; alphabet < 'p'; alphabet ++){
@@ -163,6 +187,10 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
             xPanel.add(l);
         }
     }
+
+    /**
+     * This method creates the label for the y-axis of the grid. The numbers range from 1-15 representing the row coordinate.
+     */
     private void addYAxisLabel(){
         for (int i = 0; i < 15; i++){
             JLabel l = new JLabel(String.valueOf(i+1));
@@ -170,6 +198,10 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         }
     }
 
+    /**
+     * This method initializes the players panel
+     * @param number The number of players in the game.
+     */
     private void addPlayerToPanel(int number){
         playersButtonsArray = new ArrayList[number];
         for (int i = 0; i < number; i++){
@@ -177,6 +209,11 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
             addPlayerLabel(i);
         }
     }
+
+    /**
+     * This method initializes the players label, inluding the letter buttons and the score.
+     * @param i an integer representing the index of the current player's label to initialze
+     */
     private void addPlayerLabel(int i){
         JPanel playerP = new JPanel();
         playerP.setLayout(new BorderLayout());
@@ -202,11 +239,20 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         playerPanelArray.add(playerP);
     }
 
+    /**
+     * This method returns the number of players in the game.
+     * @return the number of players in the game
+     */
     public int getNumberofPlayers() {
         String s = String.valueOf(playerCB.getSelectedItem());
         return Integer.parseInt(s.charAt(0)+"");
     }
 
+    /**
+     * This method updates the view by changing the text of the grid button that was clicked to represent the letter
+     * @param letter the letter we want to set the grid button to
+     * @param place the string representation of the button coordinate
+     */
     @Override
     public void update(String letter, String place) {
         int row, col;
@@ -244,6 +290,13 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         }
     }
 
+    /**
+     * if an invalid play was made we want to re-enable all the grid buttons that were clicked
+     * @param word The word that was tried to be played
+     * @param place The string representation of the grid coordinates
+     * @param row the row coordinate of the buttton
+     * @param cols the column coordinate of the button
+     */
     @Override
     public void enableGridButtons(String word, String place, int row, int cols){
        if(Character.isDigit(place.charAt(0))){
@@ -260,6 +313,12 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
        }
 
     }
+
+    /**
+     * This method displays the appropriate error message when an invalid move is made
+     * @param word the word that was played
+     * @param message the string representation of the message to be displayed
+     */
     @Override
     public void displayErrorMessage(String word, String message) {
         if(message.compareTo("ov") == 0){
@@ -279,6 +338,11 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         }
     }
 
+    /**
+     * This method updates the view to show the current score of the player
+     * @param score the score of the current player
+     * @param indexOfPlayer the index of the current player
+     */
     @Override
     public void updateScore(int score, int indexOfPlayer){
         for (Component component: playerPanelArray.get(indexOfPlayer).getComponents()) {
@@ -290,6 +354,10 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         }
     }
 
+    /**
+     * This method disables the buttons of players while they are not the current player
+     * @param playerIndex the index of the current player
+     */
     @Override
     public void disableOtherPlayers(int playerIndex) {
         for (int i = 0; i < 4; i++) {
