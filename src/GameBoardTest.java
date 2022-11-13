@@ -5,6 +5,13 @@ import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * Test class for GameBoard
+ *
+ * @author Rimsha Atif
+ * @author Isaiah Hunte
+ * @author Nivetha Sivasaravanan
+ */
 public class GameBoardTest {
     private GameBoard emptygameBoard;
     private GameBoard gameBoard;

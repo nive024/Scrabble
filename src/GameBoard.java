@@ -6,7 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * The GameBoard class represents the game board logic in Scrabble
+ * The GameBoard class represents the game board logic in Scrabble, it is the model in the MVC structure
  *
  * This class checks the validity of the word, places words on the board,
  * adds up scores to the players’ total, prints the current state of the board to the console

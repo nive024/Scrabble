@@ -1,3 +1,10 @@
+/**
+ * The ScrabbleView interface represents the View in the MVC structure. It contains methods that the model uses
+ * to update the view.
+ *
+ * @author Nivetha Sivasaravanan
+ * @author Rimsha Atif
+ */
 public interface ScrabbleView {
     void update(String letter, String place);
 

@@ -3,6 +3,11 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+/**
+ * Test class for BagOfLetters
+ *
+ * @author Rimsha Atif
+ */
 public class BagOfLettersTest {
     private BagOfLetters bagOfLetters;
 

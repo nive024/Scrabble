@@ -6,6 +6,9 @@ import java.util.Map.Entry;
  *
  * This class includes a hashmap of each letter and their quantities, it checks that a letter is in a bag,
  * updates the quantity of a letter, and also determines the quantity of a letter.
+ *
+ * @author Rimsha Atif
+ * @author Nivetha Sivasaravanan
  */
 
 public class BagOfLetters {
