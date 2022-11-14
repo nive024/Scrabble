@@ -31,6 +31,8 @@ These are the known issues that will be fixed in Milestone 3:
 * Skip turn doesn't ask if they want to discard any or all letters and provide new ones 
 * Some word get an error saying it doesn't fit there even if it does.
 
+NOTE: These issues are mainly regarding the GUI so there will not be any tests that fail, since our tests are only for the model. 
+
 <!-- Roadmap Ahead -->
 ## Roadmap Ahead
 For the next milestone, more features will be added. To begin, all test cases will pass. Thus, 
