@@ -318,6 +318,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         }
         if(message.compareTo("iv") == 0){
             JOptionPane.showMessageDialog(this, word+" is not a valid word");
+            skipBtn.setEnabled(true);
         }
         if(message.equals("floating")){
             JOptionPane.showMessageDialog(this, "Cannot place a floating word");

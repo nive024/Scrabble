@@ -93,7 +93,7 @@ public class GameBoard {
      */
     public boolean checkWord (String word) {
         //testing purposes
-        if (word.equals("BE"))
+        if ((word.equals("BE")) || (word.equals("IS")))
             return true;
         try {
             HttpURLConnection connection = null;
@@ -562,14 +562,21 @@ public class GameBoard {
         Object[] keys = bagOfLetters.getBag().keySet().toArray();
         String s= "";
 
-        //randomly deal n new letters to the player
-        for(int i=0; i<amountToDeal; i++){
-            Letters newLetter = (Letters) keys[r.nextInt(keys.length)];
+        int total = 0;
+        for (Object o:keys) {
+            total += bagOfLetters.getQuantity((Letters)o);
+        }
+        System.out.println("Total: " +total);
+        if (keys.length > 0) {
+            //randomly deal n new letters to the player
+            for (int i = 0; i < amountToDeal; i++) {
+                Letters newLetter = (Letters) keys[r.nextInt(keys.length)];
 
-            while(!bagOfLetters.inBag(newLetter)){
-                newLetter = (Letters) keys[r.nextInt(keys.length)];
+                while (!bagOfLetters.inBag(newLetter)) {
+                    newLetter = (Letters) keys[r.nextInt(keys.length)];
+                }
+                s += newLetter.getLetter();
             }
-            s += newLetter.getLetter();
         }
         for (ScrabbleView view: views) {
             view.updatePlayersLetters(s, playerNumber);
