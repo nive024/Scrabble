@@ -27,6 +27,9 @@ These are the known issues that will be fixed in Milestone 3:
 * If the overlapping letter is not clicked, and the word is invalid, it will remove the wrong number of letters (it is in the rules that the overlapping letter should be clicked).
 * Sometimes the error message contains the wrong word/missing letters if player chooses to overlap letters but doesn't click the overlapping letter. 
 * if multiple wrong words are placed then only one gets removed (other letters are left).
+* Sometimes we'll get an error saying we didn't place any letters even if we did.
+* Skip turn doesn't ask if they want to discard any or all letters and provide new ones 
+* Some word get an error saying it doesn't fit there even if it does.
 
 <!-- Roadmap Ahead -->
 ## Roadmap Ahead
