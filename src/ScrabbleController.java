@@ -37,8 +37,6 @@ public class ScrabbleController implements ActionListener {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-
-
         JButton b = (JButton) e.getSource();
         //if the player presses play then get num players and tell model
         if (b.getText().equals("Play")) {

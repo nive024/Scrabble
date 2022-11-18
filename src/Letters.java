@@ -8,7 +8,7 @@ import java.util.*;
  * @author Nivetha Sivasaravanan
  */
 public class Letters {
-    private static final Map<Character, Integer> Alphabet= new HashMap<>();
+    private static Map<Character, Integer> Alphabet= new HashMap<>();
     static{
         Alphabet.put('A', 1);
         Alphabet.put('B', 3);

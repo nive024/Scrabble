@@ -12,7 +12,9 @@ public interface ScrabbleView {
 
     void enableUsedPlayerButtons(int indexOfCurrentPlayer);
 
-    void enableGridButtons(String word, String place, int row, int col);
+    void saveGridStatus();
+
+    void enableGridButtons();
 
     void updateScore(int score, int indexOfCurrentPlayer);
 

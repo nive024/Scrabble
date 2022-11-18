@@ -27,6 +27,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
     private ScrabbleController sc;
     private JComboBox<String> playerCB;
     private JButton[][] grid;
+    private JButton[][] oldGrid;
     private ArrayList<JButton>[] playersButtonsArray;
     private ArrayList<JPanel> playerPanelArray;
     private JLabel turn;
@@ -40,6 +41,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
     public ScrabbleFrame(){
         super("Scrabble");
         grid = new JButton[15][15];
+        oldGrid = new JButton[15][15];
         playerPanelArray = new ArrayList<>();
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         gamePanel=new JPanel();
@@ -156,6 +158,20 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
                 b.addActionListener(sc);
                 grid[i][j] = b;
                 buttonsPanel.add(b);
+                count++;
+                col++;
+            }
+            col = 'A';
+            row++;
+        }
+
+        //initialize oldGrid
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < 15; j++) {
+                JButton b = new JButton("");
+                b.setActionCommand(col+""+row+"");
+                b.addActionListener(sc);
+                oldGrid[i][j] = b;
                 count++;
                 col++;
             }
@@ -287,20 +303,13 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
      * @param cols the column coordinate of the button
      */
     @Override
-    public void enableGridButtons(String word, String place, int row, int cols){
-       if(Character.isDigit(place.charAt(0))){
-          for(int i = 0; i<word.length(); i++){
-              grid[row][i + cols].setEnabled(true);
-              grid[row][i + cols].setText("");
-          }
+    public void enableGridButtons(){
+        //copy the contents of oldGrid into grid
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < 15; j++) {
+                grid[i][j].setText(oldGrid[i][j].getText());
+            }
         }
-       else{
-           for(int i = 0; i<word.length(); i++){
-               grid[i + row][cols].setEnabled(true);
-               grid[row +i][cols].setText("");
-           }
-       }
-
     }
 
     /**
@@ -381,6 +390,16 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         playBtn.setEnabled(!isEnabled);
         playerCB.setEnabled(!isEnabled);
 
+    }
+
+    @Override
+    public void saveGridStatus(){
+        //copy the contents of grid into oldGrid
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < 15; j++) {
+                oldGrid[i][j].setText(grid[i][j].getText());
+            }
+        }
     }
 
     public static void main(String[] args) {
