@@ -277,20 +277,23 @@ public class GameBoard {
                         return;
                     }
                 }
-                isBoardEmpty = false;
+
                 for (int i = 0; i < rows; i++) {
                     for (int j = 0; j < cols; j++) {
                         tileBoard[i][j].placeLetter(new Letters(stringBoard[i][j].toUpperCase().charAt(0)));
                     }
                 }
+
                 for (String words: wordsAddedThisTurn) {
-                    calculateScore(words.split(" ")[0]);
+                    this.currentPlayer.setScore(calculateScore(words.split(" ")[0]));
                 }
+
                 deal(players.indexOf(currentPlayer));
                 for (ScrabbleView v : views) {
                     v.saveGridStatus();
                     v.updateScore(currentPlayer.getScore(), players.indexOf(currentPlayer));
                 }
+                isBoardEmpty = false;
             }
         } else {
             for (ScrabbleView v : views) {
@@ -301,8 +304,6 @@ public class GameBoard {
             revertStringBoard();
         }
 
-        //check new words
-        //check if word is floating
         printGameStatus();
         getNextPlayer();
 
@@ -431,41 +432,41 @@ public class GameBoard {
      * @return true if the word is on the center square, false otherwise
      */
     public boolean checkCenterSquare(String word, String place){
-        int centerRow = 7;
-        char c = 'H';
-        int centerCol = c - 'A';
-
-        int row, col;
-        row = getRowAndCol(place)[0];
-        col = getRowAndCol(place)[1];
-
-        if (isHorizontal(place)){ //check horizontal placement
-
-            for(int i = 0; i<word.length(); i++, col ++){
-                if (row == centerRow && col == centerCol){
-                    return true;
-                }
-            }
-        }
-        else { //check vertical placement
-            for(int i = 0; i< word.length(); i++, row ++){
-                if(col == centerCol && row == centerRow){
-                    return true;
-                }
-            }
-        }
-        System.out.println("The first word must be placed on the center square");
-        return false;
-
-//        int centerRow = (int)(rows/2);
-//        int centerCol = (int)(cols/2);
+//        int centerRow = 7;
+//        char c = 'H';
+//        int centerCol = c - 'A';
 //
-//        if (stringBoard[centerRow][centerCol].equals("_")) {
-//            System.out.println("The first word must be placed on the center square");
-//            return false;
-//        } else {
-//            return true;
+//        int row, col;
+//        row = getRowAndCol(place)[0];
+//        col = getRowAndCol(place)[1];
+//
+//        if (isHorizontal(place)){ //check horizontal placement
+//
+//            for(int i = 0; i<word.length(); i++, col ++){
+//                if (row == centerRow && col == centerCol){
+//                    return true;
+//                }
+//            }
 //        }
+//        else { //check vertical placement
+//            for(int i = 0; i< word.length(); i++, row ++){
+//                if(col == centerCol && row == centerRow){
+//                    return true;
+//                }
+//            }
+//        }
+//        System.out.println("The first word must be placed on the center square");
+//        return false;
+
+        int centerRow = (rows/2);
+        int centerCol = (cols/2);
+
+        if (stringBoard[centerRow][centerCol].equals("_")) {
+            System.out.println("The first word must be placed on the center square");
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**
@@ -483,17 +484,13 @@ public class GameBoard {
             i++;
         }
 
-        this.currentPlayer.setScore(score);
-        System.out.println("Yay! You scored " + score + " points for " + word);
-
-
-        return score;
+        //if it's the first word being placed, then they should get double the points
+        return (isBoardEmpty) ? 2*score : score;
     }
 
     /**
      * This method deals an ArrayList of random Letters. If the currentLetter already contains some letters, 7- the number of current letters are dealt
      * Otherwise, 7 random letters are dealt
-     * @param amountToDeal the number of new letters to deal
      * @return the String representation of all the new letters
      */
     public String deal(int playerNumber){

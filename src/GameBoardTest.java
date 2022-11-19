@@ -67,21 +67,25 @@ public class GameBoardTest {
 ///////////////////////////////////////////Testing CheckCenterSquare()/////////////////////////////////////////////////////////////
     @Test
     public void checkingCenterSquareHorizontalStartingOnCenter() {
+        gameBoard.placeWord("fire 8h");
         assertTrue(gameBoard.checkCenterSquare("fire", "8h"));
     }
 
     @Test
     public void checkingCenterSquareHorizontal() {
+        gameBoard.placeWord("fire 8f");
         assertTrue(gameBoard.checkCenterSquare("fire", "8f"));
     }
 
     @Test
     public void checkingCenterSquareVerticalStartingOnCenter() {
+        gameBoard.placeWord("fire 8h");
         assertTrue(gameBoard.checkCenterSquare("fire", "h8"));
     }
 
     @Test
     public void checkingCenterSquareVerticalS() {
+        gameBoard.placeWord("fire h6");
         assertTrue(gameBoard.checkCenterSquare("fire", "h6"));
     }
 
@@ -225,43 +229,60 @@ public class GameBoardTest {
         assertNotEquals(s, s1);
     }
 
-    @Test
-    public void dealAfterWordIsPlayed(){
-       // letters = gameBoard.deal(letters);
-        assertEquals(4, gameBoard.deal(0).length());
-    }
+//    @Test use the test when AI is finished
+//    public void dealAfterWordIsPlayed(){
+//       // letters = gameBoard.deal(letters);
+//        assertEquals(4, gameBoard.deal(0).length());
+//    }
     
     @Test
     public void floatingLetter(){
+        gameBoard.placeWord("e 9h");
+        assertEquals(0, p1.getScore());
+    }
+
+    @Test
+    public void floatingWord() {
         gameBoard.placeWord("fire 8h");
         gameBoard.placeWord("fur 6h");
-        assertEquals(5, p1.getScore());
+        assertEquals(10, p1.getScore());
     }
+
+    @Test
+    public void singleLetterWordCannotBePlaced() {
+        gameBoard.placeWord("e 8h");
+        assertEquals(0, p1.getScore());
+    }
+
     @Test
     public void initialScore(){
         assertEquals(0, p1.getScore());
     }
+
     @Test
-    public void scoreAfterWordPlaced(){
+    public void scoreAfterFirstWordPlaced(){
         gameBoard.placeWord("fire 8h");
-        assertEquals(5, p1.getScore());
+        assertEquals(10, p1.getScore());
     }
+
     @Test
     public void addingToExistingScore(){
-        gameBoard.placeWord("fire 8h"); // 5 points
+        gameBoard.placeWord("fire 8h"); // 10 points
         gameBoard.placeWord("tie i7"); // 3 points
-        assertEquals(8, p1.getScore());
+        assertEquals(13, p1.getScore());
     }
+
     @Test
     public void invalidWordDoesNotChangeScore(){
         gameBoard.placeWord("hfj 8h");
         assertEquals(0, p1.getScore());
     }
+
     @Test
     public void addingASingleLetter(){
-        gameBoard.placeWord("fire 8h"); // 5 points
+        gameBoard.placeWord("fire 8h"); // 10 points
         gameBoard.placeWord("hi i7"); // 5 points
-        assertEquals(10, p1.getScore());
+        assertEquals(15, p1.getScore());
     }
 
 }
