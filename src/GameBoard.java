@@ -138,7 +138,7 @@ public class GameBoard {
                 if (!(stringBoard[i][j]).equals("_")) {
                     wordToCheck += stringBoard[i][j];
                     if (place.isEmpty()) {
-                        place += (1+i);//(char)('A'+i); //should be int
+                        place += (1+i);
                         place += (char)('A'+j);
                     }
                 } else {
@@ -260,47 +260,6 @@ public class GameBoard {
     }
 
     public void checkPlay() {
-        //check centre spot is filled
-//        if (isBoardEmpty) {
-//            if (checkNewWords()) {
-//                for (String s: wordsOnBoard) {
-//                    if (!checkCenterSquare(s.split(" ")[0], s.split(" ")[1])) {
-//                        for(ScrabbleView v: views){
-//                            v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
-//                            v.enableGridButtons();
-//                            v.displayErrorMessage(s.split(" ")[0], "center");
-//                        }
-//                        revertStringBoard();
-//                        wordsOnBoard.clear();
-//                        //if the play is invalid, then we need to remove the points added but in calculateScore
-//                        //we add the score to the player so we need to remove it twice
-//                        currentPlayer.setScore(calculateScore(s.split(" ")[0])*-2);
-//                        return;
-//                    } else {
-//                        for (int i = 0; i < rows; i++) {
-//                            for (int j = 0; j < cols; j++) {
-//                                tileBoard[i][j].placeLetter(new Letters(stringBoard[i][j].toUpperCase().charAt(0)));
-//                            }
-//                        }
-////            deal(word.length(), players.indexOf(currentPlayer));
-//                        for (ScrabbleView v : views) {
-//                            v.saveGridStatus();
-//                            v.updateScore(currentPlayer.getScore(), players.indexOf(currentPlayer));
-//                        }
-//                        isBoardEmpty = false;
-//                    }
-//
-//                }
-//            } else {
-//                //if there was an invalid word played, then the whole play is invalid
-//                for (ScrabbleView v : views) {
-//                    v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
-//                    v.enableGridButtons();
-//                    v.displayErrorMessage(wordToCheck, "iv");
-//                }
-//                revertStringBoard();
-//            }
-//        } else {
         if (checkNewWords()) {
             for (String play: wordsAddedThisTurn) {
                 String word = play.split(" ")[0];
