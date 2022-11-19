@@ -264,6 +264,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         row = place.toUpperCase().charAt(1) - 'A';
         grid[row][col].setText(letter);
         skipBtn.setEnabled(false);
+        endTurnBtn.setEnabled(true);
     }
 
     /**
@@ -331,9 +332,13 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         }
         if(message.equals("floating")){
             JOptionPane.showMessageDialog(this, "Cannot place a floating word");
+            skipBtn.setEnabled(true);
         }
         if(message.compareTo("center") == 0){
             JOptionPane.showMessageDialog(this, "The first word must be placed on the center square");
+        }
+        if(message.equals("singleLetter")) {
+            JOptionPane.showMessageDialog(this, "The word must be longer than one letter");
         }
     }
 
@@ -344,6 +349,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
      */
     @Override
     public void updateScore(int score, int indexOfPlayer){
+        System.out.println("update score");
         for (Component component: playerPanelArray.get(indexOfPlayer).getComponents()) {
             if (component instanceof JLabel) {
                 if (((JLabel) component).getText().contains("Score:")) {
@@ -386,7 +392,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
             }
         }
         skipBtn.setEnabled(isEnabled);
-        endTurnBtn.setEnabled(isEnabled);
+        endTurnBtn.setEnabled(!isEnabled);
         playBtn.setEnabled(!isEnabled);
         playerCB.setEnabled(!isEnabled);
 

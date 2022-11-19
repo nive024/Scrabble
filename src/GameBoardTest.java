@@ -35,9 +35,9 @@ public class GameBoardTest {
 
         s = "";
         s1 ="";
-        s = gameBoard.deal(7, 0);
+        s = gameBoard.deal(0);
 
-        s1 = gameBoardCopy.deal(7, 0);
+        s1 = gameBoardCopy.deal(0);
 
     }
 
@@ -127,7 +127,7 @@ public class GameBoardTest {
     @Test
     public void checkPlaceWordBoardNotEmpty(){
         gameBoard.placeWord("fire 8h");
-        gameBoard.placeWord("t(i)e i7");
+        gameBoard.placeWord("tie i7");
         String s1= "";
         String s2 = "";
         int j;
@@ -192,7 +192,7 @@ public class GameBoardTest {
     @Test
     public void NoInvalidNewWordsShouldBeFound(){
         gameBoard.placeWord("fire 8h");
-        gameBoard.placeWord("t(i)e i7");
+        gameBoard.placeWord("tie i7");
 
         assertTrue(gameBoard.checkNewWords());
     }
@@ -200,11 +200,11 @@ public class GameBoardTest {
     @Test
     public void InvalidWordShouldBeFoundAndNotAddedToTheBoard() {
         gameBoardCopy.placeWord("fire 8h");
-        gameBoardCopy.placeWord("t(i)e i7");
+        gameBoardCopy.placeWord("tie i7");
 
         gameBoard.placeWord("fire 8h");
-        gameBoard.placeWord("t(i)e i7");
-        gameBoard.placeWord("t(e)a 9h");
+        gameBoard.placeWord("tie i7");
+        gameBoard.placeWord("tea 9h");
 
         for (int i = 0; i < 15; i++) {
             for (int j = 0; j < 15; j++) {
@@ -217,7 +217,7 @@ public class GameBoardTest {
     @Test
     public void initiallyDeal7Letters(){
 
-        assertEquals(7, gameBoard.deal(7, 0).length());
+        assertEquals(7, gameBoard.deal( 0).length());
     }
 
     @Test
@@ -227,9 +227,8 @@ public class GameBoardTest {
 
     @Test
     public void dealAfterWordIsPlayed(){
-
        // letters = gameBoard.deal(letters);
-        assertEquals(4, gameBoard.deal(4, 0).length());
+        assertEquals(4, gameBoard.deal(0).length());
     }
     
     @Test
@@ -250,7 +249,7 @@ public class GameBoardTest {
     @Test
     public void addingToExistingScore(){
         gameBoard.placeWord("fire 8h"); // 5 points
-        gameBoard.placeWord("t(i)e i7"); // 3 points
+        gameBoard.placeWord("tie i7"); // 3 points
         assertEquals(8, p1.getScore());
     }
     @Test
@@ -261,7 +260,7 @@ public class GameBoardTest {
     @Test
     public void addingASingleLetter(){
         gameBoard.placeWord("fire 8h"); // 5 points
-        gameBoard.placeWord("h(i) i7"); // 5 points
+        gameBoard.placeWord("hi i7"); // 5 points
         assertEquals(10, p1.getScore());
     }
 
