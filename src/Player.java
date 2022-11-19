@@ -9,7 +9,7 @@ import java.util.*;
  * @author Rimsha Atif
  */
 
-public class Player {
+public class Player implements Comparable<Player> {
 
     private String name;
     private int score;
@@ -72,18 +72,32 @@ public class Player {
     }
 
     /**
-     * Gives the players letters.
+     * Adds a letter to the players letters
      *
-     * @param newList The list of the player's letters
+     * @param l The letter to be added to the players letters
      */
-    public void setLetters(ArrayList<Letters> newList){
-        letters.clear();
-
-        for(Letters l : newList){
-            letters.add(l);
-        }
+    public void addLetter(Letters l){
+        letters.add(l);
     }
 
+    /**
+     * Removes a letter to the players letters
+     *
+     * @param l The letter to be removed to the players letters
+     */
+    public void removeLetter(Letters l){
+        letters.remove(l);
+    }
+
+    /**
+     * Compares the players based on their scores.
+     * @param p the object to be compared.
+     * @return a value greater than 0 if this player has a higher score, 0 if its the same, a value less than 0 if it's less
+     */
+    @Override
+    public int compareTo(Player p) {
+        return Integer.compare(p.getScore(), score);
+    }
 }
 
 

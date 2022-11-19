@@ -76,6 +76,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         endTurnBtn.setActionCommand("");
         endTurnBtn.addActionListener(sc);
         numberPlayersPanel.add(endTurnBtn);
+        endTurnBtn.setEnabled(false);
         turn = new JLabel("");
         numberLabel.setFont(new Font("Verdana", Font.PLAIN, 15));
         numberPlayersPanel.add(turn);
@@ -118,7 +119,8 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         gamePanel.add(playerPanel);
         this.setContentPane(gamePanel);
 
-        setEnableOtherComponents(false);
+        enableGameComponents(false);
+
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(800,800);
         this.setResizable(true);
@@ -298,10 +300,6 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
 
     /**
      * if an invalid play was made we want to re-enable all the grid buttons that were clicked
-     * @param word The word that was tried to be played
-     * @param place The string representation of the grid coordinates
-     * @param row the row coordinate of the buttton
-     * @param cols the column coordinate of the button
      */
     @Override
     public void enableGridButtons(){
@@ -340,6 +338,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         if(message.equals("singleLetter")) {
             JOptionPane.showMessageDialog(this, "The word must be longer than one letter");
         }
+        endTurnBtn.setEnabled(false);
     }
 
     /**
@@ -349,7 +348,6 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
      */
     @Override
     public void updateScore(int score, int indexOfPlayer){
-        System.out.println("update score");
         for (Component component: playerPanelArray.get(indexOfPlayer).getComponents()) {
             if (component instanceof JLabel) {
                 if (((JLabel) component).getText().contains("Score:")) {
@@ -358,6 +356,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
             }
         }
         skipBtn.setEnabled(true);
+        endTurnBtn.setEnabled(false);
     }
 
     /**
@@ -379,23 +378,21 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         }
     }
 
-    /**
-     * Enables the Play button and the player number combo box when starting and disables the rest if false
-     * and enables the rest of the buttons if true
-     * @param isEnabled true if the game is starting and the game buttons need to be disabled
-     */
     @Override
-    public void setEnableOtherComponents(boolean isEnabled) {
+    public void enableGameComponents(boolean isEnabled) {
         for (int i = 0; i < 15; i++) {
             for (int j = 0; j < 15; j++) {
                 grid[i][j].setEnabled(isEnabled);
             }
         }
         skipBtn.setEnabled(isEnabled);
-        endTurnBtn.setEnabled(!isEnabled);
-        playBtn.setEnabled(!isEnabled);
-        playerCB.setEnabled(!isEnabled);
+//        endTurnBtn.setEnabled(isEnabled);
+    }
 
+    @Override
+    public void enableChooseNumPlayerComponents(boolean isEnabled) {
+        playBtn.setEnabled(isEnabled);
+        playerCB.setEnabled(isEnabled);
     }
 
     @Override
@@ -406,6 +403,20 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
                 oldGrid[i][j].setText(grid[i][j].getText());
             }
         }
+    }
+
+    @Override
+    public void endGame(ArrayList<Player> players) {
+        enableGameComponents(false);
+        endTurnBtn.setEnabled(false);
+        JLabel[] playerScoreLabels = new JLabel[players.size() + 1];
+        playerScoreLabels[0] = new JLabel("Game ended!\n");
+        for (int i = 0; i < players.size(); i++) {
+            Player player = players.get(i);
+            playerScoreLabels[i+1] = new JLabel(player.getName() + "'s score: " + player.getScore());
+        }
+        JOptionPane.showMessageDialog(null, playerScoreLabels, "Score Board", JOptionPane.INFORMATION_MESSAGE);
+        this.dispose();
     }
 
     public static void main(String[] args) {

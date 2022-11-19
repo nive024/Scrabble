@@ -68,35 +68,37 @@ public class GameBoardTest {
     @Test
     public void checkingCenterSquareHorizontalStartingOnCenter() {
         gameBoard.placeWord("fire 8h");
-        assertTrue(gameBoard.checkCenterSquare("fire", "8h"));
+        assertTrue(gameBoard.checkCenterSquare());
     }
 
     @Test
     public void checkingCenterSquareHorizontal() {
         gameBoard.placeWord("fire 8f");
-        assertTrue(gameBoard.checkCenterSquare("fire", "8f"));
+        assertTrue(gameBoard.checkCenterSquare());
     }
 
     @Test
     public void checkingCenterSquareVerticalStartingOnCenter() {
         gameBoard.placeWord("fire 8h");
-        assertTrue(gameBoard.checkCenterSquare("fire", "h8"));
+        assertTrue(gameBoard.checkCenterSquare());
     }
 
     @Test
     public void checkingCenterSquareVerticalS() {
         gameBoard.placeWord("fire h6");
-        assertTrue(gameBoard.checkCenterSquare("fire", "h6"));
+        assertTrue(gameBoard.checkCenterSquare());
     }
 
     @Test
     public void checkNotOnCenterSquareHorizontal(){
-        assertFalse(gameBoard.checkCenterSquare("fire", "3b"));
+        gameBoard.placeWord("fire 3b");
+        assertFalse(gameBoard.checkCenterSquare());
     }
 
     @Test
     public void checkNotOnCenterSquareVertical(){
-        assertFalse(gameBoard.checkCenterSquare("fire", "k4"));
+        gameBoard.placeWord("fire k4");
+        assertFalse(gameBoard.checkCenterSquare());
     }
 
 
@@ -220,8 +222,7 @@ public class GameBoardTest {
 //////////////////////////////////////Test Deal()/////////////////////////////////////////////////////////////////////////
     @Test
     public void initiallyDeal7Letters(){
-
-        assertEquals(7, gameBoard.deal( 0).length());
+        assertEquals(7, p1.getLetters().size());
     }
 
     @Test

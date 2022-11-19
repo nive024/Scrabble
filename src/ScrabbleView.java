@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 /**
  * The ScrabbleView interface represents the View in the MVC structure. It contains methods that the model uses
  * to update the view.
@@ -22,6 +24,10 @@ public interface ScrabbleView {
 
     void disableOtherPlayers(int playerIndex);
 
-    void setEnableOtherComponents(boolean isEnabled);
+    void enableChooseNumPlayerComponents(boolean isEnabled);
+
+    void enableGameComponents(boolean isEnabled);
+
+    void endGame(ArrayList<Player> players);
 
 }

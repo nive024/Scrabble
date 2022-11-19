@@ -2,8 +2,6 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * The GameBoard class represents the game board logic in Scrabble, it is the model in the MVC structure
@@ -29,6 +27,7 @@ public class GameBoard {
     private List<ScrabbleView> views;
     private String wordToCheck;
     private ArrayList<String> wordsAddedThisTurn;
+    private int numSkips;
 
     /**
      * Constructor to initialize the game board with the specified columns and rows. Also initializes the first player.
@@ -43,6 +42,7 @@ public class GameBoard {
         wordsAddedThisTurn = new ArrayList<>();
         this.rows = rows;
         this.cols = cols;
+        numSkips = 0;
         isBoardEmpty = true;
         this.bagOfLetters = new BagOfLetters();
 
@@ -266,7 +266,7 @@ public class GameBoard {
                 String place = play.split(" ")[1];
                 //if this is the first word played, check to see if it's on the center square
                 if (isBoardEmpty) {
-                    if (!checkCenterSquare(word, place)) {
+                    if (!checkCenterSquare()) {
                         for (ScrabbleView v : views) {
                             v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
                             v.enableGridButtons();
@@ -294,6 +294,7 @@ public class GameBoard {
                     v.updateScore(currentPlayer.getScore(), players.indexOf(currentPlayer));
                 }
                 isBoardEmpty = false;
+
             }
         } else {
             for (ScrabbleView v : views) {
@@ -306,7 +307,7 @@ public class GameBoard {
 
         printGameStatus();
         getNextPlayer();
-
+        numSkips = 0;
     }
     /**
      * Adds a letter on the GUI
@@ -320,6 +321,7 @@ public class GameBoard {
         int col = place.toUpperCase().charAt(0) - 'A';
         int row = place.toUpperCase().charAt(1) - 'A';
         stringBoard[row][col] = letter;
+        currentPlayer.removeLetter(new Letters(letter.charAt(0)));
 //        for (int i = 0; i < rows; i++) {
 //            for (int j = 0; j < cols; j++) {
 //                System.out.print(stringBoard[i][j] + " ");
@@ -427,37 +429,9 @@ public class GameBoard {
 
     /**
      * Check to see if the first word is being placed in the center square
-     * @param word the word being placed
-     * @param place the place of the first letter in the word
      * @return true if the word is on the center square, false otherwise
      */
-    public boolean checkCenterSquare(String word, String place){
-//        int centerRow = 7;
-//        char c = 'H';
-//        int centerCol = c - 'A';
-//
-//        int row, col;
-//        row = getRowAndCol(place)[0];
-//        col = getRowAndCol(place)[1];
-//
-//        if (isHorizontal(place)){ //check horizontal placement
-//
-//            for(int i = 0; i<word.length(); i++, col ++){
-//                if (row == centerRow && col == centerCol){
-//                    return true;
-//                }
-//            }
-//        }
-//        else { //check vertical placement
-//            for(int i = 0; i< word.length(); i++, row ++){
-//                if(col == centerCol && row == centerRow){
-//                    return true;
-//                }
-//            }
-//        }
-//        System.out.println("The first word must be placed on the center square");
-//        return false;
-
+    public boolean checkCenterSquare(){
         int centerRow = (rows/2);
         int centerCol = (cols/2);
 
@@ -485,6 +459,7 @@ public class GameBoard {
         }
 
         //if it's the first word being placed, then they should get double the points
+        System.out.println("Yay! You scored " + score + " points for " + word);
         return (isBoardEmpty) ? 2*score : score;
     }
 
@@ -498,12 +473,8 @@ public class GameBoard {
         Object[] keys = bagOfLetters.getBag().keySet().toArray();
         String s= "";
 
-        int amountToDeal = (7 - currentPlayer.getLetters().size());
-        System.out.println("amount to deal: " + currentPlayer.getLetters().size());
-        int total = 0;
-        for (Object o:keys) {
-            total += bagOfLetters.getQuantity((Letters)o);
-        }
+        Player player = players.get(playerNumber);
+        int amountToDeal = (7 - player.getLetters().size());
 
         if (keys.length > 0) {
             //randomly deal n new letters to the player
@@ -514,11 +485,22 @@ public class GameBoard {
                     newLetter = (Letters) keys[r.nextInt(keys.length)];
                 }
                 s += newLetter.getLetter();
+                player.addLetter(newLetter);
+            }
+        } else {
+            Set<Integer> numLetters = new HashSet<>();
+            for (Player p: players) {
+                numLetters.add(p.getLetters().size());
+            }
+            if ((numLetters.size() == 1) && (numLetters.contains(0))){
+                endGame();
             }
         }
         for (ScrabbleView view: views) {
             view.updatePlayersLetters(s, playerNumber);
         }
+
+        System.out.println("am: " + amountToDeal + " s: " + s);
         return s;
     }
 
@@ -558,7 +540,8 @@ public class GameBoard {
         }
         currentPlayer = players.get(0);
         for (ScrabbleView view: views) {
-            view.setEnableOtherComponents(true);
+            view.enableGameComponents(true);
+            view.enableChooseNumPlayerComponents(false);
         }
     }
 
@@ -624,11 +607,33 @@ public class GameBoard {
         return Character.isDigit(place.charAt(0));
     }
 
+    /**
+     * Sets the current player to the next player in the ArrayList of players and then tells the
+     * view to disable the buttons of all the other players
+     */
     public void getNextPlayer() {
         int currentIndex = (players.indexOf(currentPlayer) + 1 ) % players.size();
         currentPlayer = players.get(currentIndex);
         for (ScrabbleView view: views) {
             view.disableOtherPlayers(players.indexOf(currentPlayer));
+        }
+    }
+
+    /**
+     * Checks how many times the skip button was clicked. If all players skip they're turn then the game
+     * will end
+     */
+    public void turnSkipped() {
+        numSkips += 1;
+        if (numSkips % players.size() == 0) {
+            endGame();
+        }
+    }
+
+    public void endGame() {
+        for (ScrabbleView view: views) {
+            Collections.sort(players);
+            view.endGame(players);
         }
     }
 

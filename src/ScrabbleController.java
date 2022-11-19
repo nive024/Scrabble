@@ -59,7 +59,7 @@ public class ScrabbleController implements ActionListener {
         //check if its end turn
         else if (b.getText().equals("End Turn")) {
             try {
-                model.placeWord(getWord());
+                //model.placeWord(getWord());
                 model.checkPlay();
                 frame.getTurn().setText(model.getCurrentPlayer().getName()+"'s turn");
             } catch (IndexOutOfBoundsException exception) {
@@ -69,6 +69,7 @@ public class ScrabbleController implements ActionListener {
         }
 
         else if (b.getText().equals("Skip Turn")){
+            model.turnSkipped();
             model.getNextPlayer();
             frame.getTurn().setText(model.getCurrentPlayer().getName()+"'s turn");
         }

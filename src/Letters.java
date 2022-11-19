@@ -91,5 +91,15 @@ public class Letters {
     }
 
 
+    @Override
+    public boolean equals(Object obj) {
+        if(this == obj) {
+            return true;
+        } else if (obj instanceof Letters) {
+            return this.getLetter().equals(((Letters) obj).getLetter());
+        } else {
+            return false;
+        }
 
+    }
 }
