@@ -4,6 +4,11 @@ import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * Test class for Player
+ *
+ * @author Nicole Lim
+ */
 public class PlayerTest {
     @Test
     public void testGetPlayerName(){

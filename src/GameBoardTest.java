@@ -5,15 +5,21 @@ import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * Test class for GameBoard
+ *
+ * @author Rimsha Atif
+ * @author Isaiah Hunte
+ * @author Nivetha Sivasaravanan
+ */
 public class GameBoardTest {
     private GameBoard emptygameBoard;
     private GameBoard gameBoard;
 
     private GameBoard gameBoardCopy;
     private Player p1;
-
-    private ArrayList<Letters> letters;
-    private ArrayList<Letters> letters1;
+    private String s;
+    private String s1;
 
     @Before
     public void setUp(){
@@ -27,32 +33,33 @@ public class GameBoardTest {
         gameBoardCopy = new GameBoard(15, 15);
         gameBoardCopy.setCurrentPlayer(p1);
 
-        letters = new ArrayList<>();
-        letters = gameBoard.deal(letters);
-        letters1 = new ArrayList<>();
-        letters1 = gameBoard.deal(letters1);
+        s = "";
+        s1 ="";
+        s = gameBoard.deal(0);
+
+        s1 = gameBoardCopy.deal(0);
 
     }
 
     @Test
     public void initialBoardShouldBeEmpty(){
-        assertEquals(true, emptygameBoard.isBoardEmpty());
+        assertTrue(emptygameBoard.isBoardEmpty());
     }
 
  /////////////////////////////////////////////////Testing CheckWord()////////////////////////////////////////////////////////////
     @Test
     public void checkingValidWords(){
-        assertEquals(true, gameBoard.checkWord("word"));
+        assertTrue(gameBoard.checkWord("word"));
     }
 
     @Test
     public void checkingValidWordbe(){
-        assertEquals(true, gameBoard.checkWord("be"));
+        assertTrue(gameBoard.checkWord("BE"));
     }
 
     @Test
     public void checkingInvalidWords(){
-        assertEquals(false, gameBoard.checkWord("hfhjdkj"));
+        assertFalse(gameBoard.checkWord("hfhjdkj"));
     }
 
 
@@ -60,32 +67,38 @@ public class GameBoardTest {
 ///////////////////////////////////////////Testing CheckCenterSquare()/////////////////////////////////////////////////////////////
     @Test
     public void checkingCenterSquareHorizontalStartingOnCenter() {
-        assertEquals(true, gameBoard.checkCenterSquare("fire", "8h"));
+        gameBoard.placeWord("fire 8h");
+        assertTrue(gameBoard.checkCenterSquare());
     }
 
     @Test
     public void checkingCenterSquareHorizontal() {
-        assertEquals(true, gameBoard.checkCenterSquare("fire", "8f"));
+        gameBoard.placeWord("fire 8f");
+        assertTrue(gameBoard.checkCenterSquare());
     }
 
     @Test
     public void checkingCenterSquareVerticalStartingOnCenter() {
-        assertEquals(true, gameBoard.checkCenterSquare("fire", "h8"));
+        gameBoard.placeWord("fire 8h");
+        assertTrue(gameBoard.checkCenterSquare());
     }
 
     @Test
     public void checkingCenterSquareVerticalS() {
-        assertEquals(true, gameBoard.checkCenterSquare("fire", "h6"));
+        gameBoard.placeWord("fire h6");
+        assertTrue(gameBoard.checkCenterSquare());
     }
 
     @Test
     public void checkNotOnCenterSquareHorizontal(){
-        assertEquals(false, gameBoard.checkCenterSquare("fire", "3b"));
+        gameBoard.placeWord("fire 3b");
+        assertFalse(gameBoard.checkCenterSquare());
     }
 
     @Test
     public void checkNotOnCenterSquareVertical(){
-        assertEquals(false, gameBoard.checkCenterSquare("fire", "k4"));
+        gameBoard.placeWord("fire k4");
+        assertFalse(gameBoard.checkCenterSquare());
     }
 
 
@@ -120,7 +133,7 @@ public class GameBoardTest {
     @Test
     public void checkPlaceWordBoardNotEmpty(){
         gameBoard.placeWord("fire 8h");
-        gameBoard.placeWord("t(i)e i7");
+        gameBoard.placeWord("tie i7");
         String s1= "";
         String s2 = "";
         int j;
@@ -140,6 +153,7 @@ public class GameBoardTest {
 
     @Test
     public void placingOverAnotherWordShouldNotBePlaced(){
+        gameBoard.placeWord("fire h8");
         gameBoard.placeWord("true h8");
 
         String s= "";
@@ -170,26 +184,33 @@ public class GameBoardTest {
     @Test
     public void placingInvalidWordShouldNotChangeBoard(){
         gameBoard.placeWord("hfj 8h");
-        assertEquals(true, gameBoard.isBoardEmpty());
+        assertTrue(gameBoard.isBoardEmpty());
     }
+
+    @Test
+    public void placingFirstWordNotOnCenterSquare(){
+        gameBoard.placeWord("fire a1");
+        assertEquals(0,p1.getScore());
+    }
+
 
 /////////////////////////////////Testing CheckNewWords()/////////////////////////////////////////////////
     @Test
     public void NoInvalidNewWordsShouldBeFound(){
         gameBoard.placeWord("fire 8h");
-        gameBoard.placeWord("t(i)e i7");
+        gameBoard.placeWord("tie i7");
 
-        assertEquals(true, gameBoard.checkNewWords());
+        assertTrue(gameBoard.checkNewWords());
     }
 
     @Test
     public void InvalidWordShouldBeFoundAndNotAddedToTheBoard() {
         gameBoardCopy.placeWord("fire 8h");
-        gameBoardCopy.placeWord("t(i)e i7");
+        gameBoardCopy.placeWord("tie i7");
 
         gameBoard.placeWord("fire 8h");
-        gameBoard.placeWord("t(i)e i7");
-        gameBoard.placeWord("t(e)a 9h");
+        gameBoard.placeWord("tie i7");
+        gameBoard.placeWord("tea 9h");
 
         for (int i = 0; i < 15; i++) {
             for (int j = 0; j < 15; j++) {
@@ -198,57 +219,71 @@ public class GameBoardTest {
         }
     }
 
-//////////////////////////////////////Test Deal()///////////////////////////////////////////////////////////////////////
+//////////////////////////////////////Test Deal()/////////////////////////////////////////////////////////////////////////
     @Test
     public void initiallyDeal7Letters(){
-
-        assertEquals(7, letters.size());
+        assertEquals(7, p1.getLetters().size());
     }
 
     @Test
     public void CheckThatLettersAreRandom(){
-        assertEquals(false, letters.equals(letters1));
+        assertNotEquals(s, s1);
     }
 
-    @Test
-    public void dealAfterWordIsPlayed(){
-        letters.remove(0);
-        letters.remove(1);
-
-        letters = gameBoard.deal(letters);
-        assertEquals(7, letters.size());
-    }
+//    @Test use the test when AI is finished
+//    public void dealAfterWordIsPlayed(){
+//       // letters = gameBoard.deal(letters);
+//        assertEquals(4, gameBoard.deal(0).length());
+//    }
+    
     @Test
     public void floatingLetter(){
+        gameBoard.placeWord("e 9h");
+        assertEquals(0, p1.getScore());
+    }
+
+    @Test
+    public void floatingWord() {
         gameBoard.placeWord("fire 8h");
         gameBoard.placeWord("fur 6h");
-        assertEquals(5, p1.getScore());
+        assertEquals(10, p1.getScore());
     }
+
+    @Test
+    public void singleLetterWordCannotBePlaced() {
+        gameBoard.placeWord("e 8h");
+        assertEquals(0, p1.getScore());
+    }
+
     @Test
     public void initialScore(){
         assertEquals(0, p1.getScore());
     }
+
     @Test
-    public void scoreAfterWordPlaced(){
+    public void scoreAfterFirstWordPlaced(){
         gameBoard.placeWord("fire 8h");
-        assertEquals(5, p1.getScore());
+        assertEquals(10, p1.getScore());
     }
+
     @Test
     public void addingToExistingScore(){
-        gameBoard.placeWord("fire 8h"); // 5 points
-        gameBoard.placeWord("t(i)e i7"); // 3 points
-        assertEquals(8, p1.getScore());
+        gameBoard.placeWord("fire 8h"); // 10 points
+        gameBoard.placeWord("tie i7"); // 3 points
+        assertEquals(13, p1.getScore());
     }
+
     @Test
     public void invalidWordDoesNotChangeScore(){
         gameBoard.placeWord("hfj 8h");
         assertEquals(0, p1.getScore());
     }
+
     @Test
     public void addingASingleLetter(){
-        gameBoard.placeWord("fire 8h"); // 5 points
-        gameBoard.placeWord("h(i) i7"); // 5 points
-        assertEquals(10, p1.getScore());
+        gameBoard.placeWord("fire 8h"); // 10 points
+        gameBoard.placeWord("hi i7"); // 5 points
+        assertEquals(15, p1.getScore());
     }
 
 }

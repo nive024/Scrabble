@@ -2,11 +2,9 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
- * The GameBoard class represents the game board logic in Scrabble
+ * The GameBoard class represents the game board logic in Scrabble, it is the model in the MVC structure
  *
  * This class checks the validity of the word, places words on the board,
  * adds up scores to the players’ total, prints the current state of the board to the console
@@ -28,6 +26,8 @@ public class GameBoard {
     private BagOfLetters bagOfLetters;
     private List<ScrabbleView> views;
     private String wordToCheck;
+    private ArrayList<String> wordsAddedThisTurn;
+    private int numSkips;
 
     /**
      * Constructor to initialize the game board with the specified columns and rows. Also initializes the first player.
@@ -39,8 +39,10 @@ public class GameBoard {
         players = new ArrayList<>();
         views = new ArrayList<>();
         wordsOnBoard = new HashSet<>();
+        wordsAddedThisTurn = new ArrayList<>();
         this.rows = rows;
         this.cols = cols;
+        numSkips = 0;
         isBoardEmpty = true;
         this.bagOfLetters = new BagOfLetters();
 
@@ -70,10 +72,10 @@ public class GameBoard {
         players.add(currentPlayer);
     }
 
-    public ArrayList<Player> getPlayers(){
-        return this.players;
-    }
-
+    /**
+     * Gets the current player whose turn it is
+     * @return The player whose turn it is
+     */
     public Player getCurrentPlayer(){
         return this.currentPlayer;
     }
@@ -93,7 +95,7 @@ public class GameBoard {
      */
     public boolean checkWord (String word) {
         //testing purposes
-        if (word.equals("BE"))
+        if ((word.equals("BE")) || (word.equals("IS") || (word.equals("WAS"))))
             return true;
         try {
             HttpURLConnection connection = null;
@@ -125,79 +127,107 @@ public class GameBoard {
      * @return true, if the surrounding words are valid otherwise false
      */
     public boolean checkNewWords() {
-        int tempRow = 0;
-        int tempCol = 0;
+        wordsAddedThisTurn.clear();
         ArrayList<String> tempNewWords = new ArrayList<>();
         //check the row and col of the word that was just added
         wordToCheck = "";
-
+        String place = "";
         //go through the board left to right and look for complete words
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 if (!(stringBoard[i][j]).equals("_")) {
                     wordToCheck += stringBoard[i][j];
-                    tempRow = i;
-                    tempCol = j;
+                    if (place.isEmpty()) {
+                        place += (1+i);
+                        place += (char)('A'+j);
+                    }
                 } else {
                     if(wordToCheck.length() > 1) { //if it's word longer than 1 letter
-                        if (checkWord(wordToCheck)) { //if its a real word
-                            wordToCheck += " " + tempRow + (tempCol-wordToCheck.length()+1);
-                            tempNewWords.add(wordToCheck); //add to arratList bc we don't know if valid placement or not
+                        if (checkWord(wordToCheck)) { //if it's a real word
+                            wordToCheck += " " + place;
+                            if ((!isFloating(wordToCheck, place)) || (isBoardEmpty)) {
+                                tempNewWords.add(wordToCheck); //add to arrayList bc we don't know if valid placement or not
+                            }
                         } else {
                             System.out.println("Invalid placement: " + wordToCheck + " is not a valid word.");
-                            for (int k = 0; k < rows; k++) {
-                                for (int n = 0; n < cols; n++) {
-                                    if (tileBoard[k][n].isEmpty())
-                                        stringBoard[k][n] = "_";
-                                    else
-                                        stringBoard[k][n] = tileBoard[k][n].getLetter().getLetter() + "";
-                                }
-                            }
+                            revertStringBoard();
                             return false;
                         }
+                    } else if (wordToCheck.length() == 1) {
+                        tempNewWords.add(wordToCheck + " " + place);
                     }
                     wordToCheck = "";
+                    place = "";
                 }
 
             }
         }
 
+        place="";
         //go through the board up to down and look for complete words
         for (int i = 0; i < cols; i++) {
             for (int j = 0; j < rows; j++) {
                 if (!(stringBoard[j][i]).equals("_")) {
                     wordToCheck += stringBoard[j][i];
-                    tempRow = j;
-                    tempCol = i;
+                    if (place.isEmpty()) {
+                        place += (char)('A'+i);
+                        place += (j+1);
+                    }
                 } else {
                     if(wordToCheck.length() > 1) { //if the word is more than 1 letter
-                        if (checkWord(wordToCheck)) { //if its an actual word
-                            wordToCheck += " " + (tempRow-wordToCheck.length()+1) + tempCol;
-                            tempNewWords.add(wordToCheck); //add to arratList bc we don't know if valid placement or not
+                        if (checkWord(wordToCheck)) { //if it's an actual word
+                            wordToCheck += " " + place;
+                            if ((!isFloating(wordToCheck, place)) || (isBoardEmpty)) {
+                                tempNewWords.add(wordToCheck); //add to arrayList bc we don't know if valid placement or not
+                            }
                         } else {
                             System.out.println("Invalid placement: " + wordToCheck + " is not a valid word.");
-                            for (int k = 0; k < rows; k++) {
-                                for (int n = 0; n < cols; n++) {
-                                    if (tileBoard[k][n].isEmpty())
-                                        stringBoard[k][n] = "_";
-                                    else
-                                        stringBoard[k][n] = tileBoard[k][n].getLetter().getLetter() + "";
-                                }
-                            }
+                            revertStringBoard();
                             return false;
                         }
+                    } else if (wordToCheck.length() == 1) {
+                        tempNewWords.add(wordToCheck + " " + place);
                     }
                     wordToCheck = "";
+                    place="";
                 }
 
             }
         }
         for (String s: tempNewWords) { //only add the word if the placement of the new word is valid
             if (wordsOnBoard.add(s)) {
-                calculateScore(s.split(" ")[0]);
+                String word = s.split(" ")[0];
+                place = s.split(" ")[1];
+
+                if (word.length() == 1) {
+                    if (isFloating(word, place)) {
+                        System.out.println(word.toUpperCase() + " is floating, invalid play");
+                        for (ScrabbleView v : views) {
+                            v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
+                            v.enableGridButtons();
+                            v.displayErrorMessage(word, "floating");
+                        }
+                        revertStringBoard();
+                        return true;
+                    }
+                } else {
+                    wordsAddedThisTurn.add(s);
+                }
+
             }
         }
         return true;
+    }
+
+    private void revertStringBoard() {
+        for (int k = 0; k < rows; k++) {
+            for (int n = 0; n < cols; n++) {
+                if (tileBoard[k][n].isEmpty())
+                    stringBoard[k][n] = "_";
+                else
+                    stringBoard[k][n] = tileBoard[k][n].getLetter().getLetter() + "";
+            }
+        }
     }
 
     /**
@@ -205,190 +235,80 @@ public class GameBoard {
      * @param play String containing the word and its placement
      */
     public void placeWord (String play) {
-
-        int row = 0;
-        int col = 0;
-
         String word = play.split(" ")[0]; //gets the word
         String place = play.split(" ")[1]; //gets where the word will be placed
 
-        char commonChar = ' '; //character that is shared between word being places and existing word
-        int commonCharIndex = word.indexOf('('); //index of that char in new word
+        int row = getRowAndCol(place)[0];
+        int col = getRowAndCol(place)[1];
 
-        row = getRowAndCol(place)[0];
-        col = getRowAndCol(place)[1];
-
-        if(isBoardEmpty){
-            if(!checkCenterSquare(word, place)){ //if not placed on center square return
-                for(ScrabbleView v: views){
-                    v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
-                    v.enableGridButtons(word,place, row, col);
-                    v.displayErrorMessage(word, "center");
+        word = word.toUpperCase();
+        if (isHorizontal(place)) {
+            for (int i = 0; i < word.length(); i++) {
+                if (stringBoard[row][i + col].equals("_") || (stringBoard[row][i + col].equals(word.charAt(i) + ""))) {
+                    stringBoard[row][i + col] = word.charAt(i) + "";
                 }
-                return;
             }
-        }
-
-        Matcher matcher = Pattern.compile("\\((.)\\)").matcher(word);
-        boolean matched = matcher.find();
-        //get word and remove brackets
-        if (!isBoardEmpty) {
-            //find the character between the brackets (to make sure they are placing in the same spot)
-            if (matched) {
-                if(word.length()==3) {
-                    System.out.println("Cannot place overlapping single letter.");
-                    for(ScrabbleView v: views){
-                        v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
-                        v.enableGridButtons(word,place, row, col);
-                        v.displayErrorMessage(word, "overlapping");
-                    }
-                    return;
-                }
-                commonChar = matcher.group(1).toUpperCase().charAt(0);
-                if (word.charAt(0) == '(') {
-                    word = commonChar + word.split("\\)")[1];
-                } else if (word.charAt(word.length()-1) == ')') {
-                    word = word.split("\\(")[0] + commonChar;
-                } else {
-                    word = word.split("\\(")[0] + commonChar + word.split("\\)")[1];
-                }
-            } else { //if there is no overlapping letter, check if floating
-                if(isFloating(word, place)) {
-                    System.out.println(word.toUpperCase() + " is floating, invalid play");
-                    for(ScrabbleView v: views){
-                        v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
-                        v.enableGridButtons(word,place, row, col);
-                        v.displayErrorMessage(word, "floating");
-                    }
-                    return;
+        } else {
+            System.out.println(play);
+            for (int i = 0; i < word.length(); i++) {
+                if (stringBoard[i + row][col].equals("_") || (stringBoard[i + row][col].equals(word.charAt(i) + ""))) {
+                    stringBoard[i + row][col] = word.charAt(i) + "";
                 }
             }
         }
-
-//        if (checkWord(word)) {
-            word = word.toUpperCase();
-            place = place.toUpperCase();
-            //if first char is a digit then we place horizontally
-            if (isHorizontal(place)) {
-                //error check: if the word placement exceeds # of cols, then return
-                if (col + word.length() > cols) {
-                    System.out.println(word.toUpperCase() + ": This doesn't fit on the board");
-                    for(ScrabbleView v: views){
-                        v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
-                        v.enableGridButtons(word,place, row, col);
-                    }
-                    return;
-                }
-                //check to see if the overlapping letter is in the right spot
-                if((!isBoardEmpty) && (matched)) {
-                    if (!(stringBoard[row][col + commonCharIndex].equals(commonChar + ""))) {
-                        System.out.println(word.toUpperCase() + ": Invalid placement, overlapping char not in right spot." );
-                        for(ScrabbleView v: views){
-                            v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
-                            v.enableGridButtons(word,place, row, col);
-                        }
-                        return;
-                    }
-                }
-
-                for (int i = 0; i < word.length(); i++) {
-                    if (stringBoard[row][i + col].equals("_")|| (stringBoard[row][i + col].equals(word.charAt(i)+""))) {
-                        stringBoard[row][i + col] = word.charAt(i) + "";
-                    } else {
-                        System.out.println(word.toUpperCase() + ": This doesn't fit here.");
-                        for(ScrabbleView v: views){
-                            v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
-                            v.enableGridButtons(word,place, row, col);
-                            v.displayErrorMessage(word, "fit");
-                        }
-                        return;
-                    }
-
-                }
-                if (checkNewWords()) {
-                    for (int i = 0; i < word.length(); i++) {
-                        tileBoard[row][i + col].placeLetter(new Letters(stringBoard[row][i + col].toUpperCase().charAt(0)));
-                    }
-                    deal(word.length(), players.indexOf(currentPlayer));
-                    for(ScrabbleView v : views){
-                        v.updateScore(currentPlayer.getScore(), players.indexOf(currentPlayer));
-                    }
-                }
-                else{ //if word is not valid
-                    for(ScrabbleView v: views){
-                        v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
-                        v.enableGridButtons(word,place, row, col);
-                        v.displayErrorMessage(wordToCheck, "iv");
-                    }
-                }
-            } else { //else we place vertically
-                //error check: if the word placement exceeds # of rows, then return
-                if (row + word.length() > rows) {
-                    System.out.println(word.toUpperCase() + ": This doesn't fit on the board");
-                    for(ScrabbleView v: views){
-                        v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
-                        v.enableGridButtons(word,place, row, col);
-                        v.displayErrorMessage(word, "fit");
-                    }
-                    return;
-                }
-
-                //check to see if the overlapping letter is in the right spot if there is an overlapping letter
-                if((!isBoardEmpty) && (matched)) {
-                    if (!(stringBoard[row + commonCharIndex][col].equals(commonChar + ""))) {
-                        System.out.println(word.toUpperCase()   + ": Invalid placement, overlapping char not in right spot.");
-                        for(ScrabbleView v: views){
-                            v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
-                            v.enableGridButtons(word,place, row, col);
-                        }
-                        return;
-                    }
-                }
-
-                for (int i = 0; i < word.length(); i++) {
-                    if (stringBoard[i + row][col].equals("_") || (stringBoard[i + row][col].equals(word.charAt(i) + ""))) {
-                        stringBoard[i + row][col] = word.charAt(i) + "";
-                    } else {
-                        System.out.println(word + ": This doesn't fit here");
-                        for(ScrabbleView v: views){
-                            v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
-                            v.enableGridButtons(word,place, row, col);
-                            v.displayErrorMessage(word, "fit");
-                        }
-                        return;
-                    }
-                }
-                if (checkNewWords()) {
-                    for (int i = 0; i < word.length(); i++) {
-                        tileBoard[i + row][col].placeLetter(new Letters(stringBoard[i + row][col].toUpperCase().charAt(0)));
-                    }
-                    deal(word.length(), players.indexOf(currentPlayer));
-                    for(ScrabbleView v : views){
-                        v.updateScore(currentPlayer.getScore(), players.indexOf(currentPlayer));
-                    }
-                }
-                else {
-                    for (ScrabbleView v : views) {
-                        v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
-                        v.enableGridButtons(word, place, row, col);
-                        v.displayErrorMessage(wordToCheck, "iv");
-                    }
-                }
-            }
-
-            printGameStatus();
-            //change the player to the next in line if the valid is played
-            int currentIndex = (players.indexOf(currentPlayer) + 1 ) % players.size();
-            currentPlayer = players.get(currentIndex);
-            for (ScrabbleView view: views) {
-                view.disableOtherPlayers(currentIndex);
-            }
-            isBoardEmpty = false;
-//        } else {
-//            System.out.println(word + " is not a valid word.");
-//        }
+        checkPlay();
     }
 
+    public void checkPlay() {
+        if (checkNewWords()) {
+            for (String play: wordsAddedThisTurn) {
+                String word = play.split(" ")[0];
+                String place = play.split(" ")[1];
+                //if this is the first word played, check to see if it's on the center square
+                if (isBoardEmpty) {
+                    if (!checkCenterSquare()) {
+                        for (ScrabbleView v : views) {
+                            v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
+                            v.enableGridButtons();
+                            v.displayErrorMessage(word, "center");
+                        }
+                        revertStringBoard();
+                        wordsOnBoard.clear();
+                        return;
+                    }
+                }
+
+                for (int i = 0; i < rows; i++) {
+                    for (int j = 0; j < cols; j++) {
+                        tileBoard[i][j].placeLetter(new Letters(stringBoard[i][j].toUpperCase().charAt(0)));
+                    }
+                }
+
+                for (String words: wordsAddedThisTurn) {
+                    this.currentPlayer.setScore(calculateScore(words.split(" ")[0]));
+                }
+
+                deal(players.indexOf(currentPlayer));
+                for (ScrabbleView v : views) {
+                    v.saveGridStatus();
+                    v.updateScore(currentPlayer.getScore(), players.indexOf(currentPlayer));
+                }
+                isBoardEmpty = false;
+
+            }
+        } else {
+            for (ScrabbleView v : views) {
+                v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
+                v.enableGridButtons();
+                v.displayErrorMessage(wordToCheck, "iv");
+            }
+            revertStringBoard();
+        }
+
+        printGameStatus();
+        getNextPlayer();
+        numSkips = 0;
+    }
     /**
      * Adds a letter on the GUI
      * @param letter the letter to add on the GUI
@@ -398,6 +318,17 @@ public class GameBoard {
         for (ScrabbleView view: views) {
             view.update(letter, place);
         }
+        int col = place.toUpperCase().charAt(0) - 'A';
+        int row = place.toUpperCase().charAt(1) - 'A';
+        stringBoard[row][col] = letter;
+        currentPlayer.removeLetter(new Letters(letter.charAt(0)));
+//        for (int i = 0; i < rows; i++) {
+//            for (int j = 0; j < cols; j++) {
+//                System.out.print(stringBoard[i][j] + " ");
+//            }
+//            System.out.println();
+//        }
+//        System.out.println();
     }
 
     /**
@@ -412,7 +343,6 @@ public class GameBoard {
 
         row = getRowAndCol(place)[0];
         col = getRowAndCol(place)[1];
-        System.out.println("Row: " + row + " Col: " + col);
 
         if (word.length() == 1) {
             int emptySpace = 0; //how many empty spaces there are around the letter
@@ -499,37 +429,18 @@ public class GameBoard {
 
     /**
      * Check to see if the first word is being placed in the center square
-     * @param word the word being placed
-     * @param place the place of the first letter in the word
      * @return true if the word is on the center square, false otherwise
      */
-    public boolean checkCenterSquare(String word, String place){
-        int centerRow = 7;
-        char c = 'H';
-        int centerCol = c - 'A';
+    public boolean checkCenterSquare(){
+        int centerRow = (rows/2);
+        int centerCol = (cols/2);
 
-
-        int row, col;
-        row = getRowAndCol(place)[0];
-        col = getRowAndCol(place)[1];
-
-        if (isHorizontal(place)){ //check horizontal placement
-
-            for(int i = 0; i<word.length(); i++, col ++){
-                if (row == centerRow && col == centerCol){
-                    return true;
-                }
-            }
+        if (stringBoard[centerRow][centerCol].equals("_")) {
+            System.out.println("The first word must be placed on the center square");
+            return false;
+        } else {
+            return true;
         }
-        else { //check vertical placement
-           for(int i = 0; i< word.length(); i++, row ++){
-               if(col == centerCol && row == centerRow){
-                   return true;
-               }
-           }
-        }
-        System.out.println("The first word must be placed on the center square");
-        return false;
     }
 
     /**
@@ -547,36 +458,49 @@ public class GameBoard {
             i++;
         }
 
-        this.currentPlayer.setScore(score);
+        //if it's the first word being placed, then they should get double the points
         System.out.println("Yay! You scored " + score + " points for " + word);
-
-
-        return score;
+        return (isBoardEmpty) ? 2*score : score;
     }
 
     /**
      * This method deals an ArrayList of random Letters. If the currentLetter already contains some letters, 7- the number of current letters are dealt
      * Otherwise, 7 random letters are dealt
-     * @param amountToDeal the number of new letters to deal
      * @return the String representation of all the new letters
      */
-    public String deal(int amountToDeal, int playerNumber){
+    public String deal(int playerNumber){
         Random r = new Random();
         Object[] keys = bagOfLetters.getBag().keySet().toArray();
         String s= "";
 
-        //randomly deal n new letters to the player
-        for(int i=0; i<amountToDeal; i++){
-            Letters newLetter = (Letters) keys[r.nextInt(keys.length)];
+        Player player = players.get(playerNumber);
+        int amountToDeal = (7 - player.getLetters().size());
 
-            while(!bagOfLetters.inBag(newLetter)){
-                newLetter = (Letters) keys[r.nextInt(keys.length)];
+        if (keys.length > 0) {
+            //randomly deal n new letters to the player
+            for (int i = 0; i < amountToDeal; i++) {
+                Letters newLetter = (Letters) keys[r.nextInt(keys.length)];
+
+                while (!bagOfLetters.inBag(newLetter)) {
+                    newLetter = (Letters) keys[r.nextInt(keys.length)];
+                }
+                s += newLetter.getLetter();
+                player.addLetter(newLetter);
             }
-            s += newLetter.getLetter();
+        } else {
+            Set<Integer> numLetters = new HashSet<>();
+            for (Player p: players) {
+                numLetters.add(p.getLetters().size());
+            }
+            if ((numLetters.size() == 1) && (numLetters.contains(0))){
+                endGame();
+            }
         }
         for (ScrabbleView view: views) {
             view.updatePlayersLetters(s, playerNumber);
         }
+
+        System.out.println("am: " + amountToDeal + " s: " + s);
         return s;
     }
 
@@ -591,10 +515,10 @@ public class GameBoard {
                     System.out.print("_ ");
                 else
                     System.out.print(t.getLetter().getLetter() + " ");
-                }
-                System.out.println();
             }
             System.out.println();
+        }
+        System.out.println();
 
         System.out.println(currentPlayer.getName() + " Your total score is now: " + currentPlayer.getScore());
 
@@ -615,7 +539,10 @@ public class GameBoard {
             players.add(p);
         }
         currentPlayer = players.get(0);
-
+        for (ScrabbleView view: views) {
+            view.enableGameComponents(true);
+            view.enableChooseNumPlayerComponents(false);
+        }
     }
 
 
@@ -635,9 +562,6 @@ public class GameBoard {
         }
         return true;
     }
-    public Tile[][] getTileBoard(){
-        return tileBoard;
-    }
 
     /**
      * Returns the string version of the board
@@ -645,14 +569,6 @@ public class GameBoard {
      */
     public String[][] getStringBoard(){
         return stringBoard;
-    }
-
-    /**
-     * Returns the bag of letters
-     * @return the bag of letters
-     */
-    public BagOfLetters getBagOfLetters(){
-        return bagOfLetters;
     }
 
     /**
@@ -689,6 +605,36 @@ public class GameBoard {
      */
     public boolean isHorizontal(String place) {
         return Character.isDigit(place.charAt(0));
+    }
+
+    /**
+     * Sets the current player to the next player in the ArrayList of players and then tells the
+     * view to disable the buttons of all the other players
+     */
+    public void getNextPlayer() {
+        int currentIndex = (players.indexOf(currentPlayer) + 1 ) % players.size();
+        currentPlayer = players.get(currentIndex);
+        for (ScrabbleView view: views) {
+            view.disableOtherPlayers(players.indexOf(currentPlayer));
+        }
+    }
+
+    /**
+     * Checks how many times the skip button was clicked. If all players skip they're turn then the game
+     * will end
+     */
+    public void turnSkipped() {
+        numSkips += 1;
+        if (numSkips % players.size() == 0) {
+            endGame();
+        }
+    }
+
+    public void endGame() {
+        for (ScrabbleView view: views) {
+            Collections.sort(players);
+            view.endGame(players);
+        }
     }
 
 }

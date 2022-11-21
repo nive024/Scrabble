@@ -5,29 +5,44 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+/**
+ * The ScrabbleController class represents all the user input logic. It is the controller in the MVC
+ * structure. This class takes in and handles the user input and tells the model.
+ *
+ * @author Nivetha Sivasaravanan
+ * @author Rimsha Atif
+ * @author Nicole Lim
+ */
 public class ScrabbleController implements ActionListener {
-    GameBoard model;
-    ScrabbleFrame frame;
+    private GameBoard model;
+    private ScrabbleFrame frame;
     private ArrayList<JButton> wordButtons;
     private String currentLetter;
 
+    /**
+     * Contructor to initialize the controller
+     * @param g the model it needs to update
+     * @param frame the view it updates and listens from
+     */
     public ScrabbleController (GameBoard g, ScrabbleFrame frame) {
         model = g;
         this.frame = frame;
         currentLetter = "";
         wordButtons = new ArrayList<>();
     }
+
+    /**
+     * The method that handles the action event
+     * @param e the event to be processed
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
-
-
         JButton b = (JButton) e.getSource();
-        //System.out.println(b.getActionCommand());
         //if the player presses play then get num players and tell model
         if (b.getText().equals("Play")) {
             model.addPlayers(frame.getNumberofPlayers());
             for (int i = 0; i < frame.getNumberofPlayers(); i++){
-                model.deal(7, i);
+                model.deal(i);
             }
             frame.disableOtherPlayers(0);
             frame.getTurn().setText(model.getCurrentPlayer().getName()+"'s turn");
@@ -44,18 +59,18 @@ public class ScrabbleController implements ActionListener {
         //check if its end turn
         else if (b.getText().equals("End Turn")) {
             try {
-                model.placeWord(getWord());
+                //model.placeWord(getWord());
+                model.checkPlay();
+                frame.getTurn().setText(model.getCurrentPlayer().getName()+"'s turn");
             } catch (IndexOutOfBoundsException exception) {
                 JOptionPane.showMessageDialog(null, "You didn't place any letters. If you want to skip" +
                         " your turn, click Skip Turn");
             }
-            model.placeWord(getWord());
-            frame.getTurn().setText(model.getCurrentPlayer().getName()+"'s turn");
         }
 
         else if (b.getText().equals("Skip Turn")){
-            ArrayList<Player> players = model.getPlayers();
-            model.setCurrentPlayer(players.get((players.indexOf(model.getCurrentPlayer())+1) % players.size()));
+            model.turnSkipped();
+            model.getNextPlayer();
             frame.getTurn().setText(model.getCurrentPlayer().getName()+"'s turn");
         }
 
@@ -73,6 +88,7 @@ public class ScrabbleController implements ActionListener {
                     wordButtons.add(b);
                     model.addLetter(currentLetter, b.getActionCommand());
                     currentLetter = "";
+
                 } else {
                     JOptionPane.showMessageDialog(null, "Please select a letter to place from your letters first.");
                 }
@@ -81,6 +97,10 @@ public class ScrabbleController implements ActionListener {
         }
     }
 
+    /**
+     * looks at all the buttons clicked and returns the word that was placed and the first letter of the word
+     * @return the word created and the place of first letter
+     */
     private String getWord () {
         boolean horizontal = false;
         ArrayList<Character> letter = new ArrayList<>();
@@ -125,7 +145,6 @@ public class ScrabbleController implements ActionListener {
         //letter first means vertical
         String place = (horizontal) ? ((wordButtons.get(0).getActionCommand().charAt(1)-'A'+1)+""+letter.get(0)) : wordButtons.get(0).getActionCommand().charAt(0)+""+(letter.get(0)-'A'+1);
 
-        System.out.println(word + " " + place);
         wordButtons.clear();
         return word + " " + place;
     }

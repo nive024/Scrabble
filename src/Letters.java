@@ -8,7 +8,7 @@ import java.util.*;
  * @author Nivetha Sivasaravanan
  */
 public class Letters {
-    private static final Map<Character, Integer> Alphabet= new HashMap<>();
+    private static Map<Character, Integer> Alphabet= new HashMap<>();
     static{
         Alphabet.put('A', 1);
         Alphabet.put('B', 3);
@@ -90,16 +90,16 @@ public class Letters {
         return Alphabet;
     }
 
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) {
-//            return true;
-//        } else if (!(o instanceof Letters)){
-//            return false;
-//        } else {
-//            return ((Letters) o).getLetter() == this.getLetter();
-//        }
-//    }
 
+    @Override
+    public boolean equals(Object obj) {
+        if(this == obj) {
+            return true;
+        } else if (obj instanceof Letters) {
+            return this.getLetter().equals(((Letters) obj).getLetter());
+        } else {
+            return false;
+        }
 
+    }
 }

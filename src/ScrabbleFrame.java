@@ -1,5 +1,3 @@
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.*;
 import java.awt.*;
@@ -29,10 +27,13 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
     private ScrabbleController sc;
     private JComboBox<String> playerCB;
     private JButton[][] grid;
+    private JButton[][] oldGrid;
     private ArrayList<JButton>[] playersButtonsArray;
     private ArrayList<JPanel> playerPanelArray;
-    private int numPlayers;
     private JLabel turn;
+    private JButton skipBtn;
+    private JButton endTurnBtn;
+    private JButton playBtn;
 
     /**
      * Constructor to initialize the JFrame and add the components on to it
@@ -40,11 +41,11 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
     public ScrabbleFrame(){
         super("Scrabble");
         grid = new JButton[15][15];
+        oldGrid = new JButton[15][15];
         playerPanelArray = new ArrayList<>();
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         gamePanel=new JPanel();
-//        this.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
-        this.setLayout(new BoxLayout(gamePanel, BoxLayout.X_AXIS));
+        this.setLayout(new BoxLayout(gamePanel, X_AXIS));
 
         //add model
         GameBoard gameBoardModel = new GameBoard(15, 15);
@@ -64,31 +65,22 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         JLabel numberLabel = new JLabel("Please enter the number of players: ");
         numberLabel.setFont(new Font("Verdana", Font.PLAIN, 15));
         playerCB = new JComboBox<>(numberofPlayers);
-        JButton playBtn = new JButton("Play");
-//        playBtn.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                playBtn.setEnabled(false);
-//                playerCB.setEnabled(false);
-//                gameboardPanel.setVisible(true);
-//                playerPanel.setVisible(true);
-//                numPlayers = getNumberofPlayers();
-//            }
-//        });
+        playBtn = new JButton("Play");
         playBtn.addActionListener(sc);
         playBtn.setActionCommand("");
         numberPlayersPanel.add(numberLabel);
         numberPlayersPanel.add(playerCB);
         numberPlayersPanel.add(playBtn);
         titlePanel.add(numberPlayersPanel);
-        JButton remove = new JButton("End Turn");
-        remove.setActionCommand("");
-        remove.addActionListener(sc);
-        numberPlayersPanel.add(remove);
+        endTurnBtn = new JButton("End Turn");
+        endTurnBtn.setActionCommand("");
+        endTurnBtn.addActionListener(sc);
+        numberPlayersPanel.add(endTurnBtn);
+        endTurnBtn.setEnabled(false);
         turn = new JLabel("");
         numberLabel.setFont(new Font("Verdana", Font.PLAIN, 15));
         numberPlayersPanel.add(turn);
-        JButton skipBtn = new JButton("Skip Turn");
+        skipBtn = new JButton("Skip Turn");
         skipBtn.setActionCommand("");
         skipBtn.addActionListener(sc);
         numberPlayersPanel.add(skipBtn);
@@ -121,13 +113,13 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         gameboardPanel.add(xPanel, BorderLayout.PAGE_START);
         gameboardPanel.add(yPanel, BorderLayout.LINE_START);
         gameboardPanel.add(buttonsPanel, BorderLayout.CENTER);
-        //gameboardPanel.setVisible(false);
 
         gamePanel.add(titlePanel);
         gamePanel.add(gameboardPanel);
         gamePanel.add(playerPanel);
         this.setContentPane(gamePanel);
 
+        enableGameComponents(false);
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(800,800);
@@ -168,6 +160,20 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
                 b.addActionListener(sc);
                 grid[i][j] = b;
                 buttonsPanel.add(b);
+                count++;
+                col++;
+            }
+            col = 'A';
+            row++;
+        }
+
+        //initialize oldGrid
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < 15; j++) {
+                JButton b = new JButton("");
+                b.setActionCommand(col+""+row+"");
+                b.addActionListener(sc);
+                oldGrid[i][j] = b;
                 count++;
                 col++;
             }
@@ -259,6 +265,8 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         col = place.toUpperCase().charAt(0) - 'A';
         row = place.toUpperCase().charAt(1) - 'A';
         grid[row][col].setText(letter);
+        skipBtn.setEnabled(false);
+        endTurnBtn.setEnabled(true);
     }
 
     /**
@@ -292,26 +300,15 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
 
     /**
      * if an invalid play was made we want to re-enable all the grid buttons that were clicked
-     * @param word The word that was tried to be played
-     * @param place The string representation of the grid coordinates
-     * @param row the row coordinate of the buttton
-     * @param cols the column coordinate of the button
      */
     @Override
-    public void enableGridButtons(String word, String place, int row, int cols){
-       if(Character.isDigit(place.charAt(0))){
-          for(int i = 0; i<word.length(); i++){
-              grid[row][i + cols].setEnabled(true);
-              grid[row][i + cols].setText("");
-          }
+    public void enableGridButtons(){
+        //copy the contents of oldGrid into grid
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < 15; j++) {
+                grid[i][j].setText(oldGrid[i][j].getText());
+            }
         }
-       else{
-           for(int i = 0; i<word.length(); i++){
-               grid[i + row][cols].setEnabled(true);
-               grid[row +i][cols].setText("");
-           }
-       }
-
     }
 
     /**
@@ -329,13 +326,19 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         }
         if(message.compareTo("iv") == 0){
             JOptionPane.showMessageDialog(this, word+" is not a valid word");
+            skipBtn.setEnabled(true);
         }
         if(message.equals("floating")){
             JOptionPane.showMessageDialog(this, "Cannot place a floating word");
+            skipBtn.setEnabled(true);
         }
         if(message.compareTo("center") == 0){
             JOptionPane.showMessageDialog(this, "The first word must be placed on the center square");
         }
+        if(message.equals("singleLetter")) {
+            JOptionPane.showMessageDialog(this, "The word must be longer than one letter");
+        }
+        endTurnBtn.setEnabled(false);
     }
 
     /**
@@ -352,6 +355,8 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
                 }
             }
         }
+        skipBtn.setEnabled(true);
+        endTurnBtn.setEnabled(false);
     }
 
     /**
@@ -371,6 +376,47 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
                 }
             }
         }
+    }
+
+    @Override
+    public void enableGameComponents(boolean isEnabled) {
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < 15; j++) {
+                grid[i][j].setEnabled(isEnabled);
+            }
+        }
+        skipBtn.setEnabled(isEnabled);
+//        endTurnBtn.setEnabled(isEnabled);
+    }
+
+    @Override
+    public void enableChooseNumPlayerComponents(boolean isEnabled) {
+        playBtn.setEnabled(isEnabled);
+        playerCB.setEnabled(isEnabled);
+    }
+
+    @Override
+    public void saveGridStatus(){
+        //copy the contents of grid into oldGrid
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < 15; j++) {
+                oldGrid[i][j].setText(grid[i][j].getText());
+            }
+        }
+    }
+
+    @Override
+    public void endGame(ArrayList<Player> players) {
+        enableGameComponents(false);
+        endTurnBtn.setEnabled(false);
+        JLabel[] playerScoreLabels = new JLabel[players.size() + 1];
+        playerScoreLabels[0] = new JLabel("Game ended!\n");
+        for (int i = 0; i < players.size(); i++) {
+            Player player = players.get(i);
+            playerScoreLabels[i+1] = new JLabel(player.getName() + "'s score: " + player.getScore());
+        }
+        JOptionPane.showMessageDialog(null, playerScoreLabels, "Score Board", JOptionPane.INFORMATION_MESSAGE);
+        this.dispose();
     }
 
     public static void main(String[] args) {
