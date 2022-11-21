@@ -35,10 +35,11 @@ NOTE: These issues are mainly regarding the GUI so there will not be any tests t
 
 <!-- Roadmap Ahead -->
 ## Roadmap Ahead
-For the next milestone, more features will be added. To begin, all test cases will pass. Thus, 
-the scoring as well as placements of the letters work correctly. Furthermore,
-blank tiles, premium squares and an AI will be implemented. Finally, any issues in Milestone 2
-will be addressed and fixed. 
+For the next milestone, more features will be added. To begin, a multiple level redo/undo will be available
+to allow players to convert back and forth to and from different versions of the board throughout the game. 
+Furthermore, the players will be allowed to save and reload their game.
+Finally, the board will be customizable meaning that the special tiles can be placed according to the players preference.
+
 
 <!-- Authors -->
 ## Authors
