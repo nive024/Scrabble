@@ -18,6 +18,7 @@ public class ScrabbleController implements ActionListener {
     private ScrabbleFrame frame;
     private ArrayList<JButton> wordButtons;
     private String currentLetter;
+    private AI AI;
 
     /**
      * Contructor to initialize the controller
@@ -62,6 +63,10 @@ public class ScrabbleController implements ActionListener {
                 //model.placeWord(getWord());
                 model.checkPlay();
                 frame.getTurn().setText(model.getCurrentPlayer().getName()+"'s turn");
+                if (frame.getBot() && frame.getTurn().getText().equals("Bot's turns")){
+                    AI.playTurn();
+                }
+
             } catch (IndexOutOfBoundsException exception) {
                 JOptionPane.showMessageDialog(null, "You didn't place any letters. If you want to skip" +
                         " your turn, click Skip Turn");
