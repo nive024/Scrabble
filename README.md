@@ -10,7 +10,7 @@
 <!-- Project's Objectives -->
 ## Project's Objectives
 
-The current project has finished Milestone 2. Throughout the project, the objective of the first milestone is to create a text-based playable version of Scrabble. The
+The current project has finished Milestone 3. Throughout the project, the objective of the first milestone is to create a text-based playable version of Scrabble. The
 second milestone's objective is to make a GUI-based version of the game. The third milestone's
 objective is to add additional features. Finally, the fourth milestone's objective is to add more
 features.
@@ -18,7 +18,7 @@ features.
 
 <!-- Known Issues -->
 ## Known Issues
-These are the known issues that will be fixed in Milestone 3:
+These are the known issues that will be fixed in Milestone 4:
 * There are no multiplier tiles on the board.
 * Some placements may cause index out of bounds (i think fixed)
 * If letters are placed all over the board (like adding to multiple words at once) the logic will break and might be counted as floating. (should be fixed)
