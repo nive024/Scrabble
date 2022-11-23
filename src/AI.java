@@ -46,26 +46,34 @@ public class AI extends Player {
 
                     // Checks which tiles around the letter is empty
                     if (board[i + 1][j].equals("_")) {
-                        vertical = false;
-                        horizontal = true;
+                        vertical = true;
+                        horizontal = false;
+//                        vertical = false;
+//                        horizontal = true;
                         emptyDown = true;
                         count++;
                     }
                     if (board[i - 1][j].equals("_")) {
-                        vertical = false;
-                        horizontal = true;
+                        vertical = true;
+                        horizontal = false;
+//                        vertical = false;
+//                        horizontal = true;
                         emptyUp = true;
                         count++;
                     }
                     if (board[i][j + 1].equals("_")) {
-                        horizontal = false;
-                        vertical = true;
+                        vertical = false;
+                        horizontal = true;
+//                        horizontal = false;
+//                        vertical = true;
                         emptyRight = true;
                         count++;
                     }
                     if (board[i][j - 1].equals("_")) {
-                        horizontal = false;
-                        vertical = true;
+                        vertical = false;
+                        horizontal = true;
+//                        horizontal = false;
+//                        vertical = true;
                         emptyLeft = true;
                         count++;
                     }
@@ -75,10 +83,10 @@ public class AI extends Player {
                         String temp = board[i][j];
 
                         temp = makeWord(temp);
-                        System.out.println(temp);
+                        System.out.println("temp " + temp);
                         if (temp.charAt(0) == board[i][j].charAt(0)) {
                             if (vertical) {
-                                board[i][j + 1] = (String.valueOf(temp.toCharArray()[1]));
+                                board[i][j + 1] = (temp.charAt(1) + "");
                                 gb.checkPlay();
                             } else if (horizontal) {
                                 board[i + 1][j] = (String.valueOf(temp.toCharArray()[1]));
@@ -103,33 +111,42 @@ public class AI extends Player {
 
     private String makeWord(String letter) {
 
-
+        String word = "";
         //Letters l = new Letters(letter.charAt(0));
         //letters.add(l);
+        System.out.println(horizontal);
+        System.out.println(vertical);
+        System.out.println(emptyDown);
+        System.out.println(emptyLeft);
+        System.out.println(emptyUp);
+        System.out.println(emptyRight);
         String[] words = new String[100];
         for (int i = 0; i < 7; i++) {
             if (horizontal && emptyDown || vertical && emptyRight) {
-                String word = letter + letters.get(i);
+                word = letter + letters.get(i).getLetter();
                 if (gb.checkWord(word)) {
+                    System.out.println(word);
                     return word;
                 }
             }
-            if (horizontal && emptyUp || vertical && emptyLeft) {
-                String word = letters.get(i) + letter;
+            else if (horizontal && emptyUp || vertical && emptyLeft) {
+                word = letters.get(i).getLetter() + letter;
                 if (gb.checkWord(word)) {
+                    System.out.println(word);
                     return word;
                 }
             }
-            if (horizontal && emptyDown && vertical && emptyRight){
-                String word = letter + letters.get(i);
+            if (gb.isBoardEmpty()) {
+                word = letter + letters.get(i).getLetter();
                 if (gb.checkWord(word)) {
+                    System.out.println(word);
                     return word;
                 }
             }
 
         }
-
-        return "";
+        System.out.println("asdfggfdewedfb " + word);
+        return word;
     }
 }
 
