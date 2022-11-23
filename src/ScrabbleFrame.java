@@ -471,6 +471,8 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         for (int i = 0; i < 15; i++) {
             for (int j = 0; j < 15; j++) {
                 oldGrid[i][j].setText(grid[i][j].getText());
+                System.out.println("ghghghb " + oldGrid[i][j].getText());
+
             }
         }
     }

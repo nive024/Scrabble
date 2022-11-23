@@ -327,13 +327,16 @@ public class GameBoard {
     private void revertStringBoard() {
         for (int k = 0; k < rows; k++) {
             for (int n = 0; n < cols; n++) {
-                if (tileBoard[k][n].isEmpty())
+                if (tileBoard[k][n].isEmpty()) {
                     stringBoard[k][n] = "_";
-                else
+                } else
                     stringBoard[k][n] = tileBoard[k][n].getLetter().getLetter() + "";
+                }
             }
         }
-    }
+//        System.out.println("revert");
+//        printGameStatus();
+
 
     /**
      * Place the word entered by the player p on the board
@@ -576,16 +579,6 @@ public class GameBoard {
         //if it's the first word being placed, then they should get double the points
         System.out.println("Yay! You scored " + (score * wordMultiplier) + " points for " + word);
         return score * wordMultiplier;
-        /**
-        while(i<word.length()){
-            Letters nl = new Letters(word.charAt(i));
-            score += nl.getPointValue(nl.getLetter());
-            i++;
-        }
-        //if it's the first word being placed, then they should get double the points
-        System.out.println("Yay! You scored " + score + " points for " + word);
-        return (isBoardEmpty) ? 2*score : score;
-         */
     }
 
     /**
@@ -775,6 +768,15 @@ public class GameBoard {
         for (ScrabbleView view: views) {
             Collections.sort(players);
             view.endGame(players);
+        }
+    }
+
+    public void setStringBoard(String[][] stringBoard) {
+        this.stringBoard = stringBoard;
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                tileBoard[i][j].placeLetter(new Letters(stringBoard[i][j].toUpperCase().charAt(0)));
+            }
         }
     }
 
