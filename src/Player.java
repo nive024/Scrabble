@@ -27,15 +27,6 @@ public class Player implements Comparable<Player> {
     }
 
     /**
-     * Sets the name of the player.
-     *
-     * @param n The name to set to the players
-     */
-    public void setName(String n){
-        name = n;
-    }
-
-    /**
      * Gets the name of the player.
      *
      * @return the name the of the player

@@ -219,6 +219,9 @@ public class GameBoard {
         return true;
     }
 
+    /**
+     * This method returns the StringBoard to its previous valid state
+     */
     private void revertStringBoard() {
         for (int k = 0; k < rows; k++) {
             for (int n = 0; n < cols; n++) {
@@ -259,6 +262,10 @@ public class GameBoard {
         checkPlay();
     }
 
+    /**
+     * This method checks the validity of the move that was made. It checks the validaty of the word.
+     * As well as that the word was placed on the center tile for the first move.
+     */
     public void checkPlay() {
         if (checkNewWords()) {
             for (String play: wordsAddedThisTurn) {
@@ -466,6 +473,7 @@ public class GameBoard {
     /**
      * This method deals an ArrayList of random Letters. If the currentLetter already contains some letters, 7- the number of current letters are dealt
      * Otherwise, 7 random letters are dealt
+     * @Param playerNumber the index of the current player
      * @return the String representation of all the new letters
      */
     public String deal(int playerNumber){
@@ -634,6 +642,7 @@ public class GameBoard {
             endGame();
         }
     }
+
 
     public void endGame() {
         for (ScrabbleView view: views) {
