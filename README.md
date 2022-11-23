@@ -19,11 +19,6 @@ features (see below in the roadmap section).
 <!-- Known Issues -->
 ## Known Issues
 These are the known issues that will be fixed in Milestone 4:
-* There are no multiplier tiles on the board.
-* Some placements may cause index out of bounds (i think fixed)
-* If letters are placed all over the board (like adding to multiple words at once) the logic will break and might be counted as floating. (should be fixed)
-* If the overlapping letter is not clicked, and the word is invalid, it will remove the wrong number of letters (it is in the rules that the overlapping letter should be clicked). (fixed)
-* Sometimes the error message contains the wrong word/missing letters if player chooses to overlap letters but doesn't click the overlapping letter. (fixed)
 * Sometimes we'll get an error saying we didn't place any letters even if we did.
 * Skip turn doesn't ask if they want to discard any or all letters and provide new ones 
 * Some word get an error saying it doesn't fit there even if it does.
