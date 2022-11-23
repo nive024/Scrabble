@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 
 import static javax.swing.BoxLayout.*;
@@ -35,6 +36,8 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
     private JButton endTurnBtn;
     private JButton playBtn;
 
+    private GameBoard gameBoardModel; //change made
+
     /**
      * Constructor to initialize the JFrame and add the components on to it
      */
@@ -48,7 +51,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         this.setLayout(new BoxLayout(gamePanel, X_AXIS));
 
         //add model
-        GameBoard gameBoardModel = new GameBoard(15, 15);
+        gameBoardModel = new GameBoard(15, 15); //change made
         sc = new ScrabbleController(gameBoardModel, this);
         gameBoardModel.addView(this);
 
@@ -147,8 +150,20 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
             for (int j = 0; j < 15; j++) {
                 JButton b = new JButton("");
                 b.setActionCommand(col+""+row+"");
-                if(count % 2 != 0){
-                    b.setBackground(new Color(120, 190, 232));
+                if(gameBoardModel.getTileBoard()[i][j].redTile()){ // testing
+                    b.setBackground(Color.RED);
+                }
+                else if (gameBoardModel.getTileBoard()[i][j].blueTile()){ // testing
+                    b.setBackground(Color.BLUE);
+                }
+                else if (gameBoardModel.getTileBoard()[i][j].lightBlueTile()){ // testing
+                    b.setBackground(new Color(0,192,255));
+                }
+                else if (gameBoardModel.getTileBoard()[i][j].pinkTile()){ // testing
+                    b.setBackground(Color.PINK);
+                }
+                else if(count % 2 != 0){
+                    b.setBackground(new Color(224, 224, 224));
                 }
                 else{
                     b.setBackground(Color.WHITE);
