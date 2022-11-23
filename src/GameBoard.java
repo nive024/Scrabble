@@ -533,9 +533,14 @@ public class GameBoard {
      * Initializes the Player objects based on the number of players selected
      * @param numPlayers the number of players playing
      */
-    public void addPlayers(int numPlayers) {
+    public void addPlayers(int numPlayers, int bots) {
         for (int i = 0; i < numPlayers; i++) {
             Player p = new Player("Player " + (i+1));
+            players.add(p);
+        }
+        for (int i = 0; i < bots; i++){
+            AI p = new AI("Bot");
+            p.setGameBoard(this);
             players.add(p);
         }
         currentPlayer = players.get(0);

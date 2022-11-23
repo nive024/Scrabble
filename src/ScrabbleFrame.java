@@ -274,11 +274,20 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
      */
     public int getNumberofPlayers() {
         String s = String.valueOf(playerCB.getSelectedItem());
-        if (String.valueOf(botCB.getSelectedItem()).equals("1 bot")){
-            bot = true;
-            return Integer.parseInt(s.charAt(0)+"")+1;
-        }
+
         return Integer.parseInt(s.charAt(0)+"");
+    }
+
+    /**
+     * This method returns the number of bots in the game.
+     * @return the number of bots in the game
+     */
+    public int getNumberofBots() {
+        if (String.valueOf(botCB.getSelectedItem()).equals("1 bot")) {
+            bot = true;
+            return 1;
+        }
+        return 0;
     }
 
     /**
