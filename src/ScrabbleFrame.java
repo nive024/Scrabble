@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 
 import static javax.swing.BoxLayout.*;
@@ -41,6 +42,8 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
     private int height;
     private boolean bot;
 
+    private GameBoard gameBoardModel; //change made
+
     /**
      * Constructor to initialize the JFrame and add the components on to it
      */
@@ -62,7 +65,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         this.setLayout(new BoxLayout(gamePanel, X_AXIS));
 
         //add model
-        GameBoard gameBoardModel = new GameBoard(15, 15);
+        gameBoardModel = new GameBoard(15, 15); //change made
         sc = new ScrabbleController(gameBoardModel, this);
         gameBoardModel.addView(this);
 
@@ -170,8 +173,20 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
             for (int j = 0; j < 15; j++) {
                 JButton b = new JButton("");
                 b.setActionCommand(col+""+row+"");
-                if(count % 2 != 0){
-                    b.setBackground(new Color(120, 190, 232));
+                if(gameBoardModel.getTileBoard()[i][j].redTile()){ // testing
+                    b.setBackground(Color.RED);
+                }
+                else if (gameBoardModel.getTileBoard()[i][j].blueTile()){ // testing
+                    b.setBackground(Color.BLUE);
+                }
+                else if (gameBoardModel.getTileBoard()[i][j].lightBlueTile()){ // testing
+                    b.setBackground(new Color(0,192,255));
+                }
+                else if (gameBoardModel.getTileBoard()[i][j].pinkTile()){ // testing
+                    b.setBackground(Color.PINK);
+                }
+                else if(count % 2 != 0){
+                    b.setBackground(new Color(224, 224, 224));
                 }
                 else{
                     b.setBackground(Color.WHITE);
@@ -332,7 +347,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
     }
 
     /**
-     * if a word is invalid we want to re-enable all the used buttons
+     * If a word is invalid this method re-enables all the used player buttons
      * @param indexOfCurrentPlayer the index of the current player
      */
     @Override
@@ -343,7 +358,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
     }
 
     /**
-     * if an invalid play was made we want to re-enable all the grid buttons that were clicked
+     * If an invalid play is made this method re-enables all the grid buttons that were clicked
      */
     @Override
     public void enableGridButtons(){
@@ -422,6 +437,10 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         }
     }
 
+    /**
+     * This method enables/disables the game components (the grid and the skip button)
+     * @param isEnabled true if we want to enable the components otherwise false
+     */
     @Override
     public void enableGameComponents(boolean isEnabled) {
         for (int i = 0; i < 15; i++) {
@@ -433,12 +452,19 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
 //        endTurnBtn.setEnabled(isEnabled);
     }
 
+    /**
+     * This method enables/disables the player components (the combo box and play button)
+     * @param isEnabled true if we want to enable the components otherwise false
+     */
     @Override
     public void enableChooseNumPlayerComponents(boolean isEnabled) {
         playBtn.setEnabled(isEnabled);
         playerCB.setEnabled(isEnabled);
     }
 
+    /**
+     * This method saves the current status of the grid
+     */
     @Override
     public void saveGridStatus(){
         //copy the contents of grid into oldGrid
@@ -449,6 +475,10 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         }
     }
 
+    /**
+     * This method ends the game. It disables the endTurn button and displays the player's score and winner
+     * @param players all the players in the game
+     */
     @Override
     public void endGame(ArrayList<Player> players) {
         enableGameComponents(false);

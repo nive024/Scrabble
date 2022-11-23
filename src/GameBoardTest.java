@@ -270,7 +270,7 @@ public class GameBoardTest {
     public void addingToExistingScore(){
         gameBoard.placeWord("fire 8h"); // 10 points
         gameBoard.placeWord("tie i7"); // 3 points
-        assertEquals(13, p1.getScore());
+        assertEquals(15, p1.getScore());
     }
 
     @Test
@@ -283,7 +283,7 @@ public class GameBoardTest {
     public void addingASingleLetter(){
         gameBoard.placeWord("fire 8h"); // 10 points
         gameBoard.placeWord("hi i7"); // 5 points
-        assertEquals(15, p1.getScore());
+        assertEquals(19, p1.getScore());
     }
 
 }

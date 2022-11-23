@@ -28,7 +28,8 @@ public class GameBoard {
     private String wordToCheck;
     private ArrayList<String> wordsAddedThisTurn;
     private int numSkips;
-
+    private ArrayList<String> tilesChangedThisTurn;
+    private int currentScore;
     /**
      * Constructor to initialize the game board with the specified columns and rows. Also initializes the first player.
      *
@@ -42,9 +43,11 @@ public class GameBoard {
         wordsAddedThisTurn = new ArrayList<>();
         this.rows = rows;
         this.cols = cols;
+        currentScore = 0;
         numSkips = 0;
         isBoardEmpty = true;
         this.bagOfLetters = new BagOfLetters();
+        tilesChangedThisTurn = new ArrayList<>();
 
         stringBoard = new String[rows][cols];
         tileBoard = new Tile[rows][cols];
@@ -56,11 +59,82 @@ public class GameBoard {
         }
 
         //initialize new tiles on the board
+        //Triple Word Score (redTile())
+        tileBoard[0][0] = new Tile(3, true);
+        tileBoard[0][14] = new Tile(3, true);
+        tileBoard[14][0] = new Tile(3, true);
+        tileBoard[14][14] = new Tile(3, true);
+        tileBoard[14][7] = new Tile(3, true);
+        tileBoard[7][14] = new Tile(3, true);
+        tileBoard[0][7] = new Tile(3, true);
+        tileBoard[7][0] = new Tile(3, true);
+        //Triple Letter Score (blueTile())
+        tileBoard[1][5] = new Tile(3, false);
+        tileBoard[1][9] = new Tile(3, false);
+        tileBoard[5][1] = new Tile(3, false);
+        tileBoard[9][1] = new Tile(3, false);
+        tileBoard[5][5] = new Tile(3, false);
+        tileBoard[5][9] = new Tile(3, false);
+        tileBoard[9][5] = new Tile(3, false);
+        tileBoard[9][9] = new Tile(3, false);
+        tileBoard[13][5] = new Tile(3, false);
+        tileBoard[13][9] = new Tile(3, false);
+        tileBoard[5][13] = new Tile(3, false);
+        tileBoard[9][13] = new Tile(3, false);
+        //Double Letter Score (magentaTile())
+        tileBoard[0][3] = new Tile(2, false);
+        tileBoard[0][11] = new Tile(2, false);
+        tileBoard[2][6] = new Tile(2, false);
+        tileBoard[2][8] = new Tile(2, false);
+        tileBoard[3][0] = new Tile(2, false);
+        tileBoard[3][7] = new Tile(2, false);
+        tileBoard[3][14] = new Tile(2, false);
+        tileBoard[6][2] = new Tile(2, false);
+        tileBoard[6][6] = new Tile(2, false);
+        tileBoard[6][8] = new Tile(2, false);
+        tileBoard[6][12] = new Tile(2, false);
+        tileBoard[7][3] = new Tile(2, false);
+        tileBoard[7][11] = new Tile(2, false);
+        tileBoard[8][2] = new Tile(2, false);
+        tileBoard[8][6] = new Tile(2, false);
+        tileBoard[8][8] = new Tile(2, false);
+        tileBoard[8][12] = new Tile(2, false);
+        tileBoard[11][0] = new Tile(2, false);
+        tileBoard[11][7] = new Tile(2, false);
+        tileBoard[11][14] = new Tile(2, false);
+        tileBoard[12][6] = new Tile(2, false);
+        tileBoard[12][8] = new Tile(2, false);
+        tileBoard[14][3] = new Tile(2, false);
+        tileBoard[14][11] = new Tile(2, false);
+        //Double Word Score (pinkTile())
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                tileBoard[i][j] = new Tile();
+                if (tileBoard[i][j] == null) {
+                    if (i == j){
+                        tileBoard[i][j] = new Tile(2, true);
+                    }
+                }
             }
         }
+        int col = cols - 1;
+        for (int i = 0; i < rows; i++) {
+                if (tileBoard[i][col] == null) {
+                    tileBoard[i][col] = new Tile(2, true);
+                }
+                col--;
+        }
+        //non special tiles
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (tileBoard[i][j] == null) { // line added
+                    tileBoard[i][j] = new Tile();
+                }
+            }
+        }
+    }
+
+    public Tile[][] getTileBoard() {
+        return tileBoard;
     }
 
     /**
@@ -128,6 +202,7 @@ public class GameBoard {
      */
     public boolean checkNewWords() {
         wordsAddedThisTurn.clear();
+
         ArrayList<String> tempNewWords = new ArrayList<>();
         //check the row and col of the word that was just added
         wordToCheck = "";
@@ -137,15 +212,21 @@ public class GameBoard {
             for (int j = 0; j < cols; j++) {
                 if (!(stringBoard[i][j]).equals("_")) {
                     wordToCheck += stringBoard[i][j];
+                    tilesChangedThisTurn.add(i + " " + j);
                     if (place.isEmpty()) {
                         place += (1+i);
                         place += (char)('A'+j);
                     }
                 } else {
+
                     if(wordToCheck.length() > 1) { //if it's word longer than 1 letter
                         if (checkWord(wordToCheck)) { //if it's a real word
                             wordToCheck += " " + place;
-                            if ((!isFloating(wordToCheck, place)) || (isBoardEmpty)) {
+                            if ((!isFloating(wordToCheck.split(" ")[0], place)) || (isBoardEmpty)) {
+                                if (wordsOnBoard.add(wordToCheck)) {
+                                    currentScore += calculateScore(wordToCheck.split(" ")[0]);
+                                    wordsAddedThisTurn.add(wordToCheck);
+                                }
                                 tempNewWords.add(wordToCheck); //add to arrayList bc we don't know if valid placement or not
                             }
                         } else {
@@ -154,10 +235,21 @@ public class GameBoard {
                             return false;
                         }
                     } else if (wordToCheck.length() == 1) {
-                        tempNewWords.add(wordToCheck + " " + place);
+                        if (isFloating(wordToCheck, place)) {
+                            System.out.println(wordToCheck.toUpperCase() + " is floating, invalid play");
+                            for (ScrabbleView v : views) {
+                                v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
+                                v.enableGridButtons();
+                                v.displayErrorMessage(wordToCheck, "floating");
+                            }
+                            revertStringBoard();
+                            return true;
+                        }
                     }
                     wordToCheck = "";
+                    tilesChangedThisTurn.clear();
                     place = "";
+
                 }
 
             }
@@ -169,6 +261,7 @@ public class GameBoard {
             for (int j = 0; j < rows; j++) {
                 if (!(stringBoard[j][i]).equals("_")) {
                     wordToCheck += stringBoard[j][i];
+                    tilesChangedThisTurn.add(j + " " + i);
                     if (place.isEmpty()) {
                         place += (char)('A'+i);
                         place += (j+1);
@@ -177,8 +270,14 @@ public class GameBoard {
                     if(wordToCheck.length() > 1) { //if the word is more than 1 letter
                         if (checkWord(wordToCheck)) { //if it's an actual word
                             wordToCheck += " " + place;
-                            if ((!isFloating(wordToCheck, place)) || (isBoardEmpty)) {
+                            if ((!isFloating(wordToCheck.split(" ")[0], place)) || (isBoardEmpty)) {
+                                if (wordsOnBoard.add(wordToCheck)) {
+                                    currentScore += calculateScore(wordToCheck.split(" ")[0]);
+                                    System.out.println("current score " + calculateScore(wordToCheck.split(" ")[0]));
+                                    wordsAddedThisTurn.add(wordToCheck);
+                                }
                                 tempNewWords.add(wordToCheck); //add to arrayList bc we don't know if valid placement or not
+
                             }
                         } else {
                             System.out.println("Invalid placement: " + wordToCheck + " is not a valid word.");
@@ -186,39 +285,45 @@ public class GameBoard {
                             return false;
                         }
                     } else if (wordToCheck.length() == 1) {
-                        tempNewWords.add(wordToCheck + " " + place);
+                        if (isFloating(wordToCheck, place)) {
+                            System.out.println(wordToCheck.toUpperCase() + " is floating, invalid play");
+                            for (ScrabbleView v : views) {
+                                v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
+                                v.enableGridButtons();
+                                v.displayErrorMessage(wordToCheck, "floating");
+                            }
+                            revertStringBoard();
+                            return true;
+                        }
                     }
                     wordToCheck = "";
+                    tilesChangedThisTurn.clear();
                     place="";
                 }
 
             }
         }
-        for (String s: tempNewWords) { //only add the word if the placement of the new word is valid
-            if (wordsOnBoard.add(s)) {
-                String word = s.split(" ")[0];
-                place = s.split(" ")[1];
-
-                if (word.length() == 1) {
-                    if (isFloating(word, place)) {
-                        System.out.println(word.toUpperCase() + " is floating, invalid play");
-                        for (ScrabbleView v : views) {
-                            v.enableUsedPlayerButtons(players.indexOf(currentPlayer));
-                            v.enableGridButtons();
-                            v.displayErrorMessage(word, "floating");
-                        }
-                        revertStringBoard();
-                        return true;
-                    }
-                } else {
-                    wordsAddedThisTurn.add(s);
-                }
-
-            }
-        }
+//        for (String s: tempNewWords) { //only add the word if the placement of the new word is valid
+//            if (wordsOnBoard.add(s)) {
+//                String word = s.split(" ")[0];
+//                place = s.split(" ")[1];
+//
+//                if (word.length() == 1) {
+//
+//                } else {
+//                    //calcualte score
+//                    currentScore += calculateScore(s);
+//                    wordsAddedThisTurn.add(s);
+//                }
+//
+//            }
+//        }
         return true;
     }
 
+    /**
+     * This method returns the StringBoard to its previous valid state
+     */
     private void revertStringBoard() {
         for (int k = 0; k < rows; k++) {
             for (int n = 0; n < cols; n++) {
@@ -246,13 +351,15 @@ public class GameBoard {
             for (int i = 0; i < word.length(); i++) {
                 if (stringBoard[row][i + col].equals("_") || (stringBoard[row][i + col].equals(word.charAt(i) + ""))) {
                     stringBoard[row][i + col] = word.charAt(i) + "";
+                    tilesChangedThisTurn.add(row + " " + (i+col));
                 }
             }
         } else {
-            System.out.println(play);
             for (int i = 0; i < word.length(); i++) {
                 if (stringBoard[i + row][col].equals("_") || (stringBoard[i + row][col].equals(word.charAt(i) + ""))) {
                     stringBoard[i + row][col] = word.charAt(i) + "";
+                    String place2 = (i+row) + " " + col;
+                    tilesChangedThisTurn.add(place2);
                 }
             }
         }
@@ -260,12 +367,15 @@ public class GameBoard {
     }
 
     /**
-     * Checks if the play was a valid play
+     * This method checks the validity of the move that was made. It checks the validaty of the word.
+     * As well as that the word was placed on the center tile for the first move.
      * @return true if the play is valid, false otherwise
      */
     public boolean checkPlay() {
+        currentScore = 0;
         if (checkNewWords()) {
             for (String play: wordsAddedThisTurn) {
+
                 String word = play.split(" ")[0];
                 String place = play.split(" ")[1];
                 //if this is the first word played, check to see if it's on the center square
@@ -288,9 +398,7 @@ public class GameBoard {
                     }
                 }
 
-                for (String words: wordsAddedThisTurn) {
-                    this.currentPlayer.setScore(calculateScore(words.split(" ")[0]));
-                }
+                this.currentPlayer.setScore(currentScore);
 
                 deal(players.indexOf(currentPlayer));
                 for (ScrabbleView v : views) {
@@ -327,6 +435,7 @@ public class GameBoard {
         int col = place.toUpperCase().charAt(0) - 'A';
         int row = place.toUpperCase().charAt(1) - 'A';
         stringBoard[row][col] = letter;
+        tilesChangedThisTurn.add(row + " " + col);
         currentPlayer.removeLetter(new Letters(letter.charAt(0)));
     }
 
@@ -448,23 +557,41 @@ public class GameBoard {
      * @return the integer value of the score of the word
      */
     private int calculateScore(String word){
-        int score=0;
-        int i = 0;
+        int score = 0;
+        int wordMultiplier = 1;
 
+        //int i = 0;
+        for(String t: tilesChangedThisTurn){
+            String[] coordinates = t.split(" ");
+            int row = Integer.parseInt(coordinates[0]);
+            int col = Integer.parseInt(coordinates[1]);
+            Tile tile = tileBoard[row][col];
+            score += tile.getTileScore(stringBoard[row][col].charAt(0));
+            if (tile.isWordPointMultiplier()){
+                wordMultiplier *= tile.getPointMultiplier();
+            }
+            tile.tileMultiplierUsed();
+        }
+
+        //if it's the first word being placed, then they should get double the points
+        System.out.println("Yay! You scored " + (score * wordMultiplier) + " points for " + word);
+        return score * wordMultiplier;
+        /**
         while(i<word.length()){
             Letters nl = new Letters(word.charAt(i));
             score += nl.getPointValue(nl.getLetter());
             i++;
         }
-
         //if it's the first word being placed, then they should get double the points
         System.out.println("Yay! You scored " + score + " points for " + word);
         return (isBoardEmpty) ? 2*score : score;
+         */
     }
 
     /**
      * This method deals an ArrayList of random Letters. If the currentLetter already contains some letters, 7- the number of current letters are dealt
      * Otherwise, 7 random letters are dealt
+     * @Param playerNumber the index of the current player
      * @return the String representation of all the new letters
      */
     public String deal(int playerNumber){
@@ -499,7 +626,6 @@ public class GameBoard {
             view.updatePlayersLetters(s, playerNumber);
         }
 
-        System.out.println("am: " + amountToDeal + " s: " + s);
         return s;
     }
 

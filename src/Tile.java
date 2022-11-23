@@ -11,10 +11,11 @@
  */
 public class Tile {
 
-    Letters letter;
-    int pointMultiplier;
-    boolean wordPointMultiplier;
+    private Letters letter;
 
+    private int pointMultiplier;
+
+    private boolean wordPointMultiplier;
     /**
      * default constructor that will create tiles with a point multiplier value of 1. The wordPointMultiplier
      * is set to false.
@@ -54,6 +55,14 @@ public class Tile {
         this.wordPointMultiplier = wordPointMultiplier;
     }
 
+    public int getPointMultiplier() {
+        return pointMultiplier;
+    }
+
+    public boolean isWordPointMultiplier() {
+        return wordPointMultiplier;
+    }
+
     /**
      * After a multiplier tile is used, The tiles multiplier is set to 1.
      */
@@ -85,4 +94,27 @@ public class Tile {
      * @return The letter placed on the tile.
      */
     public Letters getLetter() { return letter; }
+
+    public boolean redTile() {
+        return (this.getPointMultiplier() == 3 && this.isWordPointMultiplier());
+    }
+    public boolean blueTile() {
+        return (this.getPointMultiplier() == 3 && !this.isWordPointMultiplier());
+    }
+    public boolean lightBlueTile() {
+        return (this.getPointMultiplier() == 2 && !this.isWordPointMultiplier());
+    }
+    public boolean pinkTile() {
+        return (this.getPointMultiplier() == 2 && this.isWordPointMultiplier());
+    }
+    public int getTileScore(char c ){
+        int score;
+        Letters l = new Letters(c);
+        if (!wordPointMultiplier)
+            score = l.getPointValue(l.getLetter()) * this.getPointMultiplier();
+        else {
+            score = l.getPointValue(l.getLetter());
+        }
+        return score;
+    }
 }
