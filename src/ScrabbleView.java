@@ -30,4 +30,6 @@ public interface ScrabbleView {
 
     void endGame(ArrayList<Player> players);
 
+    void updateBoard(String[][] board);
+
 }

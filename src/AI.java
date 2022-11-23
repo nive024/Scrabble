@@ -33,7 +33,7 @@ public class AI extends Player {
         String word;
         board = gb.getStringBoard();
         if (gb.isBoardEmpty()){
-            word = makeWord(letters.get(0).toString());
+            word = makeWord(letters.get(0).toString(), "");
             board[7][7] = String.valueOf(word.toCharArray()[0]);
 
             gb.checkPlay();
@@ -46,34 +46,46 @@ public class AI extends Player {
 
                     // Checks which tiles around the letter is empty
                     if (board[i + 1][j].equals("_")) {
-                        vertical = true;
-                        horizontal = false;
-//                        vertical = false;
-//                        horizontal = true;
+//                        vertical = true;
+//                        horizontal = false;
+                        System.out.println(1);
+                        if(board[i + 1][j].equals("_") && board[i - 1][j].equals("_")){
+                            vertical = false;
+                            horizontal = true;
+                        }
                         emptyDown = true;
                         count++;
                     }
                     if (board[i - 1][j].equals("_")) {
-                        vertical = true;
-                        horizontal = false;
-//                        vertical = false;
-//                        horizontal = true;
+                        System.out.println(2);
+//                        vertical = true;
+//                        horizontal = false;
+                        if(board[i + 1][j].equals("_") && board[i - 1][j].equals("_")){
+                            vertical = false;
+                            horizontal = true;
+                        }
                         emptyUp = true;
                         count++;
                     }
                     if (board[i][j + 1].equals("_")) {
-                        vertical = false;
-                        horizontal = true;
-//                        horizontal = false;
-//                        vertical = true;
+                        System.out.println(3);
+//                        vertical = false;
+//                        horizontal = true;
+                        if(board[i][j + 1].equals("_") && board[i][j - 1].equals("_")){
+                            vertical = true;
+                            horizontal = false;
+                        }
                         emptyRight = true;
                         count++;
                     }
                     if (board[i][j - 1].equals("_")) {
-                        vertical = false;
-                        horizontal = true;
-//                        horizontal = false;
-//                        vertical = true;
+                        System.out.println(4);
+//                        vertical = false;
+//                        horizontal = true;
+                        if(board[i][j + 1].equals("_") && board[i][j - 1].equals("_")){
+                            vertical = true;
+                            horizontal = false;
+                        }
                         emptyLeft = true;
                         count++;
                     }
@@ -82,38 +94,84 @@ public class AI extends Player {
                     if (count == 3) {
                         String temp = board[i][j];
 
-                        temp = makeWord(temp);
+                        temp = makeWord(temp, "");
                         System.out.println("temp " + temp);
                         if (temp.charAt(0) == board[i][j].charAt(0)) {
                             if (vertical) {
                                 board[i][j + 1] = (temp.charAt(1) + "");
-                                gb.checkPlay();
+                                if (validWord()){
+                                    System.out.println(11);
+                                    if (checkNewLetter(i, j+1) != 3){
+                                        temp = makeWord(board[i][j], temp);
+                                    }
+                                    return;
+                                }
                             } else if (horizontal) {
                                 board[i + 1][j] = (String.valueOf(temp.toCharArray()[1]));
-                                gb.checkPlay();
+
+                                if (validWord()){
+                                    System.out.println(22);
+                                    if (checkNewLetter(i+1, j) != 3){
+                                        temp = makeWord(board[i][j], temp);
+                                    }
+                                    //gb.setTileBoard(board);
+                                    return;
+                                }
                             }
                         } else if (temp.toCharArray()[0] != board[i][j].toCharArray()[0]) {
                             if (vertical) {
                                 board[i][j - 1] = (String.valueOf(temp.toCharArray()[1]));
-                                gb.checkPlay();
+                                if (validWord()){
+                                    System.out.println(33);
+                                   // gb.setTileBoard(board);
+                                    if (checkNewLetter(i, j-1) != 3){
+                                        temp = makeWord(board[i][j], temp);
+                                    }
+                                    return;
+                                }
                             } else if (horizontal) {
                                 board[i - 1][j] = (String.valueOf(temp.toCharArray()[1]));
-                                gb.checkPlay();
+                                if (validWord()){
+                                    System.out.println(44);
+                                    if (checkNewLetter(i-1, j) != 3){
+                                        temp = makeWord(board[i][j], temp);
+                                    }
+                                    //gb.setTileBoard(board);
+                                    return;
+                                }
                             }
                         }
                     }
                 }
             }
         }
-//        return word;
-
     }
 
-    private String makeWord(String letter) {
+    private boolean validWord() {
+        if (gb.checkPlay() && gb.checkNewWords()) {
+            for (ScrabbleView view: gb.getViews()){
+                view.updateBoard(board);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private int checkNewLetter(int i, int j){
+        int count = 0;
+        if (!board[i][j].equals("_")) {count++;}
+        if (board[i - 1][j].equals("_")) {count++;}
+        if (board[i][j + 1].equals("_")) {count++;}
+        if (board[i][j - 1].equals("_")) {count++;}
+
+        return count;
+    }
+
+
+
+    private String makeWord(String letter, String invalidWord) {
 
         String word = "";
-        //Letters l = new Letters(letter.charAt(0));
-        //letters.add(l);
         System.out.println(horizontal);
         System.out.println(vertical);
         System.out.println(emptyDown);
@@ -143,9 +201,8 @@ public class AI extends Player {
                     return word;
                 }
             }
-
         }
-        System.out.println("asdfggfdewedfb " + word);
+
         return word;
     }
 }

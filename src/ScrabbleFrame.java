@@ -463,10 +463,24 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         this.dispose();
     }
 
-    public JButton[][] getGrid(){
-        return grid;
-    }
+    /**
+     *  Updates the letters on the board after the AI played
+     * @param board
+     */
+    @Override
+    public void updateBoard(String[][] board){
+        for (int i = 0; i < 15; i++){
+            for (int j = 0; j < 15; j++){
+                if (board[i][j].equals("_")){
+                    grid[i][j].setText("");
+                }
+                else{
+                    grid[i][j].setText(board[i][j]);
+                }
 
+            }
+        }
+    }
     public static void main(String[] args) {
         new ScrabbleFrame();
     }

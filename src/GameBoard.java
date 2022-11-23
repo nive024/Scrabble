@@ -259,7 +259,11 @@ public class GameBoard {
         checkPlay();
     }
 
-    public void checkPlay() {
+    /**
+     * Checks if the play was a valid play
+     * @return true if the play is valid, false otherwise
+     */
+    public boolean checkPlay() {
         if (checkNewWords()) {
             for (String play: wordsAddedThisTurn) {
                 String word = play.split(" ")[0];
@@ -274,7 +278,7 @@ public class GameBoard {
                         }
                         revertStringBoard();
                         wordsOnBoard.clear();
-                        return;
+                        return false;
                     }
                 }
 
@@ -303,11 +307,13 @@ public class GameBoard {
                 v.displayErrorMessage(wordToCheck, "iv");
             }
             revertStringBoard();
+            return false;
         }
 
         printGameStatus();
         getNextPlayer();
         numSkips = 0;
+        return true;
     }
     /**
      * Adds a letter on the GUI
@@ -322,13 +328,6 @@ public class GameBoard {
         int row = place.toUpperCase().charAt(1) - 'A';
         stringBoard[row][col] = letter;
         currentPlayer.removeLetter(new Letters(letter.charAt(0)));
-//        for (int i = 0; i < rows; i++) {
-//            for (int j = 0; j < cols; j++) {
-//                System.out.print(stringBoard[i][j] + " ");
-//            }
-//            System.out.println();
-//        }
-//        System.out.println();
     }
 
     /**
@@ -635,6 +634,17 @@ public class GameBoard {
         }
     }
 
+    /**
+     * Get the views
+     * @return the views
+     */
+    public List<ScrabbleView> getViews() {
+        return views;
+    }
+
+    /**
+     * ends the game
+     */
     public void endGame() {
         for (ScrabbleView view: views) {
             Collections.sort(players);
