@@ -91,6 +91,11 @@ public class Letters {
     }
 
 
+    /**
+     * This method overrides the Object equals() method to compare two letters using their Letter.
+     * @param obj the Letter object that we want to compare
+     * @return true if the objects are equal otherwise false
+     */
     @Override
     public boolean equals(Object obj) {
         if(this == obj) {

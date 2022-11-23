@@ -18,6 +18,7 @@ public class ScrabbleController implements ActionListener {
     private ScrabbleFrame frame;
     private ArrayList<JButton> wordButtons;
     private String currentLetter;
+    private AI AI;
 
     /**
      * Contructor to initialize the controller
@@ -40,8 +41,9 @@ public class ScrabbleController implements ActionListener {
         JButton b = (JButton) e.getSource();
         //if the player presses play then get num players and tell model
         if (b.getText().equals("Play")) {
-            model.addPlayers(frame.getNumberofPlayers());
-            for (int i = 0; i < frame.getNumberofPlayers(); i++){
+            model.addPlayers(frame.getNumberofPlayers(),frame.getNumberofBots());
+            for (int i = 0; i < frame.getNumberofPlayers()+frame.getNumberofBots(); i++){
+                System.out.println(frame.getNumberofPlayers()+frame.getNumberofBots());
                 model.deal(i);
             }
             frame.disableOtherPlayers(0);
@@ -58,14 +60,18 @@ public class ScrabbleController implements ActionListener {
 
         //check if its end turn
         else if (b.getText().equals("End Turn")) {
-            try {
+            //try {
                 //model.placeWord(getWord());
                 model.checkPlay();
                 frame.getTurn().setText(model.getCurrentPlayer().getName()+"'s turn");
-            } catch (IndexOutOfBoundsException exception) {
-                JOptionPane.showMessageDialog(null, "You didn't place any letters. If you want to skip" +
-                        " your turn, click Skip Turn");
-            }
+                if (frame.getBot() && model.getCurrentPlayer().getName().equals("Bot")){
+                    ((AI)model.getCurrentPlayer()).playTurn();
+                }
+
+            //} catch (IndexOutOfBoundsException exception) {
+                //JOptionPane.showMessageDialog(null, "You didn't place any letters. If you want to skip" +
+                      //  " your turn, click Skip Turn");
+            //}
         }
 
         else if (b.getText().equals("Skip Turn")){

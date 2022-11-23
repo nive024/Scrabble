@@ -27,6 +27,8 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
     private String[] numberofPlayers = {"1 player", "2 players", "3 players", "4 players"};
     private ScrabbleController sc;
     private JComboBox<String> playerCB;
+    private JComboBox<String> botCB;
+    private String[] botPlayers = {"No bot","1 bot"};
     private JButton[][] grid;
     private JButton[][] oldGrid;
     private ArrayList<JButton>[] playersButtonsArray;
@@ -35,6 +37,10 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
     private JButton skipBtn;
     private JButton endTurnBtn;
     private JButton playBtn;
+    private JPanel botPanel;
+    private int width;
+    private int height;
+    private boolean bot;
 
     private GameBoard gameBoardModel; //change made
 
@@ -43,6 +49,14 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
      */
     public ScrabbleFrame(){
         super("Scrabble");
+
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        width = (int) screenSize.getWidth();
+        height = (int) screenSize.getHeight();
+        System.out.println(width);
+        System.out.println(height);
+
+
         grid = new JButton[15][15];
         oldGrid = new JButton[15][15];
         playerPanelArray = new ArrayList<>();
@@ -57,7 +71,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
 
         // Panel for the title label
         JPanel titlePanel = new JPanel();
-        titlePanel.setLayout(new GridLayout(2,0));
+        titlePanel.setLayout(new GridLayout(3,0));
         JLabel titleLabel = new JLabel("SCRABBLE");
         titleLabel.setFont(new Font("Verdana", Font.PLAIN, 30));
         titleLabel.setHorizontalAlignment(JLabel.CENTER);
@@ -88,11 +102,20 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         skipBtn.addActionListener(sc);
         numberPlayersPanel.add(skipBtn);
 
+        botPanel = new JPanel();
+        JLabel botLabel = new JLabel("Please click bot if you would like to play with a bot: ");
+        botLabel.setFont(new Font("Verdana", Font.PLAIN, 15));
+        botCB = new JComboBox<>(botPlayers);
+        botPanel.add(botLabel);
+        botPanel.add(botCB);
+        titlePanel.add(botPanel);
+
 
         // Panel for the buttons of the board
         buttonsPanel = new JPanel();
         buttonsPanel.setLayout(new GridLayout(15,15));
-        buttonsPanel.setPreferredSize(new Dimension(375,375));
+        //buttonsPanel.setSize(width/3, height);
+        buttonsPanel.setPreferredSize(new Dimension(width/2, (int) (height/1.5)));
         addButtons();
 
         // Panel for the X axis letter labels
@@ -125,7 +148,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         enableGameComponents(false);
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(800,800);
+        this.setSize(width/3,height);
         this.setResizable(true);
         this.setVisible(true);
 
@@ -266,7 +289,28 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
      */
     public int getNumberofPlayers() {
         String s = String.valueOf(playerCB.getSelectedItem());
+
         return Integer.parseInt(s.charAt(0)+"");
+    }
+
+    /**
+     * This method returns the number of bots in the game.
+     * @return the number of bots in the game
+     */
+    public int getNumberofBots() {
+        if (String.valueOf(botCB.getSelectedItem()).equals("1 bot")) {
+            bot = true;
+            return 1;
+        }
+        return 0;
+    }
+
+    /**
+     * Returns if the bot is activated or not
+     * @return true if the bot is activated, false otherwise
+     */
+    public boolean getBot(){
+        return bot;
     }
 
     /**
@@ -303,7 +347,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
     }
 
     /**
-     * if a word is invalid we want to re-enable all the used buttons
+     * If a word is invalid this method re-enables all the used player buttons
      * @param indexOfCurrentPlayer the index of the current player
      */
     @Override
@@ -314,7 +358,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
     }
 
     /**
-     * if an invalid play was made we want to re-enable all the grid buttons that were clicked
+     * If an invalid play is made this method re-enables all the grid buttons that were clicked
      */
     @Override
     public void enableGridButtons(){
@@ -393,6 +437,10 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         }
     }
 
+    /**
+     * This method enables/disables the game components (the grid and the skip button)
+     * @param isEnabled true if we want to enable the components otherwise false
+     */
     @Override
     public void enableGameComponents(boolean isEnabled) {
         for (int i = 0; i < 15; i++) {
@@ -404,12 +452,19 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
 //        endTurnBtn.setEnabled(isEnabled);
     }
 
+    /**
+     * This method enables/disables the player components (the combo box and play button)
+     * @param isEnabled true if we want to enable the components otherwise false
+     */
     @Override
     public void enableChooseNumPlayerComponents(boolean isEnabled) {
         playBtn.setEnabled(isEnabled);
         playerCB.setEnabled(isEnabled);
     }
 
+    /**
+     * This method saves the current status of the grid
+     */
     @Override
     public void saveGridStatus(){
         //copy the contents of grid into oldGrid
@@ -420,6 +475,10 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         }
     }
 
+    /**
+     * This method ends the game. It disables the endTurn button and displays the player's score and winner
+     * @param players all the players in the game
+     */
     @Override
     public void endGame(ArrayList<Player> players) {
         enableGameComponents(false);
@@ -432,6 +491,10 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         }
         JOptionPane.showMessageDialog(null, playerScoreLabels, "Score Board", JOptionPane.INFORMATION_MESSAGE);
         this.dispose();
+    }
+
+    public JButton[][] getGrid(){
+        return grid;
     }
 
     public static void main(String[] args) {
