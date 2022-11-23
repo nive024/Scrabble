@@ -13,7 +13,7 @@
 The current project has finished Milestone 3. Throughout the project, the objective of the first milestone is to create a text-based playable version of Scrabble. The
 second milestone's objective is to make a GUI-based version of the game. The third milestone's
 objective is to add additional features. The additional features that have been added on this milestone is an AI, and tile multipliers. Finally, the fourth milestone's objective is to add more
-features.
+features (see below in the roadmap section).
 
 
 <!-- Known Issues -->
