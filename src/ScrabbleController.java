@@ -19,6 +19,9 @@ public class ScrabbleController implements ActionListener {
     private ArrayList<JButton> wordButtons;
     private String currentLetter;
     private AI AI;
+    private boolean custom;
+    JTextField nameField;
+    JLabel nameLabel;
 
     /**
      * Contructor to initialize the controller
@@ -29,6 +32,9 @@ public class ScrabbleController implements ActionListener {
         model = g;
         this.frame = frame;
         currentLetter = "";
+        custom = false;
+        nameField = new JTextField();
+        nameLabel = new JLabel("Please enter the name of the file");
         wordButtons = new ArrayList<>();
     }
 
@@ -47,6 +53,8 @@ public class ScrabbleController implements ActionListener {
                 model.deal(i);
             }
             frame.disableOtherPlayers(0);
+            if (!custom)
+                model.setTileBoard(false, "");
             frame.getTurn().setText(model.getCurrentPlayer().getName()+"'s turn");
         }
 
@@ -89,8 +97,15 @@ public class ScrabbleController implements ActionListener {
         // if the player clicks redo, it will bring the board back to the gameboard before the undo
         else if (b.getText().equals("Redo")){
             System.out.println("REDO");
+        } else if (b.getText().equals("Custom")) {
+            JComponent[] inputs = new JComponent[] {nameLabel, nameField};
+            int result = JOptionPane.showConfirmDialog(null, inputs, "Import AddressBook", JOptionPane.OK_CANCEL_OPTION);
+            if (result == JOptionPane.OK_OPTION) {
+                model.setTileBoard(true, nameField.getText());
+                nameField.setText("");
+            }
+            custom = true;
         }
-
         //else it has to be a grid button
         else {
             if (!b.getText().equals("")) {

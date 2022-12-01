@@ -1,3 +1,9 @@
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.*;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -58,72 +64,72 @@ public class GameBoard {
             }
         }
 
-        //initialize new tiles on the board
-        //Triple Word Score (redTile())
-        tileBoard[0][0] = new Tile(3, true);
-        tileBoard[0][14] = new Tile(3, true);
-        tileBoard[14][0] = new Tile(3, true);
-        tileBoard[14][14] = new Tile(3, true);
-        tileBoard[14][7] = new Tile(3, true);
-        tileBoard[7][14] = new Tile(3, true);
-        tileBoard[0][7] = new Tile(3, true);
-        tileBoard[7][0] = new Tile(3, true);
-        //Triple Letter Score (blueTile())
-        tileBoard[1][5] = new Tile(3, false);
-        tileBoard[1][9] = new Tile(3, false);
-        tileBoard[5][1] = new Tile(3, false);
-        tileBoard[9][1] = new Tile(3, false);
-        tileBoard[5][5] = new Tile(3, false);
-        tileBoard[5][9] = new Tile(3, false);
-        tileBoard[9][5] = new Tile(3, false);
-        tileBoard[9][9] = new Tile(3, false);
-        tileBoard[13][5] = new Tile(3, false);
-        tileBoard[13][9] = new Tile(3, false);
-        tileBoard[5][13] = new Tile(3, false);
-        tileBoard[9][13] = new Tile(3, false);
-        //Double Letter Score (magentaTile())
-        tileBoard[0][3] = new Tile(2, false);
-        tileBoard[0][11] = new Tile(2, false);
-        tileBoard[2][6] = new Tile(2, false);
-        tileBoard[2][8] = new Tile(2, false);
-        tileBoard[3][0] = new Tile(2, false);
-        tileBoard[3][7] = new Tile(2, false);
-        tileBoard[3][14] = new Tile(2, false);
-        tileBoard[6][2] = new Tile(2, false);
-        tileBoard[6][6] = new Tile(2, false);
-        tileBoard[6][8] = new Tile(2, false);
-        tileBoard[6][12] = new Tile(2, false);
-        tileBoard[7][3] = new Tile(2, false);
-        tileBoard[7][11] = new Tile(2, false);
-        tileBoard[8][2] = new Tile(2, false);
-        tileBoard[8][6] = new Tile(2, false);
-        tileBoard[8][8] = new Tile(2, false);
-        tileBoard[8][12] = new Tile(2, false);
-        tileBoard[11][0] = new Tile(2, false);
-        tileBoard[11][7] = new Tile(2, false);
-        tileBoard[11][14] = new Tile(2, false);
-        tileBoard[12][6] = new Tile(2, false);
-        tileBoard[12][8] = new Tile(2, false);
-        tileBoard[14][3] = new Tile(2, false);
-        tileBoard[14][11] = new Tile(2, false);
-        //Double Word Score (pinkTile())
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                if (tileBoard[i][j] == null) {
-                    if (i == j){
-                        tileBoard[i][j] = new Tile(2, true);
-                    }
-                }
-            }
-        }
-        int col = cols - 1;
-        for (int i = 0; i < rows; i++) {
-                if (tileBoard[i][col] == null) {
-                    tileBoard[i][col] = new Tile(2, true);
-                }
-                col--;
-        }
-        //non special tiles
+//        //initialize new tiles on the board
+//        //Triple Word Score (redTile())
+//        tileBoard[0][0] = new Tile(3, true);
+//        tileBoard[0][14] = new Tile(3, true);
+//        tileBoard[14][0] = new Tile(3, true);
+//        tileBoard[14][14] = new Tile(3, true);
+//        tileBoard[14][7] = new Tile(3, true);
+//        tileBoard[7][14] = new Tile(3, true);
+//        tileBoard[0][7] = new Tile(3, true);
+//        tileBoard[7][0] = new Tile(3, true);
+//        //Triple Letter Score (blueTile())
+//        tileBoard[1][5] = new Tile(3, false);
+//        tileBoard[1][9] = new Tile(3, false);
+//        tileBoard[5][1] = new Tile(3, false);
+//        tileBoard[9][1] = new Tile(3, false);
+//        tileBoard[5][5] = new Tile(3, false);
+//        tileBoard[5][9] = new Tile(3, false);
+//        tileBoard[9][5] = new Tile(3, false);
+//        tileBoard[9][9] = new Tile(3, false);
+//        tileBoard[13][5] = new Tile(3, false);
+//        tileBoard[13][9] = new Tile(3, false);
+//        tileBoard[5][13] = new Tile(3, false);
+//        tileBoard[9][13] = new Tile(3, false);
+//        //Double Letter Score (magentaTile())
+//        tileBoard[0][3] = new Tile(2, false);
+//        tileBoard[0][11] = new Tile(2, false);
+//        tileBoard[2][6] = new Tile(2, false);
+//        tileBoard[2][8] = new Tile(2, false);
+//        tileBoard[3][0] = new Tile(2, false);
+//        tileBoard[3][7] = new Tile(2, false);
+//        tileBoard[3][14] = new Tile(2, false);
+//        tileBoard[6][2] = new Tile(2, false);
+//        tileBoard[6][6] = new Tile(2, false);
+//        tileBoard[6][8] = new Tile(2, false);
+//        tileBoard[6][12] = new Tile(2, false);
+//        tileBoard[7][3] = new Tile(2, false);
+//        tileBoard[7][11] = new Tile(2, false);
+//        tileBoard[8][2] = new Tile(2, false);
+//        tileBoard[8][6] = new Tile(2, false);
+//        tileBoard[8][8] = new Tile(2, false);
+//        tileBoard[8][12] = new Tile(2, false);
+//        tileBoard[11][0] = new Tile(2, false);
+//        tileBoard[11][7] = new Tile(2, false);
+//        tileBoard[11][14] = new Tile(2, false);
+//        tileBoard[12][6] = new Tile(2, false);
+//        tileBoard[12][8] = new Tile(2, false);
+//        tileBoard[14][3] = new Tile(2, false);
+//        tileBoard[14][11] = new Tile(2, false);
+//        //Double Word Score (pinkTile())
+//        for (int i = 0; i < rows; i++) {
+//            for (int j = 0; j < cols; j++) {
+//                if (tileBoard[i][j] == null) {
+//                    if (i == j){
+//                        tileBoard[i][j] = new Tile(2, true);
+//                    }
+//                }
+//            }
+//        }
+//        int col = cols - 1;
+//        for (int i = 0; i < rows; i++) {
+//                if (tileBoard[i][col] == null) {
+//                    tileBoard[i][col] = new Tile(2, true);
+//                }
+//                col--;
+//        }
+//        //non special tiles
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 if (tileBoard[i][j] == null) { // line added
@@ -776,6 +782,133 @@ public class GameBoard {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 tileBoard[i][j].placeLetter(new Letters(stringBoard[i][j].toUpperCase().charAt(0)));
+            }
+        }
+    }
+
+    public void setTileBoard(boolean custom, String filename) {
+        if (custom) {
+            //first initialize to all normal tiles
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    if (tileBoard[i][j] == null) { // line added
+                        tileBoard[i][j] = new Tile();
+                    }
+                }
+            }
+            File f = new File(filename);
+            try {
+                constructCustomBoard(f);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            for (ScrabbleView view: views) {
+                view.setCustomBoard();
+            }
+        } else {
+            //initialize new tiles on the board
+            //Triple Word Score (redTile())
+            tileBoard[0][0] = new Tile(3, true);
+            tileBoard[0][14] = new Tile(3, true);
+            tileBoard[14][0] = new Tile(3, true);
+            tileBoard[14][14] = new Tile(3, true);
+            tileBoard[14][7] = new Tile(3, true);
+            tileBoard[7][14] = new Tile(3, true);
+            tileBoard[0][7] = new Tile(3, true);
+            tileBoard[7][0] = new Tile(3, true);
+            //Triple Letter Score (blueTile())
+            tileBoard[1][5] = new Tile(3, false);
+            tileBoard[1][9] = new Tile(3, false);
+            tileBoard[5][1] = new Tile(3, false);
+            tileBoard[9][1] = new Tile(3, false);
+            tileBoard[5][5] = new Tile(3, false);
+            tileBoard[5][9] = new Tile(3, false);
+            tileBoard[9][5] = new Tile(3, false);
+            tileBoard[9][9] = new Tile(3, false);
+            tileBoard[13][5] = new Tile(3, false);
+            tileBoard[13][9] = new Tile(3, false);
+            tileBoard[5][13] = new Tile(3, false);
+            tileBoard[9][13] = new Tile(3, false);
+            //Double Letter Score (magentaTile())
+            tileBoard[0][3] = new Tile(2, false);
+            tileBoard[0][11] = new Tile(2, false);
+            tileBoard[2][6] = new Tile(2, false);
+            tileBoard[2][8] = new Tile(2, false);
+            tileBoard[3][0] = new Tile(2, false);
+            tileBoard[3][7] = new Tile(2, false);
+            tileBoard[3][14] = new Tile(2, false);
+            tileBoard[6][2] = new Tile(2, false);
+            tileBoard[6][6] = new Tile(2, false);
+            tileBoard[6][8] = new Tile(2, false);
+            tileBoard[6][12] = new Tile(2, false);
+            tileBoard[7][3] = new Tile(2, false);
+            tileBoard[7][11] = new Tile(2, false);
+            tileBoard[8][2] = new Tile(2, false);
+            tileBoard[8][6] = new Tile(2, false);
+            tileBoard[8][8] = new Tile(2, false);
+            tileBoard[8][12] = new Tile(2, false);
+            tileBoard[11][0] = new Tile(2, false);
+            tileBoard[11][7] = new Tile(2, false);
+            tileBoard[11][14] = new Tile(2, false);
+            tileBoard[12][6] = new Tile(2, false);
+            tileBoard[12][8] = new Tile(2, false);
+            tileBoard[14][3] = new Tile(2, false);
+            tileBoard[14][11] = new Tile(2, false);
+            //Double Word Score (pinkTile())
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    if (tileBoard[i][j].getPointMultiplier() == 1) {
+                        if (i == j){
+                            tileBoard[i][j] = new Tile(2, true);
+                        }
+                    }
+                }
+            }
+            int col = cols - 1;
+            for (int i = 0; i < rows; i++) {
+                if (tileBoard[i][col].getPointMultiplier() == 1) {
+                    tileBoard[i][col] = new Tile(2, true);
+                }
+                col--;
+            }
+            //non special tiles
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    if (tileBoard[i][j] == null) { // line added
+                        tileBoard[i][j] = new Tile();
+                    }
+                }
+            }
+            for (ScrabbleView view: views) {
+                view.setCustomBoard();
+            }
+        }
+    }
+
+    public void constructCustomBoard(File f) throws ParserConfigurationException, IOException, SAXException {
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        Document doc = documentBuilder.parse(f);
+        int row = 0;
+        int col, multiplier;
+        boolean wordMultiplier;
+
+        NodeList list = doc.getDocumentElement().getChildNodes();
+        for(int i = 0; i < list.getLength(); i++){
+            Node n = list.item(i);
+            NodeList list2 = n.getChildNodes();
+            if ((n.getNodeType() == Node.ELEMENT_NODE) && (n.getNodeName() != null)) {
+                row = Integer.parseInt(n.getAttributes().getNamedItem("index").getNodeValue());
+            }
+            for (int j = 0; j < list2.getLength(); j++) {
+                Node n2 = list2.item(j);
+                if ((n2.getNodeType() == Node.ELEMENT_NODE) && (n2.getNodeName() != null)) {
+                    col = Integer.parseInt(n2.getAttributes().getNamedItem("index").getNodeValue());
+                    multiplier = Integer.parseInt(n2.getAttributes().getNamedItem("multiplier").getNodeValue());
+                    wordMultiplier = n2.getAttributes().getNamedItem("type").getNodeValue().equals("word");
+                    tileBoard[row][col] = new Tile(multiplier, wordMultiplier);
+                }
+
             }
         }
     }

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<tileboard>
+	<row index="5">
+		<col index="5" multiplier="2" type="word"> </col>
+		<col index="7" multiplier="2" type="word"> </col>
+	</row>
+
+	<row index="7">
+		<col index="5" multiplier="2" type="word"> </col>
+		<col index="7" multiplier="2" type="word"> </col>
+	</row>
+
+	<row index="8">
+		<col index="5" multiplier="2" type="word"> </col>
+		<col index="6" multiplier="2" type="word"> </col>
+		<col index="7" multiplier="2" type="word"> </col>
+	</row>
+
+</tileboard>

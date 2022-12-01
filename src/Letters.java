@@ -15,7 +15,7 @@ public class Letters {
         Alphabet.put('C', 3);
         Alphabet.put('D', 2);
         Alphabet.put('E', 1);
-        Alphabet.put('F', 2);
+        Alphabet.put('F', 4);
         Alphabet.put('G', 2);
         Alphabet.put('H', 4);
         Alphabet.put('I', 1);

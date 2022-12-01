@@ -32,4 +32,6 @@ public interface ScrabbleView {
 
     void updateBoard(String[][] board);
 
+    void setCustomBoard();
+
 }

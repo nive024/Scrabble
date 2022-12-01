@@ -30,7 +30,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
     private ArrayList<JPanel> playerPanelArray;
     private JLabel turn;
     private JButton endTurnBtn, playBtn, skipBtn;
-    private JButton undoBtn, redoBtn;
+    private JButton undoBtn, redoBtn, customBtn;
     private int width, height;
     private boolean bot;
     private GameBoard gameBoardModel; //change made
@@ -112,7 +112,12 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         redoBtn.addActionListener(sc);
         redoBtn.setEnabled(false);
         movePanel.add(redoBtn);
+        customBtn = new JButton("Custom");
+        customBtn.addActionListener(sc);
+        playBtn.setActionCommand("");
+        movePanel.add(customBtn);
         titlePanel.add(movePanel);
+
 
 
         // Panel for the buttons of the board
@@ -466,6 +471,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
     public void enableChooseNumPlayerComponents(boolean isEnabled) {
         playBtn.setEnabled(isEnabled);
         playerCB.setEnabled(isEnabled);
+        customBtn.setEnabled(isEnabled);
     }
 
     /**
@@ -517,6 +523,32 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
             }
         }
     }
+
+    @Override
+    public void setCustomBoard() {
+        System.out.println(gameBoardModel.getTileBoard()[0][1].isWordPointMultiplier());
+        int count = 1;
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < 15; j++) {
+                JButton b = grid[i][j];
+                if (gameBoardModel.getTileBoard()[i][j].redTile()) { // testing
+                    b.setBackground(Color.RED);
+                } else if (gameBoardModel.getTileBoard()[i][j].blueTile()) { // testing
+                    b.setBackground(Color.BLUE);
+                } else if (gameBoardModel.getTileBoard()[i][j].lightBlueTile()) { // testing
+                    b.setBackground(new Color(0, 192, 255));
+                } else if (gameBoardModel.getTileBoard()[i][j].pinkTile()) { // testing
+                    b.setBackground(Color.PINK);
+                } else if (count % 2 != 0) {
+                    b.setBackground(new Color(224, 224, 224));
+                } else {
+                    b.setBackground(Color.WHITE);
+                }
+                count++;
+            }
+        }
+    }
+
     public static void main(String[] args) {
         new ScrabbleFrame();
     }
