@@ -74,10 +74,21 @@ public class ScrabbleController implements ActionListener {
             //}
         }
 
+        // if the player clicks skip turn, it will move the turn to the next player
         else if (b.getText().equals("Skip Turn")){
             model.turnSkipped();
             model.getNextPlayer();
             frame.getTurn().setText(model.getCurrentPlayer().getName()+"'s turn");
+        }
+
+        // if the player clicks undo, it will bring the board back to the latest gameboard before the move was done
+        else if (b.getText().equals("Undo")){
+            System.out.println("UNDO");
+        }
+
+        // if the player clicks redo, it will bring the board back to the gameboard before the undo
+        else if (b.getText().equals("Redo")){
+            System.out.println("REDO");
         }
 
         //else it has to be a grid button

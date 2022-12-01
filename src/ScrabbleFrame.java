@@ -18,30 +18,21 @@ import static javax.swing.BoxLayout.*;
 
 public class ScrabbleFrame extends JFrame implements ScrabbleView{
 
-    private JPanel buttonsPanel;
-    private JPanel xPanel;
-    private JPanel yPanel;
-    private JPanel playerPanel;
-    private JPanel gameboardPanel;
-    private JPanel gamePanel;
+    private JPanel buttonsPanel, xPanel, yPanel, botPanel, movePanel;
+    private JPanel playerPanel, gameboardPanel, gamePanel;
     private String[] numberofPlayers = {"1 player", "2 players", "3 players", "4 players"};
     private ScrabbleController sc;
-    private JComboBox<String> playerCB;
-    private JComboBox<String> botCB;
+    private JComboBox<String> playerCB, botCB;
     private String[] botPlayers = {"No bot","1 bot"};
     private JButton[][] grid;
     private JButton[][] oldGrid;
     private ArrayList<JButton>[] playersButtonsArray;
     private ArrayList<JPanel> playerPanelArray;
     private JLabel turn;
-    private JButton skipBtn;
-    private JButton endTurnBtn;
-    private JButton playBtn;
-    private JPanel botPanel;
-    private int width;
-    private int height;
+    private JButton endTurnBtn, playBtn, skipBtn;
+    private JButton undoBtn, redoBtn;
+    private int width, height;
     private boolean bot;
-
     private GameBoard gameBoardModel; //change made
 
     /**
@@ -71,7 +62,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
 
         // Panel for the title label
         JPanel titlePanel = new JPanel();
-        titlePanel.setLayout(new GridLayout(3,0));
+        titlePanel.setLayout(new GridLayout(4,0));
         JLabel titleLabel = new JLabel("SCRABBLE");
         titleLabel.setFont(new Font("Verdana", Font.PLAIN, 30));
         titleLabel.setHorizontalAlignment(JLabel.CENTER);
@@ -82,25 +73,12 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         JLabel numberLabel = new JLabel("Please enter the number of players: ");
         numberLabel.setFont(new Font("Verdana", Font.PLAIN, 15));
         playerCB = new JComboBox<>(numberofPlayers);
-        playBtn = new JButton("Play");
-        playBtn.addActionListener(sc);
-        playBtn.setActionCommand("");
         numberPlayersPanel.add(numberLabel);
         numberPlayersPanel.add(playerCB);
-        numberPlayersPanel.add(playBtn);
         titlePanel.add(numberPlayersPanel);
-        endTurnBtn = new JButton("End Turn");
-        endTurnBtn.setActionCommand("");
-        endTurnBtn.addActionListener(sc);
-        numberPlayersPanel.add(endTurnBtn);
-        endTurnBtn.setEnabled(false);
         turn = new JLabel("");
         numberLabel.setFont(new Font("Verdana", Font.PLAIN, 15));
         numberPlayersPanel.add(turn);
-        skipBtn = new JButton("Skip Turn");
-        skipBtn.setActionCommand("");
-        skipBtn.addActionListener(sc);
-        numberPlayersPanel.add(skipBtn);
 
         botPanel = new JPanel();
         JLabel botLabel = new JLabel("Please click bot if you would like to play with a bot: ");
@@ -109,6 +87,32 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         botPanel.add(botLabel);
         botPanel.add(botCB);
         titlePanel.add(botPanel);
+
+        movePanel = new JPanel();
+        playBtn = new JButton("Play");
+        playBtn.addActionListener(sc);
+        playBtn.setActionCommand("");
+        movePanel.add(playBtn);
+        endTurnBtn = new JButton("End Turn");
+        endTurnBtn.setActionCommand("");
+        endTurnBtn.addActionListener(sc);
+        movePanel.add(endTurnBtn);
+        endTurnBtn.setEnabled(false);
+        skipBtn = new JButton("Skip Turn");
+        skipBtn.setActionCommand("");
+        skipBtn.addActionListener(sc);
+        movePanel.add(skipBtn);
+        undoBtn = new JButton("Undo");
+        undoBtn.setActionCommand("");
+        undoBtn.addActionListener(sc);
+        undoBtn.setEnabled(false);
+        movePanel.add(undoBtn);
+        redoBtn = new JButton("Redo");
+        redoBtn.setActionCommand("");
+        redoBtn.addActionListener(sc);
+        redoBtn.setEnabled(false);
+        movePanel.add(redoBtn);
+        titlePanel.add(movePanel);
 
 
         // Panel for the buttons of the board
@@ -449,6 +453,8 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
             }
         }
         skipBtn.setEnabled(isEnabled);
+        undoBtn.setEnabled(isEnabled);
+        redoBtn.setEnabled(isEnabled);
 //        endTurnBtn.setEnabled(isEnabled);
     }
 
