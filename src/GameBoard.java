@@ -178,12 +178,8 @@ public class GameBoard {
         if ((word.equals("BE")) || (word.equals("IS") || (word.equals("WAS"))))
             return true;
         try {
-            HttpURLConnection connection = null;
-            URL url = new URL("https://api.dictionaryapi.dev/api/v2/entries/en/" + word);
-            //We will probably use this API for future milestones since some basic words are missing
-            //from the above API, but I haven't gotten the key for it yet.
-//            URL url = new URL("https://api.wordnik.com/v4/word.json/" + word + "/definitions?limit=200&includeRelated=false&sourceDictionaries=all&useCanonical=false&includeTags=false&api_key=YOURAPIKEY");
-
+            HttpURLConnection connection;
+            URL url = new URL("https://api.wordnik.com/v4/word.json/" + word + "/definitions?limit=200&includeRelated=false&sourceDictionaries=all&useCanonical=false&includeTags=false&api_key=k5mz36509sb4q1eyagr8gq1juoxjfpwjt1gki6kcxo13p30p5");
             connection = (HttpURLConnection) url.openConnection();
 
             InputStream is = connection.getInputStream();
