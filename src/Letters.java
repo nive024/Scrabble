@@ -107,4 +107,9 @@ public class Letters {
         }
 
     }
+
+    @Override
+    public String toString(){
+        return Letter + "";
+    }
 }

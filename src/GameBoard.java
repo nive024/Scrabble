@@ -36,6 +36,8 @@ public class GameBoard {
     private int numSkips;
     private ArrayList<String> tilesChangedThisTurn;
     private int currentScore;
+
+    private int numBots;
     /**
      * Constructor to initialize the game board with the specified columns and rows. Also initializes the first player.
      *
@@ -43,7 +45,6 @@ public class GameBoard {
      * @param cols The number of rows on the board
      */
     public GameBoard (int rows, int cols) {
-        players = new ArrayList<>();
         views = new ArrayList<>();
         wordsOnBoard = new HashSet<>();
         wordsAddedThisTurn = new ArrayList<>();
@@ -149,7 +150,6 @@ public class GameBoard {
      */
     public void setCurrentPlayer(Player currentPlayer) {
         this.currentPlayer = currentPlayer;
-        players.add(currentPlayer);
     }
 
     /**
@@ -160,6 +160,13 @@ public class GameBoard {
         return this.currentPlayer;
     }
 
+    /**
+     * Gets the players arraylist
+     * @return players; The arraylist of all the players
+     */
+    public ArrayList<Player> getPlayers(){
+        return players;
+    }
     /**
      * Add view to model for MVC structure
      * @param view the view that will be added to this model
@@ -654,6 +661,7 @@ public class GameBoard {
      * @param numPlayers the number of players playing
      */
     public void addPlayers(int numPlayers, int bots) {
+        players = new ArrayList<>();
         for (int i = 0; i < numPlayers; i++) {
             Player p = new Player("Player " + (i+1));
             players.add(p);
@@ -909,4 +917,170 @@ public class GameBoard {
         }
     }
 
+
+    public void serialize(String fileName) throws IOException {
+
+        File file = new File(fileName);
+        FileOutputStream fos = new FileOutputStream(file);
+        String s= toString();
+
+        byte[] bytes = s.getBytes();
+        fos.write(bytes);
+
+//        try{
+//            ObjectOutputStream os = new ObjectOutputStream( new FileOutputStream(fileName));
+//            System.out.println("GameBoard: " +  this);
+//            os.writeObject(this);
+//            os.close();
+//        }
+//        catch(FileNotFoundException e){
+//
+//        }
+//        catch(IOException io){
+//
+//        }
+    }
+
+    public void unserialize(String fileName) throws FileNotFoundException, UnsupportedEncodingException {
+
+        // GameBoard gm = new GameBoard(15,15);
+        String data="";
+
+        int i =0;
+
+        FileInputStream fis = new FileInputStream(fileName);
+        InputStreamReader is = new InputStreamReader(fis, "UTF-8");
+        try(BufferedReader buffer = new BufferedReader(is)){
+
+            while((data = buffer.readLine()) != null ){
+                int stringCounter=0;
+                if(data.contains("#")){
+                    loadPlayers(data);
+                }
+                else{
+                    System.out.println(data.length());
+                    while (stringCounter < data.length()) {
+                        for (int j = 0; j < 15; j++) {
+                            if (data.charAt(stringCounter) != ' ' && data.charAt(stringCounter) != '_') {
+                                getStringBoard()[i][j] = data.charAt(stringCounter) + "";
+                            }
+                            else{
+                                getStringBoard()[i][j] = "_";
+                            }
+                            stringCounter++;
+                        }
+                        i++;
+                    }
+                }
+            }
+            loadTileBoard();
+            System.out.println("GM:\n " + toString());
+            printGameStatus();
+            for(ScrabbleView v: views){
+                v.loadGame(this);
+            }
+            //this = gm;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+//
+//        GameBoard gm = null;
+//        try{
+//            ObjectInputStream ois = new ObjectInputStream( new FileInputStream(fileName));
+//            gm =  (GameBoard) ois.readObject();
+//            //System.out.println(ois.readObject());
+//            ois.close();
+//        }
+//        catch(FileNotFoundException e){
+//
+//        }
+//        catch(IOException | ClassNotFoundException io){
+//
+//        }
+//        System.out.println(gm);
+//        return;
+    }
+
+    private void loadTileBoard() {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (stringBoard[i][j] == "_") {
+                    tileBoard[i][j] = new Tile();
+                } else {
+                    tileBoard[i][j].placeLetter(new Letters(stringBoard[i][j].toUpperCase().charAt(0)));
+                }
+            }
+        }
+    }
+
+    private void loadPlayers(String data){
+        int n =0;
+        Scanner scan = new Scanner(data).useDelimiter("#");
+        int numPlayers = Integer.parseInt(scan.next());
+        int numBots = Integer.parseInt(scan.next());
+        addPlayers(numPlayers, numBots);
+        while(scan.hasNext()){
+            for( ;n< numPlayers + numBots; n++){
+                players.get(n).setName(scan.next());
+                players.get(n).setScore(Integer.parseInt(scan.next()));
+                String[] letters = scan.next().split(",");
+                ArrayList<Letters> newLetters = new ArrayList<>();
+                for(int l =0; l<7; l++){
+                    System.out.println(letters[l].charAt(0));
+                    newLetters.add(new Letters(letters[l].charAt(0)));
+                }
+                players.get(n).setLetters(newLetters);
+            }
+            setCurrentPlayer(players.get(Integer.parseInt(scan.next())));
+        }
+        System.out.println("Current Player: " + getCurrentPlayer());
+        System.out.println("###");
+
+        if(numBots !=0){
+            AI ai = (AI) players.get(players.size()-1);
+            ArrayList<Letters> let = players.get(players.size()-1).getLetters();
+            for(int i=0; i<7; i++){
+                ai.getLetter().add(let.get(i));
+            }
+        }
+        //break;
+    }
+
+    public void setNumBots(int numBot){
+        numBots = numBot;
+    }
+    @Override
+    public String toString(){
+        String str ="";
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < 15; j++) {
+                String s = getStringBoard()[i][j];
+                if (s.isEmpty())
+                    str += "_";
+                else
+                    str += s;
+            }
+            str += "\n";
+        }
+        str+= "\n";
+
+        //getPlayers score
+        if(numBots ==0){
+            str += "#" + players.size() + "#" + numBots;
+        }
+        else{
+            str += "#" + (players.size()-1) + "#" + numBots;
+        }
+
+        for(Player p: players){
+            str+= p.toString();
+        }
+        str+= "#" + players.indexOf(getCurrentPlayer());
+
+        return str;
+    }
+
 }
+
+

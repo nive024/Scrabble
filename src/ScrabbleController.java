@@ -1,3 +1,6 @@
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -105,6 +108,23 @@ public class ScrabbleController implements ActionListener {
                 nameField.setText("");
             }
             custom = true;
+        }
+        else if(b.getText().equals("Save")){
+            try {
+                model.serialize(JOptionPane.showInputDialog("Enter the name of the file you want to save to"));
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+
+        else if(b.getText().equals("Load")) {
+            try {
+                model.unserialize(JOptionPane.showInputDialog("Enter the name of the file you want to load"));
+            } catch (FileNotFoundException ex) {
+                throw new RuntimeException(ex);
+            } catch (UnsupportedEncodingException ex) {
+                throw new RuntimeException(ex);
+            }
         }
         //else it has to be a grid button
         else {

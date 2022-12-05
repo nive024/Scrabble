@@ -1,3 +1,4 @@
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -9,7 +10,7 @@ import java.util.*;
  * @author Rimsha Atif
  */
 
-public class Player implements Comparable<Player> {
+public class Player implements Comparable<Player>, Serializable {
 
     private String name;
     private int score;
@@ -62,6 +63,10 @@ public class Player implements Comparable<Player> {
         return letters;
     }
 
+    public void setLetters(ArrayList<Letters> l){
+        letters = l;
+    }
+
     /**
      * Adds a letter to the players letters
      *
@@ -69,6 +74,10 @@ public class Player implements Comparable<Player> {
      */
     public void addLetter(Letters l){
         letters.add(l);
+    }
+
+    public void setName(String name){
+        this.name = name;
     }
 
     /**
@@ -88,6 +97,25 @@ public class Player implements Comparable<Player> {
     @Override
     public int compareTo(Player p) {
         return Integer.compare(p.getScore(), score);
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        Player p = (Player) obj;
+        if(p.getName().equals(this.getName())){
+            return true;
+        }
+        return false;
+
+    }
+    @Override
+    public String toString(){
+        String s="#" + getName() + "#" + getScore() + "#";
+        for(Letters l: letters){
+            s+= l.getLetter() + ",";
+        }
+        return s;
+
     }
 }
 
