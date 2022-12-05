@@ -55,7 +55,7 @@ public class GameBoard {
         isBoardEmpty = true;
         this.bagOfLetters = new BagOfLetters();
         tilesChangedThisTurn = new ArrayList<>();
-
+        players = new ArrayList<>();
         stringBoard = new String[rows][cols];
         tileBoard = new Tile[rows][cols];
         //initialize places in the board
@@ -186,7 +186,9 @@ public class GameBoard {
             return true;
         try {
             HttpURLConnection connection;
-            URL url = new URL("https://api.wordnik.com/v4/word.json/" + word + "/definitions?limit=200&includeRelated=false&sourceDictionaries=all&useCanonical=false&includeTags=false&api_key=k5mz36509sb4q1eyagr8gq1juoxjfpwjt1gki6kcxo13p30p5");
+            URL url = new URL("https://api.dictionaryapi.dev/api/v2/entries/en/" + word.toLowerCase());
+
+            //URL url = new URL("https://api.wordnik.com/v4/word.json/" + word.toLowerCase() + "/definitions?limit=200&includeRelated=false&sourceDictionaries=all&useCanonical=false&includeTags=false&api_key=k5mz36509sb4q1eyagr8gq1juoxjfpwjt1gki6kcxo13p30p5");
             connection = (HttpURLConnection) url.openConnection();
 
             InputStream is = connection.getInputStream();
@@ -1079,6 +1081,13 @@ public class GameBoard {
         str+= "#" + players.indexOf(getCurrentPlayer());
 
         return str;
+    }
+
+    /**
+     * Used for testing purposes
+     */
+    public void addPlayer(Player p) {
+        players.add(p);
     }
 
 }
