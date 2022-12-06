@@ -435,6 +435,7 @@ public class GameBoard {
         printGameStatus();
         getNextPlayer();
         numSkips = 0;
+        saveTileBoardXML(new File("testet"));
         return true;
     }
     /**
@@ -1081,6 +1082,32 @@ public class GameBoard {
         str+= "#" + players.indexOf(getCurrentPlayer());
 
         return str;
+    }
+
+    /**
+     * Saves the current tileBoard into XML format - used for deserialization
+     */
+    private void saveTileBoardXML(File f) {
+        StringBuilder returnStr = new StringBuilder();
+        returnStr.append("<?xml version=\"1.0\"?>\n");
+        returnStr.append("<tileBoard>\n");
+        for (int i = 0; i < rows; i++) {
+            returnStr.append(("<row index=\"" + i + "\"" + ">\n").indent(4));
+            for (int j = 0; j < cols; j++) {
+                String type = tileBoard[i][j].isWordPointMultiplier() ? "word" : "letter";
+                returnStr.append(("<col index=\""+j+"\" multiplier=\"" + tileBoard[i][j].getPointMultiplier()+"\" type=\"" + type + "\"> </col>\n").indent(8));
+            }
+            returnStr.append("</row>\n");
+        }
+        returnStr.append("</tileBoard>");
+
+        try {
+            try (PrintStream out = new PrintStream(new FileOutputStream(f))) {
+                out.print(returnStr);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
