@@ -186,7 +186,8 @@ public class GameBoard {
             return true;
         try {
             HttpURLConnection connection;
-            URL url = new URL("https://api.wordnik.com/v4/word.json/" + word + "/definitions?limit=200&includeRelated=false&sourceDictionaries=all&useCanonical=false&includeTags=false&api_key=k5mz36509sb4q1eyagr8gq1juoxjfpwjt1gki6kcxo13p30p5");
+            URL url = new URL("https://api.dictionaryapi.dev/api/v2/entries/en/" + word.toLowerCase());
+            //URL url = new URL("https://api.wordnik.com/v4/word.json/" + word.toLowerCase() + "/definitions?limit=200&includeRelated=false&sourceDictionaries=all&useCanonical=false&includeTags=false&api_key=k5mz36509sb4q1eyagr8gq1juoxjfpwjt1gki6kcxo13p30p5");
             connection = (HttpURLConnection) url.openConnection();
 
             InputStream is = connection.getInputStream();
@@ -919,10 +920,17 @@ public class GameBoard {
 
 
     public void serialize(String fileName) throws IOException {
+        String xmlFile = fileName + "XML";
+        saveTileBoardXML(new File(xmlFile));
+        //saveTileBoardXML(new File(xmlFile));
+        // saveTileBoardXML(xmlfile);
 
         File file = new File(fileName);
         FileOutputStream fos = new FileOutputStream(file);
+
+
         String s= toString();
+
 
         byte[] bytes = s.getBytes();
         fos.write(bytes);
@@ -941,7 +949,10 @@ public class GameBoard {
 //        }
     }
 
-    public void unserialize(String fileName) throws FileNotFoundException, UnsupportedEncodingException {
+    public void unserialize(String fileName) throws IOException, ParserConfigurationException, SAXException {
+        String xmlFile = fileName + "XML";
+        //File f = new File(xmlFile);
+        setTileBoard(true, xmlFile);
 
         // GameBoard gm = new GameBoard(15,15);
         String data="";
@@ -956,10 +967,15 @@ public class GameBoard {
                 int stringCounter=0;
                 if(data.contains("#")){
                     loadPlayers(data);
+                    stringCounter= 16;
+                }
+                if(data.contains("/")){
+                    loadWordsOnBoard(data);
+                    stringCounter=16;
                 }
                 else{
                     System.out.println(data.length());
-                    while (stringCounter < data.length()) {
+                    while (stringCounter < 15) {
                         for (int j = 0; j < 15; j++) {
                             if (data.charAt(stringCounter) != ' ' && data.charAt(stringCounter) != '_') {
                                 getStringBoard()[i][j] = data.charAt(stringCounter) + "";
@@ -1001,7 +1017,6 @@ public class GameBoard {
 //        System.out.println(gm);
 //        return;
     }
-
     private void loadTileBoard() {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
@@ -1014,6 +1029,17 @@ public class GameBoard {
         }
     }
 
+    private void loadWordsOnBoard(String data){
+        wordsOnBoard.clear();
+        Scanner scan = new Scanner(data).useDelimiter("/");
+        while(scan.hasNext()){
+            wordsOnBoard.add(scan.next());
+        }
+        for(String s: wordsOnBoard){
+            System.out.println("Print: " + s);
+        }
+
+    }
     private void loadPlayers(String data){
         int n =0;
         Scanner scan = new Scanner(data).useDelimiter("#");
@@ -1063,7 +1089,6 @@ public class GameBoard {
             }
             str += "\n";
         }
-        str+= "\n";
 
         //getPlayers score
         if(numBots ==0){
@@ -1078,9 +1103,50 @@ public class GameBoard {
         }
         str+= "#" + players.indexOf(getCurrentPlayer());
 
+        str += "\n/";
+
+        for(String s:  wordsOnBoard){
+            str+= s+ "/";
+        }
+
         return str;
     }
 
+    /**
+     * Saves the current tileBoard into XML format - used for deserialization
+     */
+    private void saveTileBoardXML(File f) {
+        StringBuilder returnStr = new StringBuilder();
+        returnStr.append("<?xml version=\"1.0\"?>\n");
+        returnStr.append("<tileBoard>\n");
+        for (int i = 0; i < rows; i++) {
+            returnStr.append(("<row index=\"" + i + "\"" + ">\n").indent(4));
+            for (int j = 0; j < cols; j++) {
+                String type = tileBoard[i][j].isWordPointMultiplier() ? "word" : "letter";
+                returnStr.append(("<col index=\""+j+"\" multiplier=\"" + tileBoard[i][j].getPointMultiplier()+"\" type=\"" + type + "\"> </col>\n").indent(8));
+            }
+            returnStr.append("</row>\n");
+        }
+        returnStr.append("</tileBoard>");
+
+        try {
+            try (PrintStream out = new PrintStream(new FileOutputStream(f))) {
+                out.print(returnStr);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Used for testing purposes
+     */
+    public void addPlayer(Player p) {
+        players.add(p);
+    }
+
 }
+
+
 
 

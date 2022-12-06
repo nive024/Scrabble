@@ -7,6 +7,8 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.SAXException;
 
 /**
  * The ScrabbleController class represents all the user input logic. It is the controller in the MVC
@@ -23,6 +25,8 @@ public class ScrabbleController implements ActionListener {
     private String currentLetter;
     private AI AI;
     private boolean custom;
+
+    private boolean play;
     JTextField nameField;
     JLabel nameLabel;
 
@@ -39,6 +43,7 @@ public class ScrabbleController implements ActionListener {
         nameField = new JTextField();
         nameLabel = new JLabel("Please enter the name of the file");
         wordButtons = new ArrayList<>();
+        play = false;
     }
 
     /**
@@ -50,6 +55,7 @@ public class ScrabbleController implements ActionListener {
         JButton b = (JButton) e.getSource();
         //if the player presses play then get num players and tell model
         if (b.getText().equals("Play")) {
+            play = true;
             model.addPlayers(frame.getNumberofPlayers(),frame.getNumberofBots());
             for (int i = 0; i < frame.getNumberofPlayers()+frame.getNumberofBots(); i++){
                 System.out.println(frame.getNumberofPlayers()+frame.getNumberofBots());
@@ -109,11 +115,16 @@ public class ScrabbleController implements ActionListener {
             }
             custom = true;
         }
-        else if(b.getText().equals("Save")){
-            try {
-                model.serialize(JOptionPane.showInputDialog("Enter the name of the file you want to save to"));
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
+        else if(b.getText().equals("Save")) {
+            if (play) {
+                try {
+                    model.serialize(JOptionPane.showInputDialog("Enter the name of the file you want to save to"));
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+            else{
+                JOptionPane.showMessageDialog(frame, "Click play before saving the game");
             }
         }
 
@@ -123,6 +134,12 @@ public class ScrabbleController implements ActionListener {
             } catch (FileNotFoundException ex) {
                 throw new RuntimeException(ex);
             } catch (UnsupportedEncodingException ex) {
+                throw new RuntimeException(ex);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            } catch (ParserConfigurationException ex) {
+                throw new RuntimeException(ex);
+            } catch (SAXException ex) {
                 throw new RuntimeException(ex);
             }
         }
