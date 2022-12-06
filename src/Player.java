@@ -63,6 +63,10 @@ public class Player implements Comparable<Player>, Serializable {
         return letters;
     }
 
+    /**
+     * sets the letters arraylist
+     * @param l the arraylist we want to set letters to
+     */
     public void setLetters(ArrayList<Letters> l){
         letters = l;
     }
@@ -76,6 +80,10 @@ public class Player implements Comparable<Player>, Serializable {
         letters.add(l);
     }
 
+    /**
+     * sets the name of the player
+     * @param name the name of the player
+     */
     public void setName(String name){
         this.name = name;
     }
@@ -99,6 +107,11 @@ public class Player implements Comparable<Player>, Serializable {
         return Integer.compare(p.getScore(), score);
     }
 
+    /**
+     * compares two player object
+     * @param obj the player we want to compare with
+     * @return true if the players are the same otherwise false
+     */
     @Override
     public boolean equals(Object obj){
         Player p = (Player) obj;
@@ -108,6 +121,11 @@ public class Player implements Comparable<Player>, Serializable {
         return false;
 
     }
+
+    /**
+     * Returns the string representation of a player object
+     * @return the string representation of the player
+     */
     @Override
     public String toString(){
         String s="#" + getName() + "#" + getScore() + "#";

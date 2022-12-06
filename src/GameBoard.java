@@ -680,7 +680,7 @@ public class GameBoard {
     }
 
 
-    //Methods for tests
+
 
     /**
      * Check to see if the board is empty
@@ -918,8 +918,11 @@ public class GameBoard {
         }
     }
 
-
-    public void serialize(String fileName) throws IOException {
+    /**
+     * This method saves the scrabble game into a file
+     * @param fileName the file to save to
+     */
+    public void save(String fileName) throws IOException {
         String xmlFile = fileName + "XML";
         saveTileBoardXML(new File(xmlFile));
         //saveTileBoardXML(new File(xmlFile));
@@ -934,27 +937,16 @@ public class GameBoard {
 
         byte[] bytes = s.getBytes();
         fos.write(bytes);
-
-//        try{
-//            ObjectOutputStream os = new ObjectOutputStream( new FileOutputStream(fileName));
-//            System.out.println("GameBoard: " +  this);
-//            os.writeObject(this);
-//            os.close();
-//        }
-//        catch(FileNotFoundException e){
-//
-//        }
-//        catch(IOException io){
-//
-//        }
     }
 
-    public void unserialize(String fileName) throws IOException, ParserConfigurationException, SAXException {
+    /**
+     * This method reads from a file to laod a previous scrabble game
+     * @param fileName the file to read from
+     */
+    public void load(String fileName) throws IOException, ParserConfigurationException, SAXException {
         String xmlFile = fileName + "XML";
-        //File f = new File(xmlFile);
         setTileBoard(true, xmlFile);
 
-        // GameBoard gm = new GameBoard(15,15);
         String data="";
 
         int i =0;
@@ -995,28 +987,14 @@ public class GameBoard {
             for(ScrabbleView v: views){
                 v.loadGame(this);
             }
-            //this = gm;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-//
-//        GameBoard gm = null;
-//        try{
-//            ObjectInputStream ois = new ObjectInputStream( new FileInputStream(fileName));
-//            gm =  (GameBoard) ois.readObject();
-//            //System.out.println(ois.readObject());
-//            ois.close();
-//        }
-//        catch(FileNotFoundException e){
-//
-//        }
-//        catch(IOException | ClassNotFoundException io){
-//
-//        }
-//        System.out.println(gm);
-//        return;
     }
+
+    /**
+     * this method loads the tile board
+     */
     private void loadTileBoard() {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
@@ -1029,6 +1007,11 @@ public class GameBoard {
         }
     }
 
+    /**
+     *
+     * This method loads the words on the board of the previous game
+     * @param data the string representation of the words that were played
+     */
     private void loadWordsOnBoard(String data){
         wordsOnBoard.clear();
         Scanner scan = new Scanner(data).useDelimiter("/");
@@ -1036,11 +1019,18 @@ public class GameBoard {
             wordsOnBoard.add(scan.next());
         }
         for(String s: wordsOnBoard){
+            bagOfLetters.inBag(new Letters(s.charAt(0)));
             System.out.println("Print: " + s);
         }
 
     }
+
+    /**
+     * loads the players from the saved game
+     * @param data the string representation of the players
+     */
     private void loadPlayers(String data){
+        bagOfLetters = new BagOfLetters();
         int n =0;
         Scanner scan = new Scanner(data).useDelimiter("#");
         int numPlayers = Integer.parseInt(scan.next());
@@ -1053,6 +1043,7 @@ public class GameBoard {
                 String[] letters = scan.next().split(",");
                 ArrayList<Letters> newLetters = new ArrayList<>();
                 for(int l =0; l<7; l++){
+                    bagOfLetters.inBag(new Letters(letters[l].charAt(0)));
                     System.out.println(letters[l].charAt(0));
                     newLetters.add(new Letters(letters[l].charAt(0)));
                 }
@@ -1070,12 +1061,16 @@ public class GameBoard {
                 ai.getLetter().add(let.get(i));
             }
         }
-        //break;
     }
 
     public void setNumBots(int numBot){
         numBots = numBot;
     }
+
+    /**
+     * This method converts returns the string representation of gameboard
+     * @return the string representation of gameboard
+     */
     @Override
     public String toString(){
         String str ="";

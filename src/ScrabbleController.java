@@ -118,7 +118,7 @@ public class ScrabbleController implements ActionListener {
         else if(b.getText().equals("Save")) {
             if (play) {
                 try {
-                    model.serialize(JOptionPane.showInputDialog("Enter the name of the file you want to save to"));
+                    model.save(JOptionPane.showInputDialog("Enter the name of the file you want to save to"));
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -130,7 +130,7 @@ public class ScrabbleController implements ActionListener {
 
         else if(b.getText().equals("Load")) {
             try {
-                model.unserialize(JOptionPane.showInputDialog("Enter the name of the file you want to load"));
+                model.load(JOptionPane.showInputDialog("Enter the name of the file you want to load"));
             } catch (FileNotFoundException ex) {
                 throw new RuntimeException(ex);
             } catch (UnsupportedEncodingException ex) {
