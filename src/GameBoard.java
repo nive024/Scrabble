@@ -55,7 +55,7 @@ public class GameBoard {
         isBoardEmpty = true;
         this.bagOfLetters = new BagOfLetters();
         tilesChangedThisTurn = new ArrayList<>();
-        players = new ArrayList<>();
+
         stringBoard = new String[rows][cols];
         tileBoard = new Tile[rows][cols];
         //initialize places in the board
@@ -186,9 +186,7 @@ public class GameBoard {
             return true;
         try {
             HttpURLConnection connection;
-            URL url = new URL("https://api.dictionaryapi.dev/api/v2/entries/en/" + word.toLowerCase());
-
-            //URL url = new URL("https://api.wordnik.com/v4/word.json/" + word.toLowerCase() + "/definitions?limit=200&includeRelated=false&sourceDictionaries=all&useCanonical=false&includeTags=false&api_key=k5mz36509sb4q1eyagr8gq1juoxjfpwjt1gki6kcxo13p30p5");
+            URL url = new URL("https://api.wordnik.com/v4/word.json/" + word + "/definitions?limit=200&includeRelated=false&sourceDictionaries=all&useCanonical=false&includeTags=false&api_key=k5mz36509sb4q1eyagr8gq1juoxjfpwjt1gki6kcxo13p30p5");
             connection = (HttpURLConnection) url.openConnection();
 
             InputStream is = connection.getInputStream();
@@ -435,7 +433,6 @@ public class GameBoard {
         printGameStatus();
         getNextPlayer();
         numSkips = 0;
-        saveTileBoardXML(new File("testet"));
         return true;
     }
     /**
@@ -1082,39 +1079,6 @@ public class GameBoard {
         str+= "#" + players.indexOf(getCurrentPlayer());
 
         return str;
-    }
-
-    /**
-     * Saves the current tileBoard into XML format - used for deserialization
-     */
-    private void saveTileBoardXML(File f) {
-        StringBuilder returnStr = new StringBuilder();
-        returnStr.append("<?xml version=\"1.0\"?>\n");
-        returnStr.append("<tileBoard>\n");
-        for (int i = 0; i < rows; i++) {
-            returnStr.append(("<row index=\"" + i + "\"" + ">\n").indent(4));
-            for (int j = 0; j < cols; j++) {
-                String type = tileBoard[i][j].isWordPointMultiplier() ? "word" : "letter";
-                returnStr.append(("<col index=\""+j+"\" multiplier=\"" + tileBoard[i][j].getPointMultiplier()+"\" type=\"" + type + "\"> </col>\n").indent(8));
-            }
-            returnStr.append("</row>\n");
-        }
-        returnStr.append("</tileBoard>");
-
-        try {
-            try (PrintStream out = new PrintStream(new FileOutputStream(f))) {
-                out.print(returnStr);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Used for testing purposes
-     */
-    public void addPlayer(Player p) {
-        players.add(p);
     }
 
 }

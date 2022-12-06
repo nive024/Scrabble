@@ -319,6 +319,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
     public int getNumberofBots() {
         if (String.valueOf(botCB.getSelectedItem()).equals("1 bot")) {
             bot = true;
+            gameBoardModel.setNumBots(1);
             return 1;
         }
         return 0;
