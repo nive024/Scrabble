@@ -56,6 +56,7 @@ public class GameBoard {
         isBoardEmpty = true;
         this.bagOfLetters = new BagOfLetters();
         tilesChangedThisTurn = new ArrayList<>();
+        players = new ArrayList<>();
 
         stringBoard = new String[rows][cols];
         tileBoard = new Tile[rows][cols];
@@ -595,7 +596,6 @@ public class GameBoard {
      * @param numPlayers the number of players playing
      */
     public void addPlayers(int numPlayers, int bots) {
-        players = new ArrayList<>();
         for (int i = 0; i < numPlayers; i++) {
             Player p = new Player("Player " + (i+1));
             players.add(p);
@@ -1053,7 +1053,7 @@ public class GameBoard {
                 String type = tileBoard[i][j].isWordPointMultiplier() ? "word" : "letter";
                 returnStr.append(("<col index=\""+j+"\" multiplier=\"" + tileBoard[i][j].getPointMultiplier()+"\" type=\"" + type + "\"> </col>\n").indent(8));
             }
-            returnStr.append("</row>\n");
+            returnStr.append("</row>\n".indent(4));
         }
         returnStr.append("</tileBoard>");
 

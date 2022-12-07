@@ -117,4 +117,14 @@ public class Tile {
         }
         return score;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        else if (!(obj instanceof Tile))
+            return false;
+        else
+            return ((this.wordPointMultiplier == ((Tile) obj).wordPointMultiplier) && (this.letter == ((Tile) obj).letter));
+    }
 }
