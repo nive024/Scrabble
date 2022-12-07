@@ -46,6 +46,16 @@ public class Player implements Comparable<Player>, Serializable {
     }
 
     /**
+     * Sets the player's score after undo.
+     *
+     * @param s The score of the player after undo
+     */
+    public void setUndoScore(int s){
+        score -= s;
+    }
+
+
+    /**
      * Gets the player's score
      *
      * @return The score of the player

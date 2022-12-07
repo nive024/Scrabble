@@ -36,4 +36,6 @@ public interface ScrabbleView {
 
     void loadGame(GameBoard gm);
 
+    void updateUndoRedoBoard(String[][] board);
+
 }

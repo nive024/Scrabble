@@ -36,7 +36,8 @@ public class GameBoard {
     private int numSkips;
     private ArrayList<String> tilesChangedThisTurn;
     private int currentScore;
-
+    private Stack<Turn> undoStack, redoStack;
+    private String[][] prevBoard;
     private int numBots;
     /**
      * Constructor to initialize the game board with the specified columns and rows. Also initializes the first player.
@@ -58,78 +59,18 @@ public class GameBoard {
 
         stringBoard = new String[rows][cols];
         tileBoard = new Tile[rows][cols];
+        prevBoard = new String[rows][cols];
+        undoStack = new Stack<>();
+        redoStack = new Stack<>();
         //initialize places in the board
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 stringBoard[i][j] = "_";
+                prevBoard[i][j] = "_";
             }
         }
 
-//        //initialize new tiles on the board
-//        //Triple Word Score (redTile())
-//        tileBoard[0][0] = new Tile(3, true);
-//        tileBoard[0][14] = new Tile(3, true);
-//        tileBoard[14][0] = new Tile(3, true);
-//        tileBoard[14][14] = new Tile(3, true);
-//        tileBoard[14][7] = new Tile(3, true);
-//        tileBoard[7][14] = new Tile(3, true);
-//        tileBoard[0][7] = new Tile(3, true);
-//        tileBoard[7][0] = new Tile(3, true);
-//        //Triple Letter Score (blueTile())
-//        tileBoard[1][5] = new Tile(3, false);
-//        tileBoard[1][9] = new Tile(3, false);
-//        tileBoard[5][1] = new Tile(3, false);
-//        tileBoard[9][1] = new Tile(3, false);
-//        tileBoard[5][5] = new Tile(3, false);
-//        tileBoard[5][9] = new Tile(3, false);
-//        tileBoard[9][5] = new Tile(3, false);
-//        tileBoard[9][9] = new Tile(3, false);
-//        tileBoard[13][5] = new Tile(3, false);
-//        tileBoard[13][9] = new Tile(3, false);
-//        tileBoard[5][13] = new Tile(3, false);
-//        tileBoard[9][13] = new Tile(3, false);
-//        //Double Letter Score (magentaTile())
-//        tileBoard[0][3] = new Tile(2, false);
-//        tileBoard[0][11] = new Tile(2, false);
-//        tileBoard[2][6] = new Tile(2, false);
-//        tileBoard[2][8] = new Tile(2, false);
-//        tileBoard[3][0] = new Tile(2, false);
-//        tileBoard[3][7] = new Tile(2, false);
-//        tileBoard[3][14] = new Tile(2, false);
-//        tileBoard[6][2] = new Tile(2, false);
-//        tileBoard[6][6] = new Tile(2, false);
-//        tileBoard[6][8] = new Tile(2, false);
-//        tileBoard[6][12] = new Tile(2, false);
-//        tileBoard[7][3] = new Tile(2, false);
-//        tileBoard[7][11] = new Tile(2, false);
-//        tileBoard[8][2] = new Tile(2, false);
-//        tileBoard[8][6] = new Tile(2, false);
-//        tileBoard[8][8] = new Tile(2, false);
-//        tileBoard[8][12] = new Tile(2, false);
-//        tileBoard[11][0] = new Tile(2, false);
-//        tileBoard[11][7] = new Tile(2, false);
-//        tileBoard[11][14] = new Tile(2, false);
-//        tileBoard[12][6] = new Tile(2, false);
-//        tileBoard[12][8] = new Tile(2, false);
-//        tileBoard[14][3] = new Tile(2, false);
-//        tileBoard[14][11] = new Tile(2, false);
-//        //Double Word Score (pinkTile())
-//        for (int i = 0; i < rows; i++) {
-//            for (int j = 0; j < cols; j++) {
-//                if (tileBoard[i][j] == null) {
-//                    if (i == j){
-//                        tileBoard[i][j] = new Tile(2, true);
-//                    }
-//                }
-//            }
-//        }
-//        int col = cols - 1;
-//        for (int i = 0; i < rows; i++) {
-//                if (tileBoard[i][col] == null) {
-//                    tileBoard[i][col] = new Tile(2, true);
-//                }
-//                col--;
-//        }
+
 //        //non special tiles
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
@@ -187,6 +128,13 @@ public class GameBoard {
         try {
             HttpURLConnection connection;
             URL url = new URL("https://api.dictionaryapi.dev/api/v2/entries/en/" + word.toLowerCase());
+            connection = null;
+           // URL url = new URL("https://api.dictionaryapi.dev/api/v2/entries/en/" + word);
+            //URL url = new URL("https://api.wordnik.com/v4/word.json/" + word + "/definitions?limit=200&includeRelated=false&sourceDictionaries=all&useCanonical=false&includeTags=false&api_key=k5mz36509sb4q1eyagr8gq1juoxjfpwjt1gki6kcxo13p30p5");
+            //We will probably use this API for future milestones since some basic words are missing
+            //from the above API, but I haven't gotten the key for it yet.
+//            URL url = new URL("https://api.wordnik.com/v4/word.json/" + word + "/definitions?limit=200&includeRelated=false&sourceDictionaries=all&useCanonical=false&includeTags=false&api_key=YOURAPIKEY");
+
             //URL url = new URL("https://api.wordnik.com/v4/word.json/" + word.toLowerCase() + "/definitions?limit=200&includeRelated=false&sourceDictionaries=all&useCanonical=false&includeTags=false&api_key=k5mz36509sb4q1eyagr8gq1juoxjfpwjt1gki6kcxo13p30p5");
             connection = (HttpURLConnection) url.openConnection();
 
@@ -234,6 +182,7 @@ public class GameBoard {
                             wordToCheck += " " + place;
                             if ((!isFloating(wordToCheck.split(" ")[0], place)) || (isBoardEmpty)) {
                                 if (wordsOnBoard.add(wordToCheck)) {
+                                    System.out.println("q");
                                     currentScore += calculateScore(wordToCheck.split(" ")[0]);
                                     wordsAddedThisTurn.add(wordToCheck);
                                 }
@@ -282,6 +231,7 @@ public class GameBoard {
                             wordToCheck += " " + place;
                             if ((!isFloating(wordToCheck.split(" ")[0], place)) || (isBoardEmpty)) {
                                 if (wordsOnBoard.add(wordToCheck)) {
+                                    System.out.println("p");
                                     currentScore += calculateScore(wordToCheck.split(" ")[0]);
                                     System.out.println("current score " + calculateScore(wordToCheck.split(" ")[0]));
                                     wordsAddedThisTurn.add(wordToCheck);
@@ -313,21 +263,7 @@ public class GameBoard {
 
             }
         }
-//        for (String s: tempNewWords) { //only add the word if the placement of the new word is valid
-//            if (wordsOnBoard.add(s)) {
-//                String word = s.split(" ")[0];
-//                place = s.split(" ")[1];
-//
-//                if (word.length() == 1) {
-//
-//                } else {
-//                    //calcualte score
-//                    currentScore += calculateScore(s);
-//                    wordsAddedThisTurn.add(s);
-//                }
-//
-//            }
-//        }
+
         return true;
     }
 
@@ -344,9 +280,6 @@ public class GameBoard {
                 }
             }
         }
-//        System.out.println("revert");
-//        printGameStatus();
-
 
     /**
      * Place the word entered by the player p on the board
@@ -430,7 +363,7 @@ public class GameBoard {
             revertStringBoard();
             return false;
         }
-
+        setUndoBoard();
         printGameStatus();
         getNextPlayer();
         numSkips = 0;
@@ -1138,6 +1071,78 @@ public class GameBoard {
      */
     public void addPlayer(Player p) {
         players.add(p);
+    }
+
+    private String[][] changeTileToStringBoard(Tile[][] tBoard){
+        String[][] sBoard = new String[rows][cols];
+        for (int k = 0; k < rows; k++) {
+            for (int n = 0; n < cols; n++) {
+                if (tBoard[k][n].isEmpty()) {
+                    sBoard[k][n] = "_";
+                } else
+                    sBoard[k][n] = tBoard[k][n].getLetter().getLetter() + "";
+            }
+        }
+        return sBoard;
+    }
+
+    /**
+     * Sets the board for the undo
+     */
+    public void setUndoBoard(){
+        Turn t = new Turn(prevBoard, currentPlayer, currentScore);
+        undoStack.push(t);
+        prevBoard = changeTileToStringBoard(tileBoard);
+    }
+
+
+    /**
+     * Undoes the turn that was just played
+     */
+    public void undoTurn(){
+        System.out.println("UNDO");
+        Turn item = undoStack.pop();
+        Turn redoItem = new Turn(stringBoard,item.getPlayer(),item.getScore());
+        System.out.println("uu "+ item.getPlayer().getName());
+        System.out.println(item.getScore());
+        stringBoard = item.getBoard();
+        System.out.println();
+        item.getPlayer().setUndoScore(item.getScore());
+        System.out.println(item.getPlayer().getScore());
+        redoStack.push(redoItem);
+
+        for (ScrabbleView v : views) {
+            v.updateUndoRedoBoard(stringBoard);
+            v.updateScore(item.getPlayer().getScore(), players.indexOf(item.getPlayer()));
+        }
+    }
+
+    /**
+     * Redoes the turn
+     */
+    public void redoTurn(){
+        if (!redoStack.empty()){
+            System.out.println("REDO");
+            Turn redoItem = redoStack.pop();
+            Turn undoItem = new Turn(stringBoard, redoItem.getPlayer(), redoItem.getScore());
+            stringBoard = redoItem.getBoard();
+            System.out.println("rr " + redoItem.getPlayer().getName());
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    System.out.print(redoItem.getBoard()[i][j]);
+                }
+                System.out.println();
+            }
+            System.out.println();
+            redoItem.getPlayer().setScore(redoItem.getScore());
+            //currentPlayer = redoItem.getPlayer();
+            undoStack.push(undoItem);
+
+            for (ScrabbleView v : views) {
+                v.updateUndoRedoBoard(stringBoard);
+                v.updateScore(redoItem.getPlayer().getScore(), players.indexOf(redoItem.getPlayer()));
+            }
+        }
     }
 
 }

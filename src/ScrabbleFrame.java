@@ -576,6 +576,22 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         loadPlayers(gm);
     }
 
+    @Override
+    public void updateUndoRedoBoard(String[][] board) {
+        //System.out.println(Arrays.deepToString(board));
+        for (int i = 0; i < 15; i++){
+            for (int j = 0; j < 15; j++){
+                if (board[i][j].equals("_")){
+                    grid[i][j].setText("");
+                }
+                else{
+                    grid[i][j].setText(board[i][j]);
+                }
+                saveGridStatus();
+            }
+        }
+    }
+
     public void loadPlayers(GameBoard gm){
         for(int j=0; j<playersButtonsArray.length; j++){
             for(JButton b: playersButtonsArray[j]){
