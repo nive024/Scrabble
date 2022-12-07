@@ -291,8 +291,20 @@ public class GameBoardTest {
 
     @Test
     public void customBoard(){
-        gameBoard.setTileBoard(true, "test.xml");
-        assertTrue(gameBoard.getTileBoard()[5][7].pinkTile());
+        gameBoardCopy.setTileBoard(true, "test.xml");
+        gameBoard.getTileBoard()[5][5] = new Tile(2, true);
+        gameBoard.getTileBoard()[5][7] = new Tile(2, true);
+        gameBoard.getTileBoard()[7][5] = new Tile(2, true);
+        gameBoard.getTileBoard()[7][7] = new Tile(2, true);
+        gameBoard.getTileBoard()[8][5] = new Tile(2, true);
+        gameBoard.getTileBoard()[8][6] = new Tile(2, true);
+        gameBoard.getTileBoard()[8][7] = new Tile(2, true);
+        //assertTrue(gameBoard.getTileBoard()[5][7].pinkTile());
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < 15; j++) {
+                assertEquals(gameBoardCopy.getTileBoard()[i][j],gameBoard.getTileBoard()[i][j]);
+            }
+        }
     }
 
 }
