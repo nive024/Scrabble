@@ -34,7 +34,7 @@ public class GameBoardTest {
         gameBoardCopy.setCurrentPlayer(p1);
 
         s = "";
-        s1 ="";
+        s1 = "";
         s = gameBoard.deal(0);
 
         s1 = gameBoardCopy.deal(0);
@@ -284,6 +284,12 @@ public class GameBoardTest {
         gameBoard.placeWord("fire 8h"); // 10 points
         gameBoard.placeWord("hi i7"); // 5 points
         assertEquals(19, p1.getScore());
+    }
+
+    @Test
+    public void customBoard(){
+        gameBoard.setTileBoard(true, "test.xml");
+        assertTrue(gameBoard.getTileBoard()[5][7].pinkTile());
     }
 
 }
