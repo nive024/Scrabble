@@ -36,6 +36,8 @@ public class GameBoard {
     private int numSkips;
     private ArrayList<String> tilesChangedThisTurn;
     private int currentScore;
+
+    private int numBots;
     /**
      * Constructor to initialize the game board with the specified columns and rows. Also initializes the first player.
      *
@@ -43,7 +45,6 @@ public class GameBoard {
      * @param cols The number of rows on the board
      */
     public GameBoard (int rows, int cols) {
-        players = new ArrayList<>();
         views = new ArrayList<>();
         wordsOnBoard = new HashSet<>();
         wordsAddedThisTurn = new ArrayList<>();
@@ -149,7 +150,6 @@ public class GameBoard {
      */
     public void setCurrentPlayer(Player currentPlayer) {
         this.currentPlayer = currentPlayer;
-        players.add(currentPlayer);
     }
 
     /**
@@ -160,6 +160,13 @@ public class GameBoard {
         return this.currentPlayer;
     }
 
+    /**
+     * Gets the players arraylist
+     * @return players; The arraylist of all the players
+     */
+    public ArrayList<Player> getPlayers(){
+        return players;
+    }
     /**
      * Add view to model for MVC structure
      * @param view the view that will be added to this model
@@ -178,12 +185,9 @@ public class GameBoard {
         if ((word.equals("BE")) || (word.equals("IS") || (word.equals("WAS"))))
             return true;
         try {
-            HttpURLConnection connection = null;
-            URL url = new URL("https://api.dictionaryapi.dev/api/v2/entries/en/" + word);
-            //We will probably use this API for future milestones since some basic words are missing
-            //from the above API, but I haven't gotten the key for it yet.
-//            URL url = new URL("https://api.wordnik.com/v4/word.json/" + word + "/definitions?limit=200&includeRelated=false&sourceDictionaries=all&useCanonical=false&includeTags=false&api_key=YOURAPIKEY");
-
+            HttpURLConnection connection;
+            URL url = new URL("https://api.dictionaryapi.dev/api/v2/entries/en/" + word.toLowerCase());
+            //URL url = new URL("https://api.wordnik.com/v4/word.json/" + word.toLowerCase() + "/definitions?limit=200&includeRelated=false&sourceDictionaries=all&useCanonical=false&includeTags=false&api_key=k5mz36509sb4q1eyagr8gq1juoxjfpwjt1gki6kcxo13p30p5");
             connection = (HttpURLConnection) url.openConnection();
 
             InputStream is = connection.getInputStream();
@@ -658,6 +662,7 @@ public class GameBoard {
      * @param numPlayers the number of players playing
      */
     public void addPlayers(int numPlayers, int bots) {
+        players = new ArrayList<>();
         for (int i = 0; i < numPlayers; i++) {
             Player p = new Player("Player " + (i+1));
             players.add(p);
@@ -675,7 +680,7 @@ public class GameBoard {
     }
 
 
-    //Methods for tests
+
 
     /**
      * Check to see if the board is empty
@@ -913,4 +918,230 @@ public class GameBoard {
         }
     }
 
+    /**
+     * This method saves the scrabble game into a file
+     * @param fileName the file to save to
+     */
+    public void save(String fileName) throws IOException {
+        String xmlFile = fileName + "XML";
+        saveTileBoardXML(new File(xmlFile));
+        //saveTileBoardXML(new File(xmlFile));
+        // saveTileBoardXML(xmlfile);
+
+        File file = new File(fileName);
+        FileOutputStream fos = new FileOutputStream(file);
+
+
+        String s= toString();
+
+
+        byte[] bytes = s.getBytes();
+        fos.write(bytes);
+    }
+
+    /**
+     * This method reads from a file to laod a previous scrabble game
+     * @param fileName the file to read from
+     */
+    public void load(String fileName) throws IOException, ParserConfigurationException, SAXException {
+        String xmlFile = fileName + "XML";
+        setTileBoard(true, xmlFile);
+
+        String data="";
+
+        int i =0;
+
+        FileInputStream fis = new FileInputStream(fileName);
+        InputStreamReader is = new InputStreamReader(fis, "UTF-8");
+        try(BufferedReader buffer = new BufferedReader(is)){
+
+            while((data = buffer.readLine()) != null ){
+                int stringCounter=0;
+                if(data.contains("#")){
+                    loadPlayers(data);
+                    stringCounter= 16;
+                }
+                if(data.contains("/")){
+                    loadWordsOnBoard(data);
+                    stringCounter=16;
+                }
+                else{
+                    System.out.println(data.length());
+                    while (stringCounter < 15) {
+                        for (int j = 0; j < 15; j++) {
+                            if (data.charAt(stringCounter) != ' ' && data.charAt(stringCounter) != '_') {
+                                getStringBoard()[i][j] = data.charAt(stringCounter) + "";
+                            }
+                            else{
+                                getStringBoard()[i][j] = "_";
+                            }
+                            stringCounter++;
+                        }
+                        i++;
+                    }
+                }
+            }
+            loadTileBoard();
+            System.out.println("GM:\n " + toString());
+            printGameStatus();
+            for(ScrabbleView v: views){
+                v.loadGame(this);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * this method loads the tile board
+     */
+    private void loadTileBoard() {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (stringBoard[i][j] == "_") {
+                    tileBoard[i][j] = new Tile();
+                } else {
+                    tileBoard[i][j].placeLetter(new Letters(stringBoard[i][j].toUpperCase().charAt(0)));
+                }
+            }
+        }
+    }
+
+    /**
+     *
+     * This method loads the words on the board of the previous game
+     * @param data the string representation of the words that were played
+     */
+    private void loadWordsOnBoard(String data){
+        wordsOnBoard.clear();
+        Scanner scan = new Scanner(data).useDelimiter("/");
+        while(scan.hasNext()){
+            wordsOnBoard.add(scan.next());
+        }
+        for(String s: wordsOnBoard){
+            bagOfLetters.inBag(new Letters(s.charAt(0)));
+            System.out.println("Print: " + s);
+        }
+
+    }
+
+    /**
+     * loads the players from the saved game
+     * @param data the string representation of the players
+     */
+    private void loadPlayers(String data){
+        bagOfLetters = new BagOfLetters();
+        int n =0;
+        Scanner scan = new Scanner(data).useDelimiter("#");
+        int numPlayers = Integer.parseInt(scan.next());
+        int numBots = Integer.parseInt(scan.next());
+        addPlayers(numPlayers, numBots);
+        while(scan.hasNext()){
+            for( ;n< numPlayers + numBots; n++){
+                players.get(n).setName(scan.next());
+                players.get(n).setScore(Integer.parseInt(scan.next()));
+                String[] letters = scan.next().split(",");
+                ArrayList<Letters> newLetters = new ArrayList<>();
+                for(int l =0; l<7; l++){
+                    bagOfLetters.inBag(new Letters(letters[l].charAt(0)));
+                    System.out.println(letters[l].charAt(0));
+                    newLetters.add(new Letters(letters[l].charAt(0)));
+                }
+                players.get(n).setLetters(newLetters);
+            }
+            setCurrentPlayer(players.get(Integer.parseInt(scan.next())));
+        }
+        System.out.println("Current Player: " + getCurrentPlayer());
+        System.out.println("###");
+
+        if(numBots !=0){
+            AI ai = (AI) players.get(players.size()-1);
+            ArrayList<Letters> let = players.get(players.size()-1).getLetters();
+            for(int i=0; i<7; i++){
+                ai.getLetter().add(let.get(i));
+            }
+        }
+    }
+
+    public void setNumBots(int numBot){
+        numBots = numBot;
+    }
+
+    /**
+     * This method converts returns the string representation of gameboard
+     * @return the string representation of gameboard
+     */
+    @Override
+    public String toString(){
+        String str ="";
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < 15; j++) {
+                String s = getStringBoard()[i][j];
+                if (s.isEmpty())
+                    str += "_";
+                else
+                    str += s;
+            }
+            str += "\n";
+        }
+
+        //getPlayers score
+        if(numBots ==0){
+            str += "#" + players.size() + "#" + numBots;
+        }
+        else{
+            str += "#" + (players.size()-1) + "#" + numBots;
+        }
+
+        for(Player p: players){
+            str+= p.toString();
+        }
+        str+= "#" + players.indexOf(getCurrentPlayer());
+
+        str += "\n/";
+
+        for(String s:  wordsOnBoard){
+            str+= s+ "/";
+        }
+
+        return str;
+    }
+
+    /**
+     * Saves the current tileBoard into XML format - used for deserialization
+     */
+    private void saveTileBoardXML(File f) {
+        StringBuilder returnStr = new StringBuilder();
+        returnStr.append("<?xml version=\"1.0\"?>\n");
+        returnStr.append("<tileBoard>\n");
+        for (int i = 0; i < rows; i++) {
+            returnStr.append(("<row index=\"" + i + "\"" + ">\n").indent(4));
+            for (int j = 0; j < cols; j++) {
+                String type = tileBoard[i][j].isWordPointMultiplier() ? "word" : "letter";
+                returnStr.append(("<col index=\""+j+"\" multiplier=\"" + tileBoard[i][j].getPointMultiplier()+"\" type=\"" + type + "\"> </col>\n").indent(8));
+            }
+            returnStr.append("</row>\n");
+        }
+        returnStr.append("</tileBoard>");
+
+        try {
+            try (PrintStream out = new PrintStream(new FileOutputStream(f))) {
+                out.print(returnStr);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Used for testing purposes
+     */
+    public void addPlayer(Player p) {
+        players.add(p);
+    }
+
 }
+
+
+
+

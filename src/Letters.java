@@ -107,4 +107,13 @@ public class Letters {
         }
 
     }
+
+    /**
+     * returns the string representation of a letters object
+     * @return the string rep. of the letter
+     */
+    @Override
+    public String toString(){
+        return Letter + "";
+    }
 }

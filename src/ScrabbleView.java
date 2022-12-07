@@ -34,4 +34,6 @@ public interface ScrabbleView {
 
     void setCustomBoard();
 
+    void loadGame(GameBoard gm);
+
 }

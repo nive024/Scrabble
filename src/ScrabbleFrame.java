@@ -31,6 +31,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
     private JLabel turn;
     private JButton endTurnBtn, playBtn, skipBtn;
     private JButton undoBtn, redoBtn, customBtn;
+    private JButton saveBtn, loadBtn;
     private int width, height;
     private boolean bot;
     private GameBoard gameBoardModel; //change made
@@ -117,6 +118,15 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         playBtn.setActionCommand("");
         movePanel.add(customBtn);
         titlePanel.add(movePanel);
+        saveBtn =new JButton("Save");
+        saveBtn.setActionCommand("");
+        saveBtn.addActionListener(sc);
+        //saveBtn.setEnabled(false);
+        movePanel.add(saveBtn);
+        loadBtn = new JButton("Load");
+        loadBtn.setActionCommand("");
+        loadBtn.addActionListener(sc);
+        movePanel.add(loadBtn);
 
 
 
@@ -309,6 +319,7 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
     public int getNumberofBots() {
         if (String.valueOf(botCB.getSelectedItem()).equals("1 bot")) {
             bot = true;
+            gameBoardModel.setNumBots(1);
             return 1;
         }
         return 0;
@@ -547,6 +558,47 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
                 count++;
             }
         }
+    }
+
+    public void loadGame(GameBoard gm){
+        for(int i=0; i<15; i++){
+            for(int j=0; j<15; j++){
+                Tile t = gm.getTileBoard()[i][j];
+                if (t.isEmpty()){
+                    grid[i][j].setText("");
+                }
+                else{
+                    grid[i][j].setText(t.getLetter().getLetter() + "");
+                }
+                saveGridStatus();
+            }
+        }
+        loadPlayers(gm);
+    }
+
+    public void loadPlayers(GameBoard gm){
+        for(int j=0; j<playersButtonsArray.length; j++){
+            for(JButton b: playersButtonsArray[j]){
+                b.setEnabled(false);
+            }
+        }
+
+        for(Player p: gm.getPlayers()){
+            String s ="";
+            for(int i =0; i<7; i++){
+                s+= p.getLetters().get(i).getLetter();
+            }
+
+            System.out.println(s);
+
+            updatePlayersLetters(s, gm.getPlayers().indexOf(p));
+            updateScore(p.getScore(), gm.getPlayers().indexOf(p));
+        }
+        disableOtherPlayers(gm.getPlayers().indexOf(gm.getCurrentPlayer()));
+
+    }
+    public String toString(){
+        return "";
     }
 
     public static void main(String[] args) {

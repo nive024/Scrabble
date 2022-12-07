@@ -27,12 +27,15 @@ public class GameBoardTest {
         emptygameBoard= new GameBoard(15,15);
 
         gameBoard = new GameBoard(15,15);
+        gameBoard.setTileBoard(false, "");
+        gameBoard.addPlayer(p1);
         gameBoard.setCurrentPlayer(p1);
 
 
         gameBoardCopy = new GameBoard(15, 15);
+        gameBoardCopy.setTileBoard(false, "");
+        gameBoardCopy.addPlayer(p1);
         gameBoardCopy.setCurrentPlayer(p1);
-
         s = "";
         s1 = "";
         s = gameBoard.deal(0);
@@ -246,7 +249,7 @@ public class GameBoardTest {
     public void floatingWord() {
         gameBoard.placeWord("fire 8h");
         gameBoard.placeWord("fur 6h");
-        assertEquals(10, p1.getScore());
+        assertEquals(14, p1.getScore());
     }
 
     @Test
@@ -263,14 +266,14 @@ public class GameBoardTest {
     @Test
     public void scoreAfterFirstWordPlaced(){
         gameBoard.placeWord("fire 8h");
-        assertEquals(10, p1.getScore());
+        assertEquals(14, p1.getScore());
     }
 
     @Test
     public void addingToExistingScore(){
         gameBoard.placeWord("fire 8h"); // 10 points
         gameBoard.placeWord("tie i7"); // 3 points
-        assertEquals(15, p1.getScore());
+        assertEquals(19, p1.getScore());
     }
 
     @Test
@@ -283,7 +286,7 @@ public class GameBoardTest {
     public void addingASingleLetter(){
         gameBoard.placeWord("fire 8h"); // 10 points
         gameBoard.placeWord("hi i7"); // 5 points
-        assertEquals(19, p1.getScore());
+        assertEquals(23, p1.getScore());
     }
 
     @Test

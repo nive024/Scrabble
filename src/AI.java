@@ -183,6 +183,10 @@ public class AI extends Player {
         }
         return word;
     }
+
+    public ArrayList<Letters> getLetter(){
+        return letters;
+    }
 }
 
 

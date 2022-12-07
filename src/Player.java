@@ -1,3 +1,4 @@
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -9,7 +10,7 @@ import java.util.*;
  * @author Rimsha Atif
  */
 
-public class Player implements Comparable<Player> {
+public class Player implements Comparable<Player>, Serializable {
 
     private String name;
     private int score;
@@ -63,12 +64,28 @@ public class Player implements Comparable<Player> {
     }
 
     /**
+     * sets the letters arraylist
+     * @param l the arraylist we want to set letters to
+     */
+    public void setLetters(ArrayList<Letters> l){
+        letters = l;
+    }
+
+    /**
      * Adds a letter to the players letters
      *
      * @param l The letter to be added to the players letters
      */
     public void addLetter(Letters l){
         letters.add(l);
+    }
+
+    /**
+     * sets the name of the player
+     * @param name the name of the player
+     */
+    public void setName(String name){
+        this.name = name;
     }
 
     /**
@@ -88,6 +105,35 @@ public class Player implements Comparable<Player> {
     @Override
     public int compareTo(Player p) {
         return Integer.compare(p.getScore(), score);
+    }
+
+    /**
+     * compares two player object
+     * @param obj the player we want to compare with
+     * @return true if the players are the same otherwise false
+     */
+    @Override
+    public boolean equals(Object obj){
+        Player p = (Player) obj;
+        if(p.getName().equals(this.getName())){
+            return true;
+        }
+        return false;
+
+    }
+
+    /**
+     * Returns the string representation of a player object
+     * @return the string representation of the player
+     */
+    @Override
+    public String toString(){
+        String s="#" + getName() + "#" + getScore() + "#";
+        for(Letters l: letters){
+            s+= l.getLetter() + ",";
+        }
+        return s;
+
     }
 }
 
