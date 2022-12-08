@@ -132,6 +132,7 @@ public class ScrabbleController implements ActionListener {
         }
 
         else if(b.getText().equals("Load")) {
+            play = true;
             try {
                 model.load(JOptionPane.showInputDialog("Enter the name of the file you want to load"));
             } catch (FileNotFoundException ex) {

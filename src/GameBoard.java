@@ -964,6 +964,7 @@ public class GameBoard {
      */
     private void loadPlayers(String data){
         bagOfLetters = new BagOfLetters();
+        players = new ArrayList<>();
         int n =0;
         Scanner scan = new Scanner(data).useDelimiter("#");
         int numPlayers = Integer.parseInt(scan.next());
