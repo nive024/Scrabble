@@ -1103,22 +1103,24 @@ public class GameBoard {
      */
     public void undoTurn(){
         System.out.println("UNDO");
-        Turn item = undoStack.pop();
-        Turn redoItem = new Turn(stringBoard,item.getPlayer(),item.getScore());
-        System.out.println("uu "+ item.getPlayer().getName());
-        System.out.println(item.getScore());
-        stringBoard = item.getBoard();
-        System.out.println();
-        item.getPlayer().setUndoScore(item.getScore());
-        System.out.println(item.getPlayer().getScore());
-        setCurrentPlayer(redoItem.getPlayer());
-        loadTileBoard();
-        redoStack.push(redoItem);
+        if (!undoStack.empty()){
+            Turn item = undoStack.pop();
+            Turn redoItem = new Turn(stringBoard,item.getPlayer(),item.getScore());
+            System.out.println("uu "+ item.getPlayer().getName());
+            System.out.println(item.getScore());
+            stringBoard = item.getBoard();
+            System.out.println();
+            item.getPlayer().setUndoScore(item.getScore());
+            System.out.println(item.getPlayer().getScore());
+            setCurrentPlayer(redoItem.getPlayer());
+            loadTileBoard();
+            redoStack.push(redoItem);
 
-        for (ScrabbleView v : views) {
-            v.updateUndoRedoBoard(stringBoard);
-            v.updateScore(item.getPlayer().getScore(), players.indexOf(item.getPlayer()));
-            v.disableOtherPlayers(players.indexOf(currentPlayer));
+            for (ScrabbleView v : views) {
+                v.updateUndoRedoBoard(stringBoard);
+                v.updateScore(item.getPlayer().getScore(), players.indexOf(item.getPlayer()));
+                v.disableOtherPlayers(players.indexOf(currentPlayer));
+            }
         }
     }
 
