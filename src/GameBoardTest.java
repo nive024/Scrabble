@@ -1,9 +1,12 @@
 import static org.junit.Assert.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Before;
 import org.junit.Test;
+import org.xml.sax.SAXException;
 
 /**
  * Test class for GameBoard
@@ -308,37 +311,26 @@ public class GameBoardTest {
     }
 
     @Test
-    public void undoTurn(){
-        gameBoard.placeWord("fire 8h"); // 10 points
-        gameBoard.undoTurn();
-        assertEquals(0, p1.getScore());
-    }
-
-    @Test
-    public void redoTurn(){
-        gameBoard.placeWord("fire 8h"); // 10 points
-        gameBoard.placeWord("hi i7"); // 5 points
-        gameBoard.undoTurn();
-        gameBoard.redoTurn();
-        assertEquals(23, p1.getScore());
-    }
-    @Test
-    public void undoTurnAndPutNewWord(){
+    public void checkSaveandLoad() throws IOException, ParserConfigurationException, SAXException {
         gameBoard.placeWord("fire 8h");
-        gameBoard.undoTurn();
-        gameBoard.placeWord("hi 8h"); // 10 points
-        assertEquals(10, p1.getScore());
-    }
+        gameBoard.save("TFile");
+        gameBoardCopy.load("TFile");
 
-    @Test
-    public void multipleUndoTurn(){
-        gameBoard.placeWord("fire 8h");
-        gameBoard.undoTurn();
-        gameBoard.redoTurn();
-        gameBoard.placeWord("tie i7");
-        gameBoard.undoTurn();
-        gameBoard.undoTurn();
-        assertEquals(0, p1.getScore());
+        gameBoard.printGameStatus();
+        System.out.println("GAMEBOARDCOPY:");
+        gameBoardCopy.printGameStatus();
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < 15; j++) {
+                assertEquals(gameBoard.getTileBoard()[i][j], gameBoardCopy.getTileBoard()[i][j]);
+            }
+        }
+
+        for(int i =0; i<gameBoard.getPlayers().size(); i++){
+            assertEquals(gameBoard.getPlayers().get(i).getScore(), gameBoardCopy.getPlayers().get(i).getScore());
+            assertEquals(gameBoard.getPlayers().get(i).getName(), gameBoardCopy.getPlayers().get(i).getName());
+            assertEquals(gameBoard.getPlayers().get(i).getLetters(), gameBoardCopy.getPlayers().get(i).getLetters());
+        }
+
     }
 
 }
