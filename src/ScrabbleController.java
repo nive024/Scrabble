@@ -101,12 +101,15 @@ public class ScrabbleController implements ActionListener {
         // if the player clicks undo, it will bring the board back to the latest gameboard before the move was done
         else if (b.getText().equals("Undo")){
             model.undoTurn();
+            frame.getTurn().setText(model.getCurrentPlayer().getName()+"'s turn");
         }
 
         // if the player clicks redo, it will bring the board back to the gameboard before the undo
         else if (b.getText().equals("Redo")){
             model.redoTurn();
-        } else if (b.getText().equals("Custom")) {
+            frame.getTurn().setText(model.getCurrentPlayer().getName()+"'s turn");
+        }
+        else if (b.getText().equals("Custom")) {
             JComponent[] inputs = new JComponent[] {nameLabel, nameField};
             int result = JOptionPane.showConfirmDialog(null, inputs, "Import AddressBook", JOptionPane.OK_CANCEL_OPTION);
             if (result == JOptionPane.OK_OPTION) {

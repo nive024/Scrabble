@@ -1090,6 +1090,7 @@ public class GameBoard {
      * Sets the board for the undo
      */
     public void setUndoBoard(){
+        loadTileBoard();
         Turn t = new Turn(prevBoard, currentPlayer, currentScore);
         undoStack.push(t);
         prevBoard = changeTileToStringBoard(tileBoard);
@@ -1109,11 +1110,14 @@ public class GameBoard {
         System.out.println();
         item.getPlayer().setUndoScore(item.getScore());
         System.out.println(item.getPlayer().getScore());
+        setCurrentPlayer(redoItem.getPlayer());
+        loadTileBoard();
         redoStack.push(redoItem);
 
         for (ScrabbleView v : views) {
             v.updateUndoRedoBoard(stringBoard);
             v.updateScore(item.getPlayer().getScore(), players.indexOf(item.getPlayer()));
+            v.disableOtherPlayers(players.indexOf(currentPlayer));
         }
     }
 
@@ -1135,12 +1139,14 @@ public class GameBoard {
             }
             System.out.println();
             redoItem.getPlayer().setScore(redoItem.getScore());
-            //currentPlayer = redoItem.getPlayer();
+            getNextPlayer();
+            loadTileBoard();
             undoStack.push(undoItem);
 
             for (ScrabbleView v : views) {
                 v.updateUndoRedoBoard(stringBoard);
                 v.updateScore(redoItem.getPlayer().getScore(), players.indexOf(redoItem.getPlayer()));
+                v.disableOtherPlayers(players.indexOf(currentPlayer));
             }
         }
     }

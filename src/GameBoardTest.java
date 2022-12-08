@@ -307,4 +307,38 @@ public class GameBoardTest {
         }
     }
 
+    @Test
+    public void undoTurn(){
+        gameBoard.placeWord("fire 8h"); // 10 points
+        gameBoard.undoTurn();
+        assertEquals(0, p1.getScore());
+    }
+
+    @Test
+    public void redoTurn(){
+        gameBoard.placeWord("fire 8h"); // 10 points
+        gameBoard.placeWord("hi i7"); // 5 points
+        gameBoard.undoTurn();
+        gameBoard.redoTurn();
+        assertEquals(23, p1.getScore());
+    }
+    @Test
+    public void undoTurnAndPutNewWord(){
+        gameBoard.placeWord("fire 8h");
+        gameBoard.undoTurn();
+        gameBoard.placeWord("hi 8h"); // 10 points
+        assertEquals(10, p1.getScore());
+    }
+
+    @Test
+    public void multipleUndoTurn(){
+        gameBoard.placeWord("fire 8h");
+        gameBoard.undoTurn();
+        gameBoard.redoTurn();
+        gameBoard.placeWord("tie i7");
+        gameBoard.undoTurn();
+        gameBoard.undoTurn();
+        assertEquals(0, p1.getScore());
+    }
+
 }
