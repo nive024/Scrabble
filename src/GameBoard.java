@@ -341,7 +341,9 @@ public class GameBoard {
 
                 for (int i = 0; i < rows; i++) {
                     for (int j = 0; j < cols; j++) {
-                        tileBoard[i][j].placeLetter(new Letters(stringBoard[i][j].toUpperCase().charAt(0)));
+                        if(stringBoard[i][j] != "_"){
+                            tileBoard[i][j].placeLetter(new Letters(stringBoard[i][j].toUpperCase().charAt(0)));
+                        }
                     }
                 }
 
@@ -932,7 +934,7 @@ public class GameBoard {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 if (stringBoard[i][j] == "_") {
-                    tileBoard[i][j] = new Tile();
+                    tileBoard[i][j] = new Tile(tileBoard[i][j].getPointMultiplier(), tileBoard[i][j].isWordPointMultiplier());
                 } else {
                     tileBoard[i][j].placeLetter(new Letters(stringBoard[i][j].toUpperCase().charAt(0)));
                 }
@@ -1091,7 +1093,6 @@ public class GameBoard {
      * Sets the board for the undo
      */
     public void setUndoBoard(){
-        loadTileBoard();
         Turn t = new Turn(prevBoard, currentPlayer, currentScore);
         undoStack.push(t);
         prevBoard = changeTileToStringBoard(tileBoard);
@@ -1103,24 +1104,19 @@ public class GameBoard {
      */
     public void undoTurn(){
         System.out.println("UNDO");
-        if (!undoStack.empty()){
-            Turn item = undoStack.pop();
-            Turn redoItem = new Turn(stringBoard,item.getPlayer(),item.getScore());
-            System.out.println("uu "+ item.getPlayer().getName());
-            System.out.println(item.getScore());
-            stringBoard = item.getBoard();
-            System.out.println();
-            item.getPlayer().setUndoScore(item.getScore());
-            System.out.println(item.getPlayer().getScore());
-            setCurrentPlayer(redoItem.getPlayer());
-            loadTileBoard();
-            redoStack.push(redoItem);
+        Turn item = undoStack.pop();
+        Turn redoItem = new Turn(stringBoard,item.getPlayer(),item.getScore());
+        System.out.println("uu "+ item.getPlayer().getName());
+        System.out.println(item.getScore());
+        stringBoard = item.getBoard();
+        System.out.println();
+        item.getPlayer().setUndoScore(item.getScore());
+        System.out.println(item.getPlayer().getScore());
+        redoStack.push(redoItem);
 
-            for (ScrabbleView v : views) {
-                v.updateUndoRedoBoard(stringBoard);
-                v.updateScore(item.getPlayer().getScore(), players.indexOf(item.getPlayer()));
-                v.disableOtherPlayers(players.indexOf(currentPlayer));
-            }
+        for (ScrabbleView v : views) {
+            v.updateUndoRedoBoard(stringBoard);
+            v.updateScore(item.getPlayer().getScore(), players.indexOf(item.getPlayer()));
         }
     }
 
@@ -1142,14 +1138,12 @@ public class GameBoard {
             }
             System.out.println();
             redoItem.getPlayer().setScore(redoItem.getScore());
-            getNextPlayer();
-            loadTileBoard();
+            //currentPlayer = redoItem.getPlayer();
             undoStack.push(undoItem);
 
             for (ScrabbleView v : views) {
                 v.updateUndoRedoBoard(stringBoard);
                 v.updateScore(redoItem.getPlayer().getScore(), players.indexOf(redoItem.getPlayer()));
-                v.disableOtherPlayers(players.indexOf(currentPlayer));
             }
         }
     }
