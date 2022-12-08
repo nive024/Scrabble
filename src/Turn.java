@@ -1,7 +1,7 @@
 public class Turn {
-    String[][] board;
-    Player player;
-    int score;
+    private String[][] board;
+    private Player player;
+    private int score;
 
     public Turn(String[][] b, Player p, int s){
         board = b;

@@ -160,6 +160,7 @@ public class GameBoard {
      * @return true, if the surrounding words are valid otherwise false
      */
     public boolean checkNewWords() {
+        System.out.println("ww");
         wordsAddedThisTurn.clear();
 
         ArrayList<String> tempNewWords = new ArrayList<>();
@@ -168,6 +169,7 @@ public class GameBoard {
         String place = "";
         //go through the board left to right and look for complete words
         for (int i = 0; i < rows; i++) {
+            System.out.println("tt");
             for (int j = 0; j < cols; j++) {
                 if (!(stringBoard[i][j]).equals("_")) {
                     wordToCheck += stringBoard[i][j];
@@ -179,6 +181,7 @@ public class GameBoard {
                 } else {
 
                     if(wordToCheck.length() > 1) { //if it's word longer than 1 letter
+                        System.out.println("ii");
                         if (checkWord(wordToCheck)) { //if it's a real word
                             wordToCheck += " " + place;
                             if ((!isFloating(wordToCheck.split(" ")[0], place)) || (isBoardEmpty)) {
@@ -319,6 +322,7 @@ public class GameBoard {
      * @return true if the play is valid, false otherwise
      */
     public boolean checkPlay() {
+        System.out.println("pp");
         currentScore = 0;
         if (checkNewWords()) {
             for (String play: wordsAddedThisTurn) {
@@ -1112,7 +1116,7 @@ public class GameBoard {
             System.out.println();
             item.getPlayer().setUndoScore(item.getScore());
             System.out.println(item.getPlayer().getScore());
-            setCurrentPlayer(redoItem.getPlayer());
+            setCurrentPlayer(item.getPlayer());
             loadTileBoard();
             redoStack.push(redoItem);
 
