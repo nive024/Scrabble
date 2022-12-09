@@ -1,8 +1,21 @@
+/**
+ * The Turn class represents a turn that a user takes.
+ *
+ * This class saved the board of the turn, the player who played the turn and the score of the turn
+ *
+ * @author Nicole Lim
+ */
 public class Turn {
     private String[][] board;
     private Player player;
     private int score;
 
+    /**
+     * Constructor for the turn object
+     * @param b the board of the turn
+     * @param p the player whose turn it was
+     * @param s the score of the turn
+     */
     public Turn(String[][] b, Player p, int s){
         board = b;
         player = p;
@@ -50,8 +63,8 @@ public class Turn {
     }
 
     /**
-     * sets the score of the most recent player
-     * @param score
+     * sets the score of the turn
+     * @param score the score of the turn
      */
     public void setScore(int score) {
         this.score = score;

@@ -19,6 +19,7 @@ import java.util.*;
  * @author Nivetha Sivasaravanan
  * @author Nicole Lim
  * @author Rimsha Atif
+ * @author Isaiah Hunte
  */
 public class GameBoard {
     private String[][] stringBoard; //used for error checking when placing a word
@@ -1110,12 +1111,8 @@ public class GameBoard {
         if (!undoStack.empty()){
             Turn item = undoStack.pop();
             Turn redoItem = new Turn(stringBoard,item.getPlayer(),item.getScore());
-            System.out.println("uu "+ item.getPlayer().getName());
-            System.out.println(item.getScore());
             stringBoard = item.getBoard();
-            System.out.println();
             item.getPlayer().setUndoScore(item.getScore());
-            System.out.println(item.getPlayer().getScore());
             setCurrentPlayer(item.getPlayer());
             loadTileBoard();
             redoStack.push(redoItem);
@@ -1130,6 +1127,7 @@ public class GameBoard {
 
     /**
      * Redoes the turn
+     * Updates the board to the board it last was before the undo .
      */
     public void redoTurn(){
         if (!redoStack.empty()){
@@ -1137,14 +1135,6 @@ public class GameBoard {
             Turn redoItem = redoStack.pop();
             Turn undoItem = new Turn(stringBoard, redoItem.getPlayer(), redoItem.getScore());
             stringBoard = redoItem.getBoard();
-            System.out.println("rr " + redoItem.getPlayer().getName());
-            for (int i = 0; i < rows; i++) {
-                for (int j = 0; j < cols; j++) {
-                    System.out.print(redoItem.getBoard()[i][j]);
-                }
-                System.out.println();
-            }
-            System.out.println();
             redoItem.getPlayer().setScore(redoItem.getScore());
             getNextPlayer();
             loadTileBoard();

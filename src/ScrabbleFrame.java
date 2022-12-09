@@ -45,9 +45,6 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         width = (int) screenSize.getWidth();
         height = (int) screenSize.getHeight();
-        System.out.println(width);
-        System.out.println(height);
-
 
         grid = new JButton[15][15];
         oldGrid = new JButton[15][15];
@@ -576,6 +573,10 @@ public class ScrabbleFrame extends JFrame implements ScrabbleView{
         loadPlayers(gm);
     }
 
+    /**
+     * Updates the board to the past board or to the board after a redo.
+     * @param board
+     */
     @Override
     public void updateUndoRedoBoard(String[][] board) {
         //System.out.println(Arrays.deepToString(board));

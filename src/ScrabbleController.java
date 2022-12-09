@@ -77,18 +77,12 @@ public class ScrabbleController implements ActionListener {
 
         //check if its end turn
         else if (b.getText().equals("End Turn")) {
-            //try {
-                //model.placeWord(getWord());
-                model.checkPlay();
-                frame.getTurn().setText(model.getCurrentPlayer().getName()+"'s turn");
-                if (frame.getBot() && model.getCurrentPlayer().getName().equals("Bot")){
-                    ((AI)model.getCurrentPlayer()).playTurn();
-                }
 
-            //} catch (IndexOutOfBoundsException exception) {
-                //JOptionPane.showMessageDialog(null, "You didn't place any letters. If you want to skip" +
-                      //  " your turn, click Skip Turn");
-            //}
+            model.checkPlay();
+            frame.getTurn().setText(model.getCurrentPlayer().getName()+"'s turn");
+            if (frame.getBot() && model.getCurrentPlayer().getName().equals("Bot")){
+                ((AI)model.getCurrentPlayer()).playTurn();
+            }
         }
 
         // if the player clicks skip turn, it will move the turn to the next player
@@ -106,7 +100,9 @@ public class ScrabbleController implements ActionListener {
         // if the player clicks redo, it will bring the board back to the gameboard before the undo
         else if (b.getText().equals("Redo")){
             model.redoTurn();
-        } else if (b.getText().equals("Custom")) {
+        }
+        // if the player click custom, it will change the board to the custom board
+        else if (b.getText().equals("Custom")) {
             JComponent[] inputs = new JComponent[] {nameLabel, nameField};
             int result = JOptionPane.showConfirmDialog(null, inputs, "Import AddressBook", JOptionPane.OK_CANCEL_OPTION);
             if (result == JOptionPane.OK_OPTION) {

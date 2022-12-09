@@ -14,6 +14,7 @@ import org.xml.sax.SAXException;
  * @author Rimsha Atif
  * @author Isaiah Hunte
  * @author Nivetha Sivasaravanan
+ * @author Nicole Lim
  */
 public class GameBoardTest {
     private GameBoard emptygameBoard;
