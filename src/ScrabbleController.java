@@ -95,11 +95,13 @@ public class ScrabbleController implements ActionListener {
         // if the player clicks undo, it will bring the board back to the latest gameboard before the move was done
         else if (b.getText().equals("Undo")){
             model.undoTurn();
+            frame.getTurn().setText(model.getCurrentPlayer().getName()+"'s turn");
         }
 
         // if the player clicks redo, it will bring the board back to the gameboard before the undo
         else if (b.getText().equals("Redo")){
             model.redoTurn();
+            frame.getTurn().setText(model.getCurrentPlayer().getName()+"'s turn");
         }
         // if the player click custom, it will change the board to the custom board
         else if (b.getText().equals("Custom")) {
