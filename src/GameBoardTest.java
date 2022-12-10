@@ -322,6 +322,8 @@ public class GameBoardTest {
         gameBoardCopy.printGameStatus();
         for (int i = 0; i < 15; i++) {
             for (int j = 0; j < 15; j++) {
+                System.out.println("i: " + i + " j: " + j);
+                System.out.println("i: " + gameBoard.getTileBoard()[i][j].getLetter() + " j: " + gameBoardCopy.getTileBoard()[i][j].getLetter());
                 assertEquals(gameBoard.getTileBoard()[i][j], gameBoardCopy.getTileBoard()[i][j]);
             }
         }

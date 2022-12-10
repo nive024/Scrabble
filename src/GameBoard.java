@@ -363,9 +363,7 @@ public class GameBoard {
 
         setUndoBoard(t);
         printGameStatus();
-        System.out.println(currentPlayer.getName());
         getNextPlayer();
-        System.out.println(currentPlayer.getName());
         numSkips = 0;
         return true;
     }
@@ -913,9 +911,11 @@ public class GameBoard {
                     while (stringCounter < 15) {
                         for (int j = 0; j < 15; j++) {
                             if (data.charAt(stringCounter) != ' ' && data.charAt(stringCounter) != '_') {
+                                tileBoard[i][j].placeLetter(new Letters(data.charAt(stringCounter)));
                                 stringBoard[i][j] = data.charAt(stringCounter) + "";
                             }
                             else{
+                                tileBoard[i][j].placeLetter(new Letters('_'));
                                 stringBoard[i][j] = "_";
                             }
                             stringCounter++;
@@ -931,21 +931,6 @@ public class GameBoard {
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * this method loads the tile board
-     */
-    private void loadTileBoard() {
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                if (stringBoard[i][j].equals("_")) {
-                    tileBoard[i][j] = new Tile();
-                } else {
-                    tileBoard[i][j].placeLetter(new Letters(stringBoard[i][j].toUpperCase().charAt(0)));
-                }
-            }
         }
     }
 
@@ -1132,7 +1117,6 @@ public class GameBoard {
 
    // if the bot become the current player after the undo, it will play its turn right away
             if (currentPlayer.getName().equals("Bot")){
-                loadTileBoard();
                 ((AI)getCurrentPlayer()).playTurn();
                 for (ScrabbleView v : views) {
                     v.updateUndoRedoBoard(stringBoard);
@@ -1170,7 +1154,6 @@ public class GameBoard {
 
             // If the player becomes the bot after the redo, the bot will automatically play
             if (currentPlayer.getName().equals("Bot")){
-                loadTileBoard();
                 ((AI)getCurrentPlayer()).playTurn();
                 for (ScrabbleView v : views) {
                     v.updateUndoRedoBoard(stringBoard);

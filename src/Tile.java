@@ -125,9 +125,6 @@ public class Tile {
         else if (!(obj instanceof Tile))
             return false;
         else
-            if(this.letter ==null){
-                return ((this.wordPointMultiplier == ((Tile) obj).wordPointMultiplier) && (this.letter == ((Tile) obj).letter));
-            }
             return ((this.wordPointMultiplier == ((Tile) obj).wordPointMultiplier) && (this.letter.equals(((Tile) obj).letter)));
     }
 }
