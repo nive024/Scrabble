@@ -7,6 +7,7 @@
  */
 public class Turn {
     private String[][] board;
+    private Tile[][] tileBoard;
     private Player player;
     private int score;
 
@@ -16,10 +17,19 @@ public class Turn {
      * @param p the player whose turn it was
      * @param s the score of the turn
      */
-    public Turn(String[][] b, Player p, int s){
+    public Turn(String[][] b, Player p, int s, Tile[][] t){
+        super();
         board = b;
         player = p;
         score = s;
+        tileBoard = t;
+    }
+
+    public Turn() {
+        score = 0;
+        tileBoard = new Tile[15][15];
+        player = new Player("");
+        board = new String[15][15];
     }
 
     /**
@@ -31,11 +41,32 @@ public class Turn {
     }
 
     /**
+     * Returns the tile gameboard of the player's turn
+     * @return tile gameboard of the turn that was just played
+     */
+    public Tile[][] getTileBoard() {
+        return tileBoard;
+    }
+
+    /**
      * Sets the board to the current board
      * @param board the board with the most recent play
      */
     public void setBoard(String[][] board) {
         this.board = board;
+    }
+
+    /**
+     * Sets the tile board to the current tile board
+     * @param board the tile board with the most recent play
+     */
+    public void setTileBoard(Tile[][] board) {
+        //this.tileBoard = board;
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board.length; j++) {
+                this.tileBoard[i][j] = new Tile(board[i][j].getPointMultiplier(), board[i][j].isWordPointMultiplier());
+            }
+        }
     }
 
     /**
@@ -67,7 +98,7 @@ public class Turn {
      * @param score the score of the turn
      */
     public void setScore(int score) {
-        this.score = score;
+        this.score += score;
     }
 }
 

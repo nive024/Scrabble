@@ -106,7 +106,7 @@ public class ScrabbleController implements ActionListener {
         // if the player click custom, it will change the board to the custom board
         else if (b.getText().equals("Custom")) {
             JComponent[] inputs = new JComponent[] {nameLabel, nameField};
-            int result = JOptionPane.showConfirmDialog(null, inputs, "Import AddressBook", JOptionPane.OK_CANCEL_OPTION);
+            int result = JOptionPane.showConfirmDialog(null, inputs, "Import Custom Board", JOptionPane.OK_CANCEL_OPTION);
             if (result == JOptionPane.OK_OPTION) {
                 model.setTileBoard(true, nameField.getText());
                 nameField.setText("");

@@ -72,8 +72,6 @@ public class GameBoard {
             }
         }
 
-
-//        //non special tiles
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 if (tileBoard[i][j] == null) { // line added
@@ -130,14 +128,6 @@ public class GameBoard {
         try {
             HttpURLConnection connection;
             URL url = new URL("https://api.dictionaryapi.dev/api/v2/entries/en/" + word.toLowerCase());
-            connection = null;
-           // URL url = new URL("https://api.dictionaryapi.dev/api/v2/entries/en/" + word);
-            //URL url = new URL("https://api.wordnik.com/v4/word.json/" + word + "/definitions?limit=200&includeRelated=false&sourceDictionaries=all&useCanonical=false&includeTags=false&api_key=k5mz36509sb4q1eyagr8gq1juoxjfpwjt1gki6kcxo13p30p5");
-            //We will probably use this API for future milestones since some basic words are missing
-            //from the above API, but I haven't gotten the key for it yet.
-//            URL url = new URL("https://api.wordnik.com/v4/word.json/" + word + "/definitions?limit=200&includeRelated=false&sourceDictionaries=all&useCanonical=false&includeTags=false&api_key=YOURAPIKEY");
-
-            //URL url = new URL("https://api.wordnik.com/v4/word.json/" + word.toLowerCase() + "/definitions?limit=200&includeRelated=false&sourceDictionaries=all&useCanonical=false&includeTags=false&api_key=k5mz36509sb4q1eyagr8gq1juoxjfpwjt1gki6kcxo13p30p5");
             connection = (HttpURLConnection) url.openConnection();
 
             InputStream is = connection.getInputStream();
@@ -152,7 +142,7 @@ public class GameBoard {
         } catch (FileNotFoundException e) {
             return false;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            return true; //if the API stops working then it would play in a reduced functionality way
         }
     }
 
@@ -161,7 +151,6 @@ public class GameBoard {
      * @return true, if the surrounding words are valid otherwise false
      */
     public boolean checkNewWords() {
-        System.out.println("ww");
         wordsAddedThisTurn.clear();
 
         ArrayList<String> tempNewWords = new ArrayList<>();
@@ -170,7 +159,6 @@ public class GameBoard {
         String place = "";
         //go through the board left to right and look for complete words
         for (int i = 0; i < rows; i++) {
-            System.out.println("tt");
             for (int j = 0; j < cols; j++) {
                 if (!(stringBoard[i][j]).equals("_")) {
                     wordToCheck += stringBoard[i][j];
@@ -180,15 +168,14 @@ public class GameBoard {
                         place += (char)('A'+j);
                     }
                 } else {
-
                     if(wordToCheck.length() > 1) { //if it's word longer than 1 letter
                         System.out.println("ii");
                         if (checkWord(wordToCheck)) { //if it's a real word
                             wordToCheck += " " + place;
                             if ((!isFloating(wordToCheck.split(" ")[0], place)) || (isBoardEmpty)) {
                                 if (wordsOnBoard.add(wordToCheck)) {
-                                    System.out.println("q");
                                     currentScore += calculateScore(wordToCheck.split(" ")[0]);
+
                                     wordsAddedThisTurn.add(wordToCheck);
                                 }
                                 tempNewWords.add(wordToCheck); //add to arrayList bc we don't know if valid placement or not
@@ -236,9 +223,7 @@ public class GameBoard {
                             wordToCheck += " " + place;
                             if ((!isFloating(wordToCheck.split(" ")[0], place)) || (isBoardEmpty)) {
                                 if (wordsOnBoard.add(wordToCheck)) {
-                                    System.out.println("p");
                                     currentScore += calculateScore(wordToCheck.split(" ")[0]);
-                                    System.out.println("current score " + calculateScore(wordToCheck.split(" ")[0]));
                                     wordsAddedThisTurn.add(wordToCheck);
                                 }
                                 tempNewWords.add(wordToCheck); //add to arrayList bc we don't know if valid placement or not
@@ -323,7 +308,9 @@ public class GameBoard {
      * @return true if the play is valid, false otherwise
      */
     public boolean checkPlay() {
-        System.out.println("pp");
+        Turn t = new Turn();
+        t.setTileBoard(tileBoard);
+
         currentScore = 0;
         if (checkNewWords()) {
             for (String play: wordsAddedThisTurn) {
@@ -351,6 +338,8 @@ public class GameBoard {
                 }
 
                 this.currentPlayer.setScore(currentScore);
+                t.setScore(currentScore);
+                currentScore = 0;
 
                 deal(players.indexOf(currentPlayer));
                 for (ScrabbleView v : views) {
@@ -369,7 +358,8 @@ public class GameBoard {
             revertStringBoard();
             return false;
         }
-        setUndoBoard();
+
+        setUndoBoard(t);
         printGameStatus();
         getNextPlayer();
         numSkips = 0;
@@ -511,7 +501,6 @@ public class GameBoard {
     private int calculateScore(String word){
         int score = 0;
         int wordMultiplier = 1;
-
         //int i = 0;
         for(String t: tilesChangedThisTurn){
             String[] coordinates = t.split(" ");
@@ -526,7 +515,7 @@ public class GameBoard {
         }
 
         //if it's the first word being placed, then they should get double the points
-        System.out.println("Yay! You scored " + (score * wordMultiplier) + " points for " + word);
+        //System.out.println("Yay! You scored " + (score * wordMultiplier) + " points for " + word);
         return score * wordMultiplier;
     }
 
@@ -720,6 +709,10 @@ public class GameBoard {
         }
     }
 
+    /**
+     * Sets the current string board to the new one with the AI's play on it
+     * @param stringBoard the stringboard after the AI plays
+     */
     public void setStringBoard(String[][] stringBoard) {
         this.stringBoard = stringBoard;
         for (int i = 0; i < rows; i++) {
@@ -729,6 +722,11 @@ public class GameBoard {
         }
     }
 
+    /**
+     * Sets the current tileboard to the custom version, or the normal board
+     * @param custom true if we are using a custom board, false otherwise
+     * @param filename the file containing the XML description of the custom board
+     */
     public void setTileBoard(boolean custom, String filename) {
         if (custom) {
             //first initialize to all normal tiles
@@ -828,6 +826,13 @@ public class GameBoard {
         }
     }
 
+    /**
+     * Reads the XML file and changes the corresponding squares on the tileBoard
+     * @param f the file containing the XML specification
+     * @throws ParserConfigurationException
+     * @throws IOException
+     * @throws SAXException
+     */
     public void constructCustomBoard(File f) throws ParserConfigurationException, IOException, SAXException {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
@@ -863,15 +868,11 @@ public class GameBoard {
     public void save(String fileName) throws IOException {
         String xmlFile = fileName + "XML";
         saveTileBoardXML(new File(xmlFile));
-        //saveTileBoardXML(new File(xmlFile));
-        // saveTileBoardXML(xmlfile);
 
         File file = new File(fileName);
         FileOutputStream fos = new FileOutputStream(file);
 
-
         String s= toString();
-
 
         byte[] bytes = s.getBytes();
         fos.write(bytes);
@@ -904,14 +905,13 @@ public class GameBoard {
                     stringCounter=16;
                 }
                 else{
-                    System.out.println(data.length());
                     while (stringCounter < 15) {
                         for (int j = 0; j < 15; j++) {
                             if (data.charAt(stringCounter) != ' ' && data.charAt(stringCounter) != '_') {
-                                getStringBoard()[i][j] = data.charAt(stringCounter) + "";
+                                stringBoard[i][j] = data.charAt(stringCounter) + "";
                             }
                             else{
-                                getStringBoard()[i][j] = "_";
+                                stringBoard[i][j] = "_";
                             }
                             stringCounter++;
                         }
@@ -919,8 +919,7 @@ public class GameBoard {
                     }
                 }
             }
-            loadTileBoard();
-            System.out.println("GM:\n " + toString());
+            System.out.println("GM:\n " + this);
             printGameStatus();
             for(ScrabbleView v: views){
                 v.loadGame(this);
@@ -936,7 +935,7 @@ public class GameBoard {
     private void loadTileBoard() {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                if (stringBoard[i][j] == "_") {
+                if (stringBoard[i][j].equals("_")) {
                     tileBoard[i][j] = new Tile();
                 } else {
                     tileBoard[i][j].placeLetter(new Letters(stringBoard[i][j].toUpperCase().charAt(0)));
@@ -983,7 +982,6 @@ public class GameBoard {
                 ArrayList<Letters> newLetters = new ArrayList<>();
                 for(int l =0; l<7; l++){
                     bagOfLetters.inBag(new Letters(letters[l].charAt(0)));
-                    System.out.println(letters[l].charAt(0));
                     newLetters.add(new Letters(letters[l].charAt(0)));
                 }
                 players.get(n).setLetters(newLetters);
@@ -1047,10 +1045,18 @@ public class GameBoard {
     }
 
     /**
+     * Used for testing purposes
+     */
+    public void addPlayer(Player p) {
+        players.add(p);
+    }
+
+    /**
      * Saves the current tileBoard into XML format - used for deserialization
      */
     private void saveTileBoardXML(File f) {
         StringBuilder returnStr = new StringBuilder();
+
         returnStr.append("<?xml version=\"1.0\"?>\n");
         returnStr.append("<tileBoard>\n");
         for (int i = 0; i < rows; i++) {
@@ -1072,13 +1078,6 @@ public class GameBoard {
         }
     }
 
-    /**
-     * Used for testing purposes
-     */
-    public void addPlayer(Player p) {
-        players.add(p);
-    }
-
     private String[][] changeTileToStringBoard(Tile[][] tBoard){
         String[][] sBoard = new String[rows][cols];
         for (int k = 0; k < rows; k++) {
@@ -1095,10 +1094,11 @@ public class GameBoard {
     /**
      * Sets the board for the undo
      */
-    public void setUndoBoard(){
-        loadTileBoard();
-        Turn t = new Turn(prevBoard, currentPlayer, currentScore);
+    public void setUndoBoard(Turn t){
+        t.setBoard(prevBoard);
+        t.setPlayer(currentPlayer);
         undoStack.push(t);
+        System.out.println("size: " + undoStack.size());
         prevBoard = changeTileToStringBoard(tileBoard);
     }
 
@@ -1110,18 +1110,20 @@ public class GameBoard {
         System.out.println("UNDO");
         if (!undoStack.empty()){
             Turn item = undoStack.pop();
-            Turn redoItem = new Turn(stringBoard,item.getPlayer(),item.getScore());
+            Turn redoItem = new Turn(stringBoard,item.getPlayer(),item.getScore(), item.getTileBoard());
             stringBoard = item.getBoard();
             item.getPlayer().setUndoScore(item.getScore());
             setCurrentPlayer(item.getPlayer());
-            loadTileBoard();
+            tileBoard = item.getTileBoard();
             redoStack.push(redoItem);
 
             for (ScrabbleView v : views) {
                 v.updateUndoRedoBoard(stringBoard);
                 v.updateScore(item.getPlayer().getScore(), players.indexOf(item.getPlayer()));
                 v.disableOtherPlayers(players.indexOf(currentPlayer));
+                v.setCustomBoard();
             }
+
         }
     }
 
@@ -1133,17 +1135,18 @@ public class GameBoard {
         if (!redoStack.empty()){
             System.out.println("REDO");
             Turn redoItem = redoStack.pop();
-            Turn undoItem = new Turn(stringBoard, redoItem.getPlayer(), redoItem.getScore());
+            Turn undoItem = new Turn(stringBoard, redoItem.getPlayer(), redoItem.getScore(), redoItem.getTileBoard());
             stringBoard = redoItem.getBoard();
+            tileBoard = redoItem.getTileBoard();
             redoItem.getPlayer().setScore(redoItem.getScore());
             getNextPlayer();
-            loadTileBoard();
             undoStack.push(undoItem);
 
             for (ScrabbleView v : views) {
                 v.updateUndoRedoBoard(stringBoard);
                 v.updateScore(redoItem.getPlayer().getScore(), players.indexOf(redoItem.getPlayer()));
                 v.disableOtherPlayers(players.indexOf(currentPlayer));
+                v.setCustomBoard();
             }
         }
     }
