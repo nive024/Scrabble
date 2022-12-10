@@ -169,7 +169,6 @@ public class GameBoard {
                     }
                 } else {
                     if(wordToCheck.length() > 1) { //if it's word longer than 1 letter
-                        System.out.println("ii");
                         if (checkWord(wordToCheck)) { //if it's a real word
                             wordToCheck += " " + place;
                             if ((!isFloating(wordToCheck.split(" ")[0], place)) || (isBoardEmpty)) {
@@ -310,7 +309,6 @@ public class GameBoard {
     public boolean checkPlay() {
         Turn t = new Turn();
         t.setTileBoard(tileBoard);
-
         currentScore = 0;
         if (checkNewWords()) {
             for (String play: wordsAddedThisTurn) {
@@ -361,7 +359,9 @@ public class GameBoard {
 
         setUndoBoard(t);
         printGameStatus();
+        System.out.println(currentPlayer.getName());
         getNextPlayer();
+        System.out.println(currentPlayer.getName());
         numSkips = 0;
         return true;
     }
@@ -1109,13 +1109,13 @@ public class GameBoard {
     public void undoTurn(){
         System.out.println("UNDO");
         if (!undoStack.empty()){
-            Turn item = undoStack.pop();
-            Turn redoItem = new Turn(stringBoard,item.getPlayer(),item.getScore(), item.getTileBoard());
-            stringBoard = item.getBoard();
-            item.getPlayer().setUndoScore(item.getScore());
-            setCurrentPlayer(item.getPlayer());
+            Turn item = undoStack.pop();// pops the latest turn
+            Turn redoItem = new Turn(stringBoard,item.getPlayer(),item.getScore(), item.getTileBoard());// saves the current turn
+            stringBoard = item.getBoard();// sets the string board to the popped board
+            item.getPlayer().setUndoScore(item.getScore()); // resets the player's score
+            setCurrentPlayer(item.getPlayer()); // changes the current player bak to the previous player
             tileBoard = item.getTileBoard();
-            redoStack.push(redoItem);
+            redoStack.push(redoItem); // pushes the last baord to the redo stack
 
             for (ScrabbleView v : views) {
                 v.updateUndoRedoBoard(stringBoard);
@@ -1124,6 +1124,17 @@ public class GameBoard {
                 v.setCustomBoard();
             }
 
+   // if the bot become the current player after the undo, it will play its turn right away
+            if (currentPlayer.getName().equals("Bot")){
+                loadTileBoard();
+                ((AI)getCurrentPlayer()).playTurn();
+                for (ScrabbleView v : views) {
+                    v.updateUndoRedoBoard(stringBoard);
+                    v.updateScore(item.getPlayer().getScore(), players.indexOf(item.getPlayer()));
+                    v.disableOtherPlayers(players.indexOf(currentPlayer));
+                }
+
+            }
         }
     }
 
@@ -1134,19 +1145,32 @@ public class GameBoard {
     public void redoTurn(){
         if (!redoStack.empty()){
             System.out.println("REDO");
-            Turn redoItem = redoStack.pop();
-            Turn undoItem = new Turn(stringBoard, redoItem.getPlayer(), redoItem.getScore(), redoItem.getTileBoard());
-            stringBoard = redoItem.getBoard();
+
+            Turn redoItem = redoStack.pop(); // pops last turn
+            Turn undoItem = new Turn(stringBoard, redoItem.getPlayer(), redoItem.getScore(), redoItem.getTileBoard()); // creates undo item of current state
+            stringBoard = redoItem.getBoard(); // sets string board to popped board
             tileBoard = redoItem.getTileBoard();
-            redoItem.getPlayer().setScore(redoItem.getScore());
-            getNextPlayer();
-            undoStack.push(undoItem);
+            redoItem.getPlayer().setScore(redoItem.getScore()); // resets the player score
+            getNextPlayer(); // gets the next player
+            undoStack.push(undoItem); // pushes the undo turn to the turn stack
 
             for (ScrabbleView v : views) {
                 v.updateUndoRedoBoard(stringBoard);
                 v.updateScore(redoItem.getPlayer().getScore(), players.indexOf(redoItem.getPlayer()));
                 v.disableOtherPlayers(players.indexOf(currentPlayer));
                 v.setCustomBoard();
+            }
+
+            // If the player becomes the bot after the redo, the bot will automatically play
+            if (currentPlayer.getName().equals("Bot")){
+                loadTileBoard();
+                ((AI)getCurrentPlayer()).playTurn();
+                for (ScrabbleView v : views) {
+                    v.updateUndoRedoBoard(stringBoard);
+                    v.updateScore(redoItem.getPlayer().getScore(), players.indexOf(redoItem.getPlayer()));
+                    v.disableOtherPlayers(players.indexOf(currentPlayer));
+                }
+
             }
         }
     }
