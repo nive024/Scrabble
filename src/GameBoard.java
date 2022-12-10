@@ -161,7 +161,6 @@ public class GameBoard {
      * @return true, if the surrounding words are valid otherwise false
      */
     public boolean checkNewWords() {
-        System.out.println("ww");
         wordsAddedThisTurn.clear();
 
         ArrayList<String> tempNewWords = new ArrayList<>();
@@ -170,7 +169,6 @@ public class GameBoard {
         String place = "";
         //go through the board left to right and look for complete words
         for (int i = 0; i < rows; i++) {
-            System.out.println("tt");
             for (int j = 0; j < cols; j++) {
                 if (!(stringBoard[i][j]).equals("_")) {
                     wordToCheck += stringBoard[i][j];
@@ -182,7 +180,6 @@ public class GameBoard {
                 } else {
 
                     if(wordToCheck.length() > 1) { //if it's word longer than 1 letter
-                        System.out.println("ii");
                         if (checkWord(wordToCheck)) { //if it's a real word
                             wordToCheck += " " + place;
                             if ((!isFloating(wordToCheck.split(" ")[0], place)) || (isBoardEmpty)) {
@@ -323,7 +320,6 @@ public class GameBoard {
      * @return true if the play is valid, false otherwise
      */
     public boolean checkPlay() {
-        System.out.println("pp");
         currentScore = 0;
         if (checkNewWords()) {
             for (String play: wordsAddedThisTurn) {
@@ -371,7 +367,9 @@ public class GameBoard {
         }
         setUndoBoard();
         printGameStatus();
+        System.out.println(currentPlayer.getName());
         getNextPlayer();
+        System.out.println(currentPlayer.getName());
         numSkips = 0;
         return true;
     }
@@ -1109,18 +1107,30 @@ public class GameBoard {
     public void undoTurn(){
         System.out.println("UNDO");
         if (!undoStack.empty()){
-            Turn item = undoStack.pop();
-            Turn redoItem = new Turn(stringBoard,item.getPlayer(),item.getScore());
-            stringBoard = item.getBoard();
-            item.getPlayer().setUndoScore(item.getScore());
-            setCurrentPlayer(item.getPlayer());
+            Turn item = undoStack.pop(); // pops the latest turn
+            Turn redoItem = new Turn(stringBoard,item.getPlayer(),item.getScore()); // saves the current turn
+            stringBoard = item.getBoard(); // sets the string board to the popped board
+            item.getPlayer().setUndoScore(item.getScore()); // resets the player's score
+            setCurrentPlayer(item.getPlayer()); // changes the current player bak to the previous player
             loadTileBoard();
-            redoStack.push(redoItem);
+            redoStack.push(redoItem); // pushes the last baord to the redo stack
 
             for (ScrabbleView v : views) {
                 v.updateUndoRedoBoard(stringBoard);
                 v.updateScore(item.getPlayer().getScore(), players.indexOf(item.getPlayer()));
                 v.disableOtherPlayers(players.indexOf(currentPlayer));
+            }
+
+            // if the bot become the current player after the undo, it will play its turn right away
+            if (currentPlayer.getName().equals("Bot")){
+                loadTileBoard();
+                ((AI)getCurrentPlayer()).playTurn();
+                for (ScrabbleView v : views) {
+                    v.updateUndoRedoBoard(stringBoard);
+                    v.updateScore(item.getPlayer().getScore(), players.indexOf(item.getPlayer()));
+                    v.disableOtherPlayers(players.indexOf(currentPlayer));
+                }
+
             }
         }
     }
@@ -1132,18 +1142,30 @@ public class GameBoard {
     public void redoTurn(){
         if (!redoStack.empty()){
             System.out.println("REDO");
-            Turn redoItem = redoStack.pop();
-            Turn undoItem = new Turn(stringBoard, redoItem.getPlayer(), redoItem.getScore());
-            stringBoard = redoItem.getBoard();
-            redoItem.getPlayer().setScore(redoItem.getScore());
-            getNextPlayer();
+            Turn redoItem = redoStack.pop(); // pops last turn
+            Turn undoItem = new Turn(stringBoard, redoItem.getPlayer(), redoItem.getScore()); // creates undo item of current state
+            stringBoard = redoItem.getBoard(); // sets string board to popped board
+            redoItem.getPlayer().setScore(redoItem.getScore()); // resets the player score
+            getNextPlayer(); // gets the next player
             loadTileBoard();
-            undoStack.push(undoItem);
+            undoStack.push(undoItem); // pushes the undo turn to the turn stack
 
             for (ScrabbleView v : views) {
                 v.updateUndoRedoBoard(stringBoard);
                 v.updateScore(redoItem.getPlayer().getScore(), players.indexOf(redoItem.getPlayer()));
                 v.disableOtherPlayers(players.indexOf(currentPlayer));
+            }
+
+            // If the player becomes the bot after the redo, the bot will automatically play
+            if (currentPlayer.getName().equals("Bot")){
+                loadTileBoard();
+                ((AI)getCurrentPlayer()).playTurn();
+                for (ScrabbleView v : views) {
+                    v.updateUndoRedoBoard(stringBoard);
+                    v.updateScore(redoItem.getPlayer().getScore(), players.indexOf(redoItem.getPlayer()));
+                    v.disableOtherPlayers(players.indexOf(currentPlayer));
+                }
+
             }
         }
     }

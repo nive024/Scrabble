@@ -82,6 +82,7 @@ public class ScrabbleController implements ActionListener {
             frame.getTurn().setText(model.getCurrentPlayer().getName()+"'s turn");
             if (frame.getBot() && model.getCurrentPlayer().getName().equals("Bot")){
                 ((AI)model.getCurrentPlayer()).playTurn();
+                frame.getTurn().setText(model.getCurrentPlayer().getName()+"'s turn");
             }
         }
 
