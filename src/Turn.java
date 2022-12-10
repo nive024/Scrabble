@@ -1,3 +1,6 @@
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * The Turn class represents a turn that a user takes.
  *
@@ -10,6 +13,7 @@ public class Turn {
     private Tile[][] tileBoard;
     private Player player;
     private int score;
+    private Set<String> wordOnBoard;
 
     /**
      * Constructor for the turn object
@@ -17,12 +21,13 @@ public class Turn {
      * @param p the player whose turn it was
      * @param s the score of the turn
      */
-    public Turn(String[][] b, Player p, int s, Tile[][] t){
+    public Turn(String[][] b, Player p, int s, Tile[][] t, Set<String> w){
         super();
         board = b;
         player = p;
         score = s;
         tileBoard = t;
+        wordOnBoard = w;
     }
 
     public Turn() {
@@ -30,6 +35,7 @@ public class Turn {
         tileBoard = new Tile[15][15];
         player = new Player("");
         board = new String[15][15];
+        wordOnBoard = new HashSet<>();
     }
 
     /**
@@ -57,6 +63,14 @@ public class Turn {
     }
 
     /**
+     * Sets the set with the current words on the board
+     * @param words the set with the words on the board
+     */
+    public void setWordOnBoard(Set<String> words) {
+        this.wordOnBoard = words;
+    }
+
+    /**
      * Sets the tile board to the current tile board
      * @param board the tile board with the most recent play
      */
@@ -75,6 +89,14 @@ public class Turn {
      */
     public Player getPlayer() {
         return player;
+    }
+
+    /**
+     * Returns the set of words on the last move
+     * @return set of words on the last move
+     */
+    public Set<String> getWordsOnBoard() {
+        return wordOnBoard;
     }
 
     /**

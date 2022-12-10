@@ -309,9 +309,13 @@ public class GameBoard {
     public boolean checkPlay() {
         Turn t = new Turn();
         t.setTileBoard(tileBoard);
+        t.setWordOnBoard(wordsOnBoard);
         currentScore = 0;
+
+
         if (checkNewWords()) {
             for (String play: wordsAddedThisTurn) {
+                System.out.println("wkehrwe " + play);
 
                 String word = play.split(" ")[0];
                 String place = play.split(" ")[1];
@@ -379,6 +383,7 @@ public class GameBoard {
         stringBoard[row][col] = letter;
         tilesChangedThisTurn.add(row + " " + col);
         currentPlayer.removeLetter(new Letters(letter.charAt(0)));
+
     }
 
     /**
@@ -1110,11 +1115,12 @@ public class GameBoard {
         System.out.println("UNDO");
         if (!undoStack.empty()){
             Turn item = undoStack.pop();// pops the latest turn
-            Turn redoItem = new Turn(stringBoard,item.getPlayer(),item.getScore(), item.getTileBoard());// saves the current turn
+            Turn redoItem = new Turn(stringBoard,item.getPlayer(),item.getScore(), item.getTileBoard(), item.getWordsOnBoard());// saves the current turn
             stringBoard = item.getBoard();// sets the string board to the popped board
             item.getPlayer().setUndoScore(item.getScore()); // resets the player's score
             setCurrentPlayer(item.getPlayer()); // changes the current player bak to the previous player
             tileBoard = item.getTileBoard();
+            wordsOnBoard = item.getWordsOnBoard();
             redoStack.push(redoItem); // pushes the last baord to the redo stack
 
             for (ScrabbleView v : views) {
@@ -1147,8 +1153,9 @@ public class GameBoard {
             System.out.println("REDO");
 
             Turn redoItem = redoStack.pop(); // pops last turn
-            Turn undoItem = new Turn(stringBoard, redoItem.getPlayer(), redoItem.getScore(), redoItem.getTileBoard()); // creates undo item of current state
+            Turn undoItem = new Turn(stringBoard, redoItem.getPlayer(), redoItem.getScore(), redoItem.getTileBoard(), redoItem.getWordsOnBoard()); // creates undo item of current state
             stringBoard = redoItem.getBoard(); // sets string board to popped board
+            wordsOnBoard = redoItem.getWordsOnBoard();
             tileBoard = redoItem.getTileBoard();
             redoItem.getPlayer().setScore(redoItem.getScore()); // resets the player score
             getNextPlayer(); // gets the next player
