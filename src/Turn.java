@@ -67,7 +67,7 @@ public class Turn {
      * @param words the set with the words on the board
      */
     public void setWordOnBoard(Set<String> words) {
-        this.wordOnBoard = words;
+        this.wordOnBoard.addAll(words);
     }
 
     /**

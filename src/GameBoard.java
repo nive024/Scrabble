@@ -168,7 +168,10 @@ public class GameBoard {
                         place += (char)('A'+j);
                     }
                 } else {
+
                     if(wordToCheck.length() > 1) { //if it's word longer than 1 letter
+                        System.out.println("quywgehwergwergweur " + wordToCheck);
+
                         if (checkWord(wordToCheck)) { //if it's a real word
                             wordToCheck += " " + place;
                             if ((!isFloating(wordToCheck.split(" ")[0], place)) || (isBoardEmpty)) {
@@ -217,11 +220,15 @@ public class GameBoard {
                         place += (j+1);
                     }
                 } else {
+
                     if(wordToCheck.length() > 1) { //if the word is more than 1 letter
                         if (checkWord(wordToCheck)) { //if it's an actual word
+                            System.out.println("check word pass " + wordToCheck);
+                            System.out.println("is float: " + (!isFloating(wordToCheck.split(" ")[0], place)) + " emt " + isBoardEmpty);
                             wordToCheck += " " + place;
                             if ((!isFloating(wordToCheck.split(" ")[0], place)) || (isBoardEmpty)) {
                                 if (wordsOnBoard.add(wordToCheck)) {
+                                    System.out.println("add to set");
                                     currentScore += calculateScore(wordToCheck.split(" ")[0]);
                                     wordsAddedThisTurn.add(wordToCheck);
                                 }
@@ -312,11 +319,8 @@ public class GameBoard {
         t.setWordOnBoard(wordsOnBoard);
         currentScore = 0;
 
-
         if (checkNewWords()) {
             for (String play: wordsAddedThisTurn) {
-                System.out.println("wkehrwe " + play);
-
                 String word = play.split(" ")[0];
                 String place = play.split(" ")[1];
                 //if this is the first word played, check to see if it's on the center square
@@ -1087,8 +1091,8 @@ public class GameBoard {
     public void setUndoBoard(Turn t){
         t.setBoard(prevBoard);
         t.setPlayer(currentPlayer);
+
         undoStack.push(t);
-        System.out.println("size: " + undoStack.size());
         prevBoard = changeTileToStringBoard(tileBoard);
     }
 
@@ -1099,14 +1103,18 @@ public class GameBoard {
     public void undoTurn(){
         System.out.println("UNDO");
         if (!undoStack.empty()){
+            if (undoStack.size() == 1) {
+                isBoardEmpty = true;
+            }
             Turn item = undoStack.pop();// pops the latest turn
             Turn redoItem = new Turn(stringBoard,item.getPlayer(),item.getScore(), item.getTileBoard(), item.getWordsOnBoard());// saves the current turn
             stringBoard = item.getBoard();// sets the string board to the popped board
             item.getPlayer().setUndoScore(item.getScore()); // resets the player's score
             setCurrentPlayer(item.getPlayer()); // changes the current player bak to the previous player
             tileBoard = item.getTileBoard();
-            wordsOnBoard = item.getWordsOnBoard();
-            redoStack.push(redoItem); // pushes the last baord to the redo stack
+            wordsOnBoard.clear();
+            wordsOnBoard.addAll(item.getWordsOnBoard());
+            redoStack.push(redoItem); // pushes the last board to the redo stack
 
             for (ScrabbleView v : views) {
                 v.updateUndoRedoBoard(stringBoard);
@@ -1139,7 +1147,8 @@ public class GameBoard {
             Turn redoItem = redoStack.pop(); // pops last turn
             Turn undoItem = new Turn(stringBoard, redoItem.getPlayer(), redoItem.getScore(), redoItem.getTileBoard(), redoItem.getWordsOnBoard()); // creates undo item of current state
             stringBoard = redoItem.getBoard(); // sets string board to popped board
-            wordsOnBoard = redoItem.getWordsOnBoard();
+            wordsOnBoard.clear();
+            wordsOnBoard.addAll(redoItem.getWordsOnBoard());
             tileBoard = redoItem.getTileBoard();
             redoItem.getPlayer().setScore(redoItem.getScore()); // resets the player score
             getNextPlayer(); // gets the next player
