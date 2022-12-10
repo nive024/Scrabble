@@ -17,7 +17,6 @@ The current project has finished Milestone 4. Throughout the project, the object
 ## Known Issues
 These are the known issues that will be fixed in Milestone 4:
 * Sometimes we'll get an error saying we didn't place any letters even if we did.
-* When an invalid play is made by the player, the AI's last play will not show up.
 * Skip turn doesn't ask if they want to discard any or all letters and provide new ones 
 * Some word get an error saying it doesn't fit there even if it does.
 * The file Input Stream sometimes does not write to the file properly (if this happens just delete the file and rerun the application)
