@@ -27,7 +27,9 @@ This project is now completed. Each milestone has been finished. All necessary a
 
 <!-- Authors -->
 ## Authors
-* Nivetha Sivasaravanan
-* Isaiah Hunte
-* Rimsha Atif
-* Nicole Lim
+* Nivetha Sivasaravanan (https://github.com/nive024)
+* Isaiah Hunte (https://github.com/Isaiahhunte)
+* Rimsha Atif (https://github.com/rimshaatif)
+* Nicole Lim (https://github.com/nnicolell)
+
+
